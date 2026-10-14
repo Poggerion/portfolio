@@ -1,13 +1,19 @@
 import type { Project } from "./types";
 
 /**
- * Case studies.
- * No screenshots of real applications exist on this site; visuals are abstract and labelled as such.
+ * Case studies. The three featured ones open the work section as large cards.
  */
 export const projects: Project[] = [
   {
     slug: "parking-platform",
-    featured: true,
+    featured: {
+      role: { fr: "Seul développeur de l'application mobile · ITMI", en: "Sole developer of the mobile app · ITMI" },
+      impact: {
+        fr: "Déployée pour l'ensemble du personnel du Cégep de Sept-Îles et quelques utilisateurs externes.",
+        en: "Deployed to all Cégep de Sept-Îles staff and a few external users.",
+      },
+      stack: ["React Native", "TypeScript", "Expo", "PHP"],
+    },
     title: { fr: "Gestion des stationnements", en: "Parking management" },
     summary: {
       fr: "Application mobile React Native (seul développeur) et interface web administrateur en PHP, pour le Cégep de Sept-Îles.",
@@ -86,7 +92,14 @@ export const projects: Project[] = [
   },
   {
     slug: "spot-mission-imaging",
-    featured: true,
+    featured: {
+      role: { fr: "Conseiller technique · ITMI", en: "Technical advisor · ITMI" },
+      impact: {
+        fr: "Un prototype fonctionnel qui sélectionne et enregistre des missions autonomes, et des photos de mission traitées automatiquement sur un serveur Linux.",
+        en: "A working prototype that selects and records autonomous missions, with mission photos processed automatically on a Linux server.",
+      },
+      stack: ["Python", "Spot SDK", "OpenCV", "Rust"],
+    },
     title: { fr: "Missions et images avec Spot", en: "Spot missions and imaging" },
     summary: {
       fr: "Prototype Python avec le Spot SDK : missions autonomes, photos, traitement sur serveur Linux.",
@@ -145,7 +158,14 @@ export const projects: Project[] = [
   },
   {
     slug: "spot-thermal-mission",
-    featured: true,
+    featured: {
+      role: { fr: "Projet final · équipe de deux", en: "Final project · team of two" },
+      impact: {
+        fr: "Le robot repère la source de chaleur la plus élevée avec sa caméra thermique, s'en approche et collecte des données sur place.",
+        en: "The robot finds the hottest source with its thermal camera, walks toward it and collects data on site.",
+      },
+      stack: ["Python", "Spot SDK", "Docker", "Bash"],
+    },
     title: { fr: "Spot à la recherche de chaleur", en: "Spot, heat-seeking" },
     summary: {
       fr: "Projet final en équipe de deux : une mission Spot qui repère une source de chaleur et collecte des données.",

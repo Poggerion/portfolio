@@ -72,72 +72,137 @@
 }
 
 /* ---------- Work ---------- */
-.featured {
+.cards {
   display: grid;
+  gap: 1rem;
   max-width: 40rem;
 }
 
-.featuredRow {
+/* Hover and focus change the border only: nothing moves. */
+.card {
+  position: relative;
   display: grid;
-  gap: 0.6rem;
-  padding-block: 1.75rem;
-  border-bottom: 1px solid var(--line);
+  gap: 0.7rem;
+  padding: clamp(1.25rem, 3vw, 1.75rem);
+  border: 1px solid var(--line);
+  transition: border-color 0.2s var(--ease-out);
 }
 
-.rowMeta {
+.card:hover,
+.card:focus-within {
+  border-color: var(--accent);
+}
+
+.cover {
+  width: 100%;
+  height: auto;
+  margin-bottom: 0.5rem;
+  border: 1px solid var(--line);
+}
+
+.cardMeta {
   display: flex;
   flex-wrap: wrap;
   gap: 0.3rem 1rem;
   color: var(--ink-faint);
 }
 
-.featuredTitle {
+.cardTitle {
   font-family: var(--font-display);
-  font-size: var(--display-sm);
+  font-size: clamp(1.9rem, 3.2vw, 2.6rem);
   line-height: 1;
   letter-spacing: -0.02em;
 }
 
-.featuredSummary {
+.cardLink::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+}
+
+/* The card's border shows focus; the anchor itself draws no ring. */
+.cardLink:focus-visible {
+  outline: none;
+}
+
+.card:has(.cardLink:focus-visible) {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+.cardRole {
+  font-size: var(--text-sm);
+}
+
+.cardImpact {
   color: var(--ink-muted);
   font-size: var(--text-sm);
 }
 
-.arrow {
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-top: 0.3rem;
+}
+
+.tags li {
+  padding: 0.3rem 0.55rem;
+  border: 1px solid var(--line);
+  color: var(--ink-muted);
+}
+
+.cardMore {
+  margin-top: 0.3rem;
+  font-size: var(--text-sm);
+  text-decoration: underline;
+  text-decoration-color: var(--line);
+  text-underline-offset: 0.35em;
+  transition: text-decoration-color 0.2s var(--ease-out);
+}
+
+.card:hover .cardMore {
+  text-decoration-color: var(--accent);
+}
+
+.othersTitle {
+  max-width: 40rem;
+  margin-top: 2.5rem;
+  padding-bottom: 0.75rem;
   color: var(--ink-faint);
+  border-bottom: 1px solid var(--line);
 }
 
 .others {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 1px;
-  padding: 1px;
   max-width: 40rem;
-  margin-top: 2.5rem;
 }
 
-.others > li {
-  outline: 1px solid var(--line);
-}
-
-.otherCard {
-  display: grid;
-  align-content: start;
-  gap: 0.75rem;
-  height: 100%;
-  padding: 1.5rem 1.25rem;
-  background: var(--bg);
+.otherRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.25rem 1.5rem;
+  min-height: 3.25rem;
+  padding-block: 0.85rem;
+  border-bottom: 1px solid var(--line);
 }
 
 .otherTitle {
   font-family: var(--font-display);
-  font-size: 1.5rem;
-  line-height: 1.1;
+  font-size: 1.35rem;
+  line-height: 1.15;
+  transition: color 0.2s var(--ease-out);
 }
 
-.otherSummary {
-  color: var(--ink-muted);
-  font-size: var(--text-sm);
+.otherRow:hover .otherTitle {
+  color: var(--accent);
+}
+
+.otherMeta {
+  color: var(--ink-faint);
+  white-space: nowrap;
 }
 
 /* ---------- Experience / education ---------- */
@@ -435,7 +500,6 @@
 /* ---------- Responsive ---------- */
 @media (max-width: 600px) {
   .facts,
-  .others,
   .courses {
     grid-template-columns: minmax(0, 1fr);
   }

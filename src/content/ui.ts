@@ -37,6 +37,7 @@ export const ui = {
   copied: { fr: "Copié", en: "Copied" },
   resume: { fr: "CV (PDF)", en: "Résumé (PDF)" },
   readCase: { fr: "Lire l'étude de cas", en: "Read the case study" },
+  otherProjects: { fr: "Autres projets", en: "More projects" },
   backToWork: { fr: "Retour aux projets", en: "Back to work" },
   limits: { fr: "À savoir", en: "Good to know" },
   stack: { fr: "Technologies", en: "Stack" },

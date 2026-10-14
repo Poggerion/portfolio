@@ -73,45 +73,59 @@ export function Work({ lang }: { lang: Locale }) {
   return (
     <section id="work" className={`col ${styles.section}`} aria-labelledby="work-title">
       <Head id="work" label={ui.sections.work} lang={lang} aside={`${count} ${lang === "fr" ? "études de cas" : "case studies"}`} />
-      <div data-work-list="">
-        <ol className={styles.featured}>
-          {featured.map((p) => (
-            <li key={p.slug}>
-              <Link
-                href={casePath(lang, p.slug)}
-                className={styles.featuredRow}
-              >
-                <span className={`mono ${styles.rowMeta}`}>
-                  {t(p.period, lang)}
-                  <span>{t(ui.involvement[p.involvement], lang)}</span>
-                </span>
-                <span className={styles.featuredTitle}>{t(p.title, lang)}</span>
-                <span className={styles.featuredSummary}>{t(p.summary, lang)}</span>
-                <span className={`mono ${styles.arrow}`} aria-hidden="true">
-                  →
-                </span>
-              </Link>
+      <ul className={styles.cards}>
+        {featured.map((p) => {
+          const f = p.featured!;
+          return (
+            <li key={p.slug} className={styles.card} data-project={p.slug}>
+              {f.cover && (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  className={styles.cover}
+                  src={`${basePath}${f.cover.src}`}
+                  alt={t(f.cover.alt, lang)}
+                  width={f.cover.width}
+                  height={f.cover.height}
+                  loading="lazy"
+                />
+              )}
+              <p className={`mono ${styles.cardMeta}`}>
+                <span>{t(p.period, lang)}</span>
+                <span>{t(ui.involvement[p.involvement], lang)}</span>
+              </p>
+              <h3 className={styles.cardTitle}>
+                {/* The whole card is the link; its area comes from the ::after of this anchor. */}
+                <Link href={casePath(lang, p.slug)} className={styles.cardLink}>
+                  {t(p.title, lang)}
+                </Link>
+              </h3>
+              <p className={styles.cardRole}>{t(f.role, lang)}</p>
+              <p className={styles.cardImpact}>{t(f.impact, lang)}</p>
+              <ul className={`mono ${styles.tags}`} aria-label={t(ui.stack, lang)}>
+                {f.stack.map((s) => (
+                  <li key={s}>{s}</li>
+                ))}
+              </ul>
+              <p className={styles.cardMore} aria-hidden="true">
+                {t(ui.readCase, lang)}
+              </p>
             </li>
-          ))}
-        </ol>
-        <ul className={styles.others}>
-          {others.map((p) => (
-            <li key={p.slug}>
-              <Link
-                href={casePath(lang, p.slug)}
-                className={styles.otherCard}
-              >
-                <span className={`mono ${styles.rowMeta}`}>
-                  {t(p.period, lang)}
-                  <span>{t(p.team, lang)}</span>
-                </span>
-                <span className={styles.otherTitle}>{t(p.title, lang)}</span>
-                <span className={styles.otherSummary}>{t(p.summary, lang)}</span>
-              </Link>
-            </li>
-          ))}
-        </ul>
-      </div>
+          );
+        })}
+      </ul>
+      <h3 className={`mono ${styles.othersTitle}`}>{t(ui.otherProjects, lang)}</h3>
+      <ul className={styles.others}>
+        {others.map((p) => (
+          <li key={p.slug} data-project={p.slug}>
+            <Link href={casePath(lang, p.slug)} className={styles.otherRow}>
+              <span className={styles.otherTitle}>{t(p.title, lang)}</span>
+              <span className={`mono ${styles.otherMeta}`}>
+                {t(p.period, lang)} · {t(ui.involvement[p.involvement], lang)}
+              </span>
+            </Link>
+          </li>
+        ))}
+      </ul>
     </section>
   );
 }

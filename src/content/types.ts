@@ -65,7 +65,17 @@ export interface Project {
   sections: CaseStudySection[];
   /** Honest limits a reader should know (e.g. prototype, approximate behaviour). */
   limits?: Localized[];
-  featured?: boolean;
+  /** Featured projects get a large card with the fields below. */
+  featured?: {
+    /** Felipe's role, in a few words. */
+    role: Localized;
+    /** One sentence on what the work achieved. */
+    impact: Localized;
+    /** Three or four technologies for the card. */
+    stack: string[];
+    /** A real image of the project, when one exists (file under public/projects/<slug>/). */
+    cover?: { src: string; alt: Localized; width: number; height: number };
+  };
 }
 
 export interface SkillGroup {
