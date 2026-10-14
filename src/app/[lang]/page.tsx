@@ -11,19 +11,17 @@ export default async function Home({ params }: PageProps<"/[lang]">) {
   if (!isLocale(lang)) notFound();
   return (
     <>
-      {/* Reading column on the left, scan panel sticky on the right (desktop). */}
-      <div className={styles.scrolly}>
-        <main id="content" className={styles.column}>
-          <Hero lang={lang} />
-          <About lang={lang} />
-          <Work lang={lang} />
-          <ExperienceList lang={lang} />
-          <Skills lang={lang} />
-          <EducationList lang={lang} />
-          <Contact lang={lang} />
-        </main>
-        <ScanPanel lang={lang} />
-      </div>
+      {/* The point cloud sits behind the page; the text scrolls over it. */}
+      <ScanPanel lang={lang} />
+      <main id="content" className={styles.column}>
+        <Hero lang={lang} />
+        <About lang={lang} />
+        <Work lang={lang} />
+        <ExperienceList lang={lang} />
+        <Skills lang={lang} />
+        <EducationList lang={lang} />
+        <Contact lang={lang} />
+      </main>
       <ScanTracker />
       <Footer />
     </>

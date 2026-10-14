@@ -1,11 +1,12 @@
+/* Above the fixed point cloud. On wide screens the text keeps to the left part of the page. */
 .column {
+  position: relative;
+  z-index: 1;
   min-width: 0;
 }
 
 @media (min-width: 1024px) {
-  .scrolly {
-    display: grid;
-    grid-template-columns: minmax(0, 55fr) minmax(0, 45fr);
-    align-items: start;
+  .column {
+    max-width: 55%;
   }
 }

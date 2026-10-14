@@ -1,118 +1,47 @@
-/* Desktop only: below 1024px the page is a single column. */
+/* Fixed behind the page; the text column scrolls over it. */
 .panel {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  transition: opacity 1.2s var(--ease-out);
+}
+
+.canvas[data-ready] {
+  opacity: 1;
+}
+
+/* Scan caption, bottom right on wide screens. */
+.hud {
   display: none;
 }
 
 @media (min-width: 1024px) {
-  .panel {
+  .hud {
     display: block;
-    position: sticky;
-    top: 0;
-    height: 100vh;
-    height: 100svh;
-    overflow: hidden;
-  }
-
-  /* The dividing rule starts under the header, so it never runs through the menu. */
-  .panel::before {
-    content: "";
     position: absolute;
-    inset: 4.5rem auto 0 0;
-    width: 1px;
-    background: var(--line);
+    right: 2.5rem;
+    bottom: 1.75rem;
+    color: var(--ink-faint);
+    line-height: 1.5;
+    text-align: right;
   }
-}
-
-/* Clear of the fixed header above and of the HUD below. */
-.frame {
-  position: absolute;
-  inset: 6rem 2.5rem 4.5rem;
-}
-
-/* Calibration bed: a faint lattice the cloud is drawn over, fading out toward the edges. */
-.bed {
-  position: absolute;
-  inset: 0;
-  background-image: radial-gradient(circle, rgb(241 240 237 / 0.1) 0.75px, transparent 1.25px);
-  background-size: 22px 22px;
-  background-position: center;
-  mask-image: radial-gradient(ellipse 60% 55% at 50% 50%, #000 20%, transparent 80%);
-}
-
-.corner {
-  position: absolute;
-  width: 18px;
-  height: 18px;
-  border: 0 solid var(--ink-ghost);
-}
-
-.corner[data-corner="tl"] {
-  top: 0;
-  left: 0;
-  border-top-width: 1px;
-  border-left-width: 1px;
-}
-
-.corner[data-corner="tr"] {
-  top: 0;
-  right: 0;
-  border-top-width: 1px;
-  border-right-width: 1px;
-}
-
-.corner[data-corner="bl"] {
-  bottom: 0;
-  left: 0;
-  border-bottom-width: 1px;
-  border-left-width: 1px;
-}
-
-.corner[data-corner="br"] {
-  bottom: 0;
-  right: 0;
-  border-bottom-width: 1px;
-  border-right-width: 1px;
-}
-
-.reticle {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  width: 15px;
-  height: 15px;
-  transform: translate(-50%, -50%);
-}
-
-.reticle::before,
-.reticle::after {
-  content: "";
-  position: absolute;
-  background: var(--ink-ghost);
-}
-
-.reticle::before {
-  left: 7px;
-  top: 0;
-  width: 1px;
-  height: 15px;
-}
-
-.reticle::after {
-  top: 7px;
-  left: 0;
-  width: 15px;
-  height: 1px;
-}
-
-.hud {
-  position: absolute;
-  left: 2.5rem;
-  right: 2.5rem;
-  bottom: 1.75rem;
-  color: var(--ink-faint);
-  line-height: 1.5;
 }
 
 .hudNum {
   color: var(--ink);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .canvas {
+    transition: none;
+  }
 }
