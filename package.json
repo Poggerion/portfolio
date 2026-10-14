@@ -8,7 +8,8 @@
     "typecheck": "next typegen && tsc --noEmit",
     "lint": "eslint",
     "test": "vitest run",
-    "check": "npm run typecheck && npm run lint && npm test && npm run build"
+    "check": "npm run typecheck && npm run lint && npm test && npm run build",
+    "clouds": "node scripts/build-clouds.mts"
   },
   "dependencies": {
     "next": "16.4.0",
@@ -24,6 +25,7 @@
     "eslint": "^9",
     "eslint-config-next": "16.4.0",
     "jsdom": "^26.1.0",
+    "sharp": "^0.35.5",
     "typescript": "^5",
     "vitest": "^3.2.4"
   }

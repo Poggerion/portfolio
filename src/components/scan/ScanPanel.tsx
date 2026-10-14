@@ -10,7 +10,7 @@ import styles from "./ScanPanel.module.css";
 export function ScanPanel({ lang }: { lang: Locale }) {
   return (
     <div className={styles.panel}>
-      <ScanCloud />
+      <ScanCloud lang={lang} />
       <ScanHud lang={lang} />
     </div>
   );

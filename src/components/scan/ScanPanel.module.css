@@ -19,6 +19,23 @@
   opacity: 1;
 }
 
+/* Without WebGL: a still image of the section's shape, on wide screens only. */
+.still {
+  display: none;
+}
+
+@media (min-width: 1024px) {
+  .still {
+    display: block;
+    position: absolute;
+    right: 5%;
+    top: 50%;
+    width: min(36vw, 70vh);
+    height: auto;
+    transform: translateY(-50%);
+  }
+}
+
 /* Scan caption, bottom right on wide screens. */
 .hud {
   display: none;

@@ -1,7 +1,14 @@
 import * as THREE from "three";
 
-/** Points in the cloud. Phones and small screens take the first part only. */
+/** Points in the cloud. Phones and small screens draw the first part only. */
 export const POINTS = { full: 16384, light: 6144 };
+
+/** One shape: positions in −1..1 on its longest side, intensity 0..1, accent 0 or 1, per point. */
+export interface Shape {
+  position: Float32Array;
+  intensity: Float32Array;
+  accent: Float32Array;
+}
 
 /** Small deterministic PRNG (mulberry32), so the cloud is the same on every visit. */
 function rng(seed: number) {
@@ -21,19 +28,15 @@ function knot(t: number): [number, number, number] {
   return [r * Math.cos(2 * t), r * Math.sin(2 * t), 0.42 * Math.sin(3 * t)];
 }
 
-/**
- * The ball of yarn as points: many strands wound around the knot, each strand a line of
- * points instead of a filament. Returns positions and, per point, a seed and an accent flag.
- */
-export function buildYarn(count: number) {
+/** The ball of yarn: many strands wound around the knot, each strand a line of points. */
+export function buildYarn(count = POINTS.full): Shape {
   const rand = rng(7);
   const strands = 140;
   const position = new Float32Array(count * 3);
-  const seed = new Float32Array(count);
+  const intensity = new Float32Array(count);
   const accent = new Float32Array(count);
   for (let i = 0; i < count; i++) {
-    const s = i % strands;
-    const sRand = rng(s + 1);
+    const sRand = rng((i % strands) + 1);
     const phase = sRand() * Math.PI * 2;
     const spread = 0.015 + 0.11 * Math.sqrt(sRand());
     const twist = 2 + Math.floor(sRand() * 3);
@@ -42,49 +45,112 @@ export function buildYarn(count: number) {
     const q = knot(t + 0.001);
     const tan = [q[0] - p[0], q[1] - p[1], q[2] - p[2]];
     const tl = Math.hypot(tan[0], tan[1], tan[2]) || 1;
-    tan[0] /= tl;
-    tan[1] /= tl;
-    tan[2] /= tl;
-    // Normal and binormal from the tangent and the knot's axis.
-    let n = [tan[1], -tan[0], 0];
-    const nl = Math.hypot(n[0], n[1]) || 1;
-    n = [n[0] / nl, n[1] / nl, 0];
+    for (let k = 0; k < 3; k++) tan[k] /= tl;
+    const nl = Math.hypot(tan[1], tan[0]) || 1;
+    const n = [tan[1] / nl, -tan[0] / nl, 0];
     const b = [tan[1] * n[2] - tan[2] * n[1], tan[2] * n[0] - tan[0] * n[2], tan[0] * n[1] - tan[1] * n[0]];
     const a = phase + twist * t;
     const r = spread * (0.85 + 0.3 * rand());
-    const jitter = 0.006;
     for (let k = 0; k < 3; k++) {
-      position[i * 3 + k] = p[k] + (n[k] * Math.cos(a) + b[k] * Math.sin(a)) * r + (rand() - 0.5) * jitter;
+      position[i * 3 + k] = (p[k] + (n[k] * Math.cos(a) + b[k] * Math.sin(a)) * r + (rand() - 0.5) * 0.006) / 1.05;
     }
-    seed[i] = rand();
+    intensity[i] = 0.35 + 0.65 * rand();
     accent[i] = rand() < 0.008 ? 1 : 0;
   }
-  return { position, seed, accent };
+  return { position, intensity, accent };
+}
+
+/** Decodes a .bin from scripts/build-clouds.mts: Int16 x, y, z, Uint8 intensity, Uint8 accent. */
+export function decodeShape(buffer: ArrayBuffer): Shape {
+  const view = new DataView(buffer);
+  const count = buffer.byteLength / 8;
+  const position = new Float32Array(count * 3);
+  const intensity = new Float32Array(count);
+  const accent = new Float32Array(count);
+  for (let i = 0; i < count; i++) {
+    const o = i * 8;
+    position[i * 3] = view.getInt16(o, true) / 32767;
+    position[i * 3 + 1] = view.getInt16(o + 2, true) / 32767;
+    position[i * 3 + 2] = view.getInt16(o + 4, true) / 32767;
+    intensity[i] = view.getUint8(o + 6) / 255;
+    accent[i] = view.getUint8(o + 7);
+  }
+  return { position, intensity, accent };
+}
+
+/**
+ * Samples the points of a line of text drawn in the page's display font. Lines after the first
+ * carry the accent, like the italic half of the contact title.
+ */
+export function textShape(lines: string[], font: string, count = POINTS.full): Shape {
+  const w = 1200;
+  const h = 300 * lines.length;
+  const canvas = document.createElement("canvas");
+  canvas.width = w;
+  canvas.height = h;
+  const ctx = canvas.getContext("2d", { willReadFrequently: true })!;
+  ctx.fillStyle = "#fff";
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  lines.forEach((line, i) => {
+    ctx.font = `${i ? "italic " : ""}220px ${font}`;
+    ctx.fillText(line, w / 2, 150 + i * 280, w - 40);
+  });
+  const data = ctx.getImageData(0, 0, w, h).data;
+  const lit: number[] = [];
+  for (let k = 0; k < w * h; k += 2) if (data[k * 4 + 3] > 128) lit.push(k);
+  const rand = rng(13);
+  const position = new Float32Array(count * 3);
+  const intensity = new Float32Array(count);
+  const accent = new Float32Array(count);
+  const half = Math.max(w, h) / 2;
+  for (let i = 0; i < count; i++) {
+    const k = lit.length ? lit[Math.floor(rand() * lit.length)] : 0;
+    const x = (k % w) + rand();
+    const y = Math.floor(k / w) + rand();
+    position[i * 3] = (x - w / 2) / half;
+    position[i * 3 + 1] = -(y - h / 2) / half;
+    position[i * 3 + 2] = (rand() - 0.5) * 0.06;
+    intensity[i] = 0.55 + 0.45 * rand();
+    accent[i] = y > 300 && rand() < 0.85 ? 1 : 0;
+  }
+  return { position, intensity, accent };
 }
 
 const VERT = /* glsl */ `
+attribute vec3 aFrom;
+attribute float aFromI;
+attribute float aFromA;
+attribute float aToI;
+attribute float aToA;
 attribute float aSeed;
-attribute float aAccent;
 uniform float uTime;
 uniform float uSize;
-uniform float uScan;
+uniform float uProgress;
 varying float vAlpha;
 varying float vAccent;
 varying float vScan;
 
+// Per point: the scan reaches the top of the new shape first, then sweeps down.
+float local(float y) {
+  float delay = (1.0 - (y + 1.0) * 0.5) * 0.45 + aSeed * 0.08;
+  return smoothstep(0.0, 1.0, clamp((uProgress - delay) / 0.47, 0.0, 1.0));
+}
+
 void main() {
-  vec3 p = position;
-  // Breathing: each point drifts a little around its place on the strand.
-  p += 0.006 * vec3(sin(uTime * 0.7 + aSeed * 40.0), cos(uTime * 0.6 + aSeed * 23.0), sin(uTime * 0.5 + aSeed * 11.0));
+  float t = local(position.y);
+  vec3 p = mix(aFrom, position, t);
+  // Points lift off a little while they travel.
+  p.z += sin(t * 3.14159) * (aSeed - 0.5) * 0.5;
+  // Breathing at rest.
+  p += 0.005 * vec3(sin(uTime * 0.7 + aSeed * 40.0), cos(uTime * 0.6 + aSeed * 23.0), sin(uTime * 0.5 + aSeed * 11.0));
   vec4 mv = modelViewMatrix * vec4(p, 1.0);
   gl_Position = projectionMatrix * mv;
-  float depth = clamp((-mv.z - 5.2) / 1.6, 0.0, 1.0);
   gl_PointSize = uSize * (0.7 + 0.5 * fract(aSeed * 9.1)) * (6.0 / -mv.z);
-  // The scan line: a band sweeping down the model, lighting what it crosses.
-  float band = 1.0 - smoothstep(0.0, 0.07, abs(position.y - uScan));
-  vScan = band;
-  vAlpha = (1.0 - depth * 0.7) * (0.35 + 0.65 * fract(aSeed * 7.13));
-  vAccent = aAccent;
+  float depth = clamp((-mv.z - 5.2) / 1.6, 0.0, 1.0);
+  vScan = sin(t * 3.14159);
+  vAlpha = (1.0 - depth * 0.7) * mix(aFromI, aToI, t);
+  vAccent = mix(aFromA, aToA, t);
 }
 `;
 
@@ -99,13 +165,13 @@ varying float vScan;
 void main() {
   vec2 d = gl_PointCoord - 0.5;
   float m = smoothstep(0.5, 0.15, length(d));
-  vec3 c = mix(uInk, uAccent, max(vAccent, vScan * 0.55));
-  float a = m * (vAlpha * 0.95 + vScan * 0.6 + vAccent * 0.4) * uOpacity;
+  vec3 c = mix(uInk, uAccent, max(vAccent, vScan * 0.7));
+  float a = m * (vAlpha * 0.95 + vScan * 0.5 + vAccent * 0.35) * uOpacity;
   gl_FragColor = vec4(c, a);
 }
 `;
 
-/** Where the cloud sits: x, y in fractions of the half viewport, size as a fraction of its height. */
+/** Where the cloud sits: x, y in fractions of the half viewport, size: shape height / viewport height. */
 export interface Pose {
   x: number;
   y: number;
@@ -113,12 +179,16 @@ export interface Pose {
   opacity: number;
 }
 
-/** Renders the ball of yarn on a fixed canvas behind the page. */
-export class YarnCloud {
+/** Morph from one shape to the next: 1.4 s, the scan sweeping down the new shape. */
+const MORPH_S = 1.4;
+
+/** Renders the cloud on a fixed canvas behind the page and morphs it between shapes. */
+export class ScanCloudRenderer {
   private renderer: THREE.WebGLRenderer;
   private scene = new THREE.Scene();
   private camera = new THREE.PerspectiveCamera(30, 1, 0.1, 50);
   private group = new THREE.Group();
+  private geometry = new THREE.BufferGeometry();
   private material: THREE.ShaderMaterial;
   private frame = 0;
   private last = 0;
@@ -127,21 +197,35 @@ export class YarnCloud {
   private target: Pose;
   private tilt = { x: 0, y: 0 };
   private tiltTarget = { x: 0, y: 0 };
+  private yaw = 0.2;
+  private spinning = true;
+  private progress = 1;
   private running = false;
+  private current: Shape;
 
   constructor(
-    private canvas: HTMLCanvasElement,
-    count: number,
+    canvas: HTMLCanvasElement,
+    private count: number,
+    first: Shape,
     pose: Pose,
     private still: boolean,
   ) {
     this.renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: false, powerPreference: "low-power" });
     this.renderer.setClearColor(0x000000, 0);
-    const { position, seed, accent } = buildYarn(count);
-    const geo = new THREE.BufferGeometry();
-    geo.setAttribute("position", new THREE.BufferAttribute(position, 3));
-    geo.setAttribute("aSeed", new THREE.BufferAttribute(seed, 1));
-    geo.setAttribute("aAccent", new THREE.BufferAttribute(accent, 1));
+    const n = POINTS.full;
+    const seed = new Float32Array(n);
+    const rand = rng(99);
+    for (let i = 0; i < n; i++) seed[i] = rand();
+    const attr = (array: Float32Array, size: number) => new THREE.BufferAttribute(array, size).setUsage(THREE.DynamicDrawUsage);
+    this.geometry.setAttribute("position", attr(first.position.slice(), 3));
+    this.geometry.setAttribute("aFrom", attr(first.position.slice(), 3));
+    this.geometry.setAttribute("aFromI", attr(first.intensity.slice(), 1));
+    this.geometry.setAttribute("aToI", attr(first.intensity.slice(), 1));
+    this.geometry.setAttribute("aFromA", attr(first.accent.slice(), 1));
+    this.geometry.setAttribute("aToA", attr(first.accent.slice(), 1));
+    this.geometry.setAttribute("aSeed", new THREE.BufferAttribute(seed, 1));
+    this.geometry.setDrawRange(0, count);
+    this.current = first;
     this.material = new THREE.ShaderMaterial({
       vertexShader: VERT,
       fragmentShader: FRAG,
@@ -151,14 +235,15 @@ export class YarnCloud {
       uniforms: {
         uTime: { value: 0 },
         uSize: { value: 2 },
-        uScan: { value: 2 },
+        uProgress: { value: 1 },
         uOpacity: { value: pose.opacity },
         uInk: { value: new THREE.Color("#f1f0ed") },
         uAccent: { value: new THREE.Color("#ff6a3d") },
       },
     });
-    this.group.add(new THREE.Points(geo, this.material));
-    this.group.rotation.set(-0.35, 0.2, 0.3);
+    const points = new THREE.Points(this.geometry, this.material);
+    points.frustumCulled = false;
+    this.group.add(points);
     this.scene.add(this.group);
     this.camera.position.set(0, 0, 6);
     this.pose = { ...pose };
@@ -187,10 +272,44 @@ export class YarnCloud {
     }
   }
 
-  /** Pointer in -1..1 on both axes; the cloud leans up to 4° toward it. */
+  /** Pointer in −1..1 on both axes; the cloud leans up to 4° toward it. */
   setPointer(x: number, y: number) {
     const max = (4 * Math.PI) / 180;
     this.tiltTarget = { x: y * max, y: x * max };
+  }
+
+  /** Morphs to a shape. `spin`: the shape turns on itself (the ball of yarn) instead of facing the reader. */
+  morphTo(shape: Shape, spin: boolean) {
+    if (shape === this.current) return;
+    const g = this.geometry;
+    const from = g.getAttribute("aFrom") as THREE.BufferAttribute;
+    const to = g.getAttribute("position") as THREE.BufferAttribute;
+    const fromI = g.getAttribute("aFromI") as THREE.BufferAttribute;
+    const toI = g.getAttribute("aToI") as THREE.BufferAttribute;
+    const fromA = g.getAttribute("aFromA") as THREE.BufferAttribute;
+    const toA = g.getAttribute("aToA") as THREE.BufferAttribute;
+    const seed = g.getAttribute("aSeed") as THREE.BufferAttribute;
+    // Start from where every point is now, even mid-morph (same easing as the shader).
+    const p = this.progress;
+    for (let i = 0; i < POINTS.full; i++) {
+      const y = to.array[i * 3 + 1];
+      const delay = (1 - (y + 1) * 0.5) * 0.45 + seed.array[i] * 0.08;
+      const c = Math.min(1, Math.max(0, (p - delay) / 0.47));
+      const t = c * c * (3 - 2 * c);
+      for (let k = 0; k < 3; k++) from.array[i * 3 + k] += (to.array[i * 3 + k] - from.array[i * 3 + k]) * t;
+      fromI.array[i] += (toI.array[i] - fromI.array[i]) * t;
+      fromA.array[i] += (toA.array[i] - fromA.array[i]) * t;
+    }
+    (to.array as Float32Array).set(shape.position);
+    (toI.array as Float32Array).set(shape.intensity);
+    (toA.array as Float32Array).set(shape.accent);
+    for (const a of [from, to, fromI, toI, fromA, toA]) a.needsUpdate = true;
+    this.current = shape;
+    if (this.spinning && !spin) this.yaw = Math.atan2(Math.sin(this.yaw), Math.cos(this.yaw));
+    this.spinning = spin;
+    this.progress = this.still ? 1 : 0;
+    this.material.uniforms.uProgress.value = this.progress;
+    if (this.still) this.render();
   }
 
   play() {
@@ -212,34 +331,39 @@ export class YarnCloud {
     this.last = now;
     const k = 1 - Math.exp(-dt * 3);
     for (const key of ["x", "y", "size", "opacity"] as const) this.pose[key] += (this.target[key] - this.pose[key]) * k;
+    // Nothing to draw while the cloud is hidden (phones, between the hero and the contact).
+    if (this.pose.opacity < 0.004 && this.target.opacity === 0) return;
     this.tilt.x += (this.tiltTarget.x - this.tilt.x) * k;
     this.tilt.y += (this.tiltTarget.y - this.tilt.y) * k;
     const t = (now - this.start) / 1000;
+    this.progress = Math.min(1, this.progress + dt / MORPH_S);
+    this.material.uniforms.uProgress.value = this.progress;
     this.material.uniforms.uTime.value = t;
-    // One sweep every 7 s, from above the model to below it, then a pause.
-    const sweep = (t % 7) / 4.5;
-    this.material.uniforms.uScan.value = sweep <= 1 ? 1.1 - sweep * 2.2 : 2;
-    this.group.rotation.y = 0.2 + t * 0.06 + this.tilt.y;
-    this.group.rotation.x = -0.35 + this.tilt.x;
+    if (this.spinning) {
+      this.yaw += dt * 0.06;
+      this.group.rotation.x = -0.35 + this.tilt.x;
+    } else {
+      // Facing the reader, with a slow sway.
+      this.yaw += (Math.sin(t * 0.25) * 0.14 - this.yaw) * k;
+      this.group.rotation.x += (this.tilt.x - this.group.rotation.x) * k;
+    }
+    this.group.rotation.y = this.yaw + this.tilt.y;
     this.render();
   };
 
   private render() {
     const { x, y, size, opacity } = this.pose;
-    // Visible half height at the model's depth, then place and scale in those units.
     const halfH = Math.tan((this.camera.fov * Math.PI) / 360) * this.camera.position.z;
     const halfW = halfH * this.camera.aspect;
     this.group.position.set(x * halfW, y * halfH, 0);
-    this.group.scale.setScalar((size * halfH * 2) / 2.2);
+    this.group.scale.setScalar(size * halfH);
     this.material.uniforms.uOpacity.value = opacity;
     this.renderer.render(this.scene, this.camera);
   }
 
   dispose() {
     this.pause();
-    this.group.traverse((o) => {
-      if (o instanceof THREE.Points) o.geometry.dispose();
-    });
+    this.geometry.dispose();
     this.material.dispose();
     this.renderer.dispose();
   }

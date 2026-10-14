@@ -31,6 +31,16 @@ npm run build      # génère le site statique dans out/
 
 Pour prévisualiser l'export, servir `out/` avec n'importe quel serveur de fichiers statiques, puis ouvrir `/fr/`.
 
+## Nuages de points
+
+Le nuage derrière la page change de forme selon la section : portrait, carte du Québec, téléphone, Spot, carte électronique, Cégep, ÉTS, puis le titre du contact. Les formes sont précalculées dans `public/clouds/` (16 384 points par forme, 8 octets par point) avec un aperçu fixe en WebP.
+
+```sh
+npm run clouds     # régénère public/clouds/ à partir de cloud-sources/
+```
+
+Les photos sources (`cloud-sources/`) ne sont pas versionnées.
+
 ## Déploiement
 
 Chaque push sur `main` lance `.github/workflows/deploy.yml`, qui vérifie le projet, construit le site pour le chemin du dépôt (`/portfolio`) et le publie sur GitHub Pages.
@@ -54,7 +64,9 @@ src/
   content/             contenu bilingue, séparé de la présentation
   lib/                 outils de langue, d'URL et de section active
 public/
+  clouds/              formes du nuage de points (.bin) et aperçus (.webp)
   cv/                  CV en PDF, français et anglais
   og/                  images de partage 1200 × 630, une par langue
-tests/                 tests du contenu et de la section active
+scripts/build-clouds.mts  génération des nuages de points (sharp)
+tests/                 tests du contenu, de la section active et des nuages
 ```
