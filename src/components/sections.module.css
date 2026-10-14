@@ -1,0 +1,590 @@
+.section {
+  padding-top: var(--section-gap);
+  scroll-margin-top: 3rem;
+}
+
+.head {
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 2rem;
+  padding-bottom: 1.5rem;
+  margin-bottom: clamp(2.5rem, 6vw, 4.5rem);
+}
+
+.rule {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 1px;
+  background: var(--line);
+}
+
+.headAside {
+  color: var(--ink-faint);
+  padding-bottom: 0.6rem;
+  white-space: nowrap;
+}
+
+.title {
+  font-family: var(--font-display);
+  font-size: var(--display-md);
+  line-height: 0.95;
+  letter-spacing: -0.03em;
+}
+
+/* ---------- About ---------- */
+.aboutGrid {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: 3rem 1.5rem;
+}
+
+.prose {
+  grid-column: 1 / span 7;
+  display: grid;
+  gap: 1.5rem;
+  max-width: 40rem;
+  color: var(--ink-muted);
+  font-size: var(--text-md);
+}
+
+.lead {
+  color: var(--ink);
+  font-family: var(--font-display);
+  font-size: clamp(1.6rem, 2.6vw, 2.25rem);
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+}
+
+.facts {
+  grid-column: 9 / -1;
+  display: grid;
+  align-content: start;
+}
+
+.facts div {
+  display: grid;
+  gap: 0.3rem;
+  padding-block: 1rem;
+  border-top: 1px solid var(--line);
+}
+
+.facts dt {
+  color: var(--ink-faint);
+}
+
+.facts dd {
+  font-size: var(--text-sm);
+}
+
+/* ---------- Work ---------- */
+.featured > li:first-child .featuredRow {
+  padding-top: 0.5rem;
+}
+
+.featuredRow {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(0, 6fr) minmax(0, 3.5fr) 2rem;
+  align-items: baseline;
+  gap: 1.5rem;
+  padding-block: clamp(1.75rem, 3.5vw, 2.75rem);
+  border-bottom: 1px solid var(--line);
+  transition: padding-left 0.6s var(--ease-out);
+}
+
+.featuredRow::before {
+  content: "";
+  position: absolute;
+  inset: -1px 0 -1px 0;
+  background: var(--bg-raised);
+  transform: scaleY(0);
+  transform-origin: bottom;
+  transition: transform 0.6s var(--ease-out);
+  z-index: -1;
+}
+
+.featuredRow:hover::before,
+.featuredRow:focus-visible::before {
+  transform: scaleY(1);
+}
+
+.featuredRow:hover {
+  padding-left: 1rem;
+}
+
+.rowMeta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  color: var(--ink-faint);
+}
+
+.featuredTitle {
+  font-family: var(--font-display);
+  font-size: var(--display-sm);
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+
+.featuredSummary {
+  color: var(--ink-muted);
+  font-size: var(--text-sm);
+}
+
+.arrow {
+  justify-self: end;
+  font-size: var(--text-md);
+  color: var(--ink-faint);
+  transition: transform 0.5s var(--ease-out), color 0.3s;
+}
+
+.featuredRow:hover .arrow {
+  transform: translateX(4px);
+  color: var(--ink);
+}
+
+/* Each card draws its own cell border (an outline over the 1px gaps), so a card that has not
+   revealed yet leaves an empty cell rather than a grey slab. */
+.others {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1px;
+  padding: 1px;
+  margin-top: 4rem;
+}
+
+.others > li {
+  outline: 1px solid var(--line);
+}
+
+.otherCard {
+  display: grid;
+  align-content: start;
+  gap: 0.9rem;
+  height: 100%;
+  padding: 1.75rem 1.5rem 2rem;
+  background: var(--bg);
+  transition: background 0.4s var(--ease-out);
+}
+
+.otherCard:hover {
+  background: var(--bg-raised);
+}
+
+/* Neighbouring cells paint over an outside ring, so it is drawn inside the cell... */
+.otherCard:focus-visible {
+  outline-offset: -1px;
+  background: var(--bg-raised);
+}
+
+/* ...or, where :has() works, the focused cell is lifted and its border becomes the ring. */
+@supports selector(:has(*)) {
+  .others > li:has(.otherCard:focus-visible) {
+    position: relative;
+    z-index: 1;
+    outline-color: var(--accent);
+  }
+
+  .otherCard:focus-visible {
+    outline: none;
+  }
+}
+
+.otherCard .rowMeta {
+  flex-direction: row;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.otherTitle {
+  font-family: var(--font-display);
+  font-size: 1.6rem;
+  line-height: 1.1;
+}
+
+.otherSummary {
+  color: var(--ink-muted);
+  font-size: var(--text-sm);
+}
+
+/* ---------- Experience / education ---------- */
+.timeline {
+  display: grid;
+}
+
+.job {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: 1rem 1.5rem;
+  padding-block: 2.5rem;
+  border-top: 1px solid var(--line);
+}
+
+.job:first-child {
+  border-top: 0;
+  padding-top: 0;
+}
+
+.when {
+  grid-column: 1 / span 3;
+  color: var(--ink-muted);
+  padding-top: 0.5rem;
+}
+
+.jobBody {
+  grid-column: 4 / -1;
+  display: grid;
+  gap: 1rem;
+  max-width: 48rem;
+}
+
+.jobTitle {
+  font-family: var(--font-display);
+  font-size: clamp(1.75rem, 3vw, 2.5rem);
+  line-height: 1.05;
+  letter-spacing: -0.015em;
+}
+
+.org {
+  color: var(--ink-muted);
+  font-size: var(--text-sm);
+}
+
+.roles {
+  display: grid;
+  border-left: 1px solid var(--line);
+  padding-left: 1rem;
+  gap: 0.4rem;
+}
+
+.roles li {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 0.25rem 1rem;
+  font-size: var(--text-sm);
+}
+
+.rolePeriod,
+.subLabel {
+  color: var(--ink-faint);
+}
+
+.highlights {
+  display: grid;
+  gap: 0.6rem;
+}
+
+.highlights li {
+  position: relative;
+  padding-left: 1.4rem;
+  color: var(--ink-muted);
+  font-size: var(--text-sm);
+}
+
+.highlights li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.75em;
+  width: 0.6rem;
+  height: 1px;
+  background: var(--ink-ghost);
+}
+
+/* Technologies wrap between items only. Each item carries its separator on its left; the
+   column starts --sep further left and that strip is clipped, so no line starts with a dot. */
+.stack {
+  --sep: 2.75em;
+  display: flex;
+  flex-wrap: wrap;
+  margin-left: calc(var(--sep) * -1);
+  clip-path: inset(0 0 0 var(--sep));
+  color: var(--ink-faint);
+  line-height: 1.9;
+}
+
+.stack li {
+  position: relative;
+  padding-left: var(--sep);
+  white-space: nowrap;
+}
+
+.stack li::before {
+  content: "\00B7";
+  content: "\00B7" / "";
+  position: absolute;
+  left: 0;
+  width: var(--sep);
+  text-align: center;
+  color: var(--ink-ghost);
+}
+
+.explored {
+  font-style: italic;
+}
+
+.inlineLink {
+  justify-self: start;
+  font-size: var(--text-sm);
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 2px;
+  transition: border-color 0.3s;
+}
+
+.inlineLink:hover {
+  border-color: var(--ink);
+}
+
+.courses {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.25rem 2rem;
+  margin-top: 0.5rem;
+}
+
+.courses li {
+  display: grid;
+  align-content: start;
+  gap: 0.2rem;
+}
+
+.courseCode {
+  color: var(--ink-faint);
+}
+
+.courseTitle {
+  font-size: var(--text-sm);
+}
+
+.courseDetail {
+  color: var(--ink-muted);
+  font-size: var(--text-sm);
+}
+
+/* ---------- Skills ---------- */
+.skills {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 3rem 1.5rem;
+}
+
+.skill {
+  display: grid;
+  align-content: start;
+  gap: 0.75rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--line);
+}
+
+.skillTitle {
+  font-family: var(--font-display);
+  font-size: 1.75rem;
+  line-height: 1.1;
+}
+
+.skillEvidence {
+  color: var(--ink-muted);
+  font-size: var(--text-sm);
+}
+
+/* ---------- Contact ---------- */
+.contact {
+  padding-bottom: clamp(5rem, 10vw, 8rem);
+}
+
+.contactLabel {
+  position: relative;
+  color: var(--ink-faint);
+  padding-bottom: 1.5rem;
+  margin-bottom: clamp(2.5rem, 6vw, 4.5rem);
+}
+
+.contactTitle {
+  font-family: var(--font-display);
+  font-size: var(--display-lg);
+  line-height: 0.9;
+  letter-spacing: -0.035em;
+}
+
+.contactTitle em {
+  font-style: italic;
+  color: var(--ink-muted);
+}
+
+.contactLead {
+  margin-top: 2rem;
+  max-width: 36ch;
+  color: var(--ink-muted);
+  font-size: var(--text-md);
+}
+
+.contactList {
+  display: grid;
+  margin-top: 3.5rem;
+  border-top: 1px solid var(--line);
+}
+
+.contactList li {
+  display: grid;
+  grid-template-columns: 8rem minmax(0, 1fr) auto;
+  align-items: baseline;
+  gap: 1rem;
+  padding-block: 1.25rem;
+  border-bottom: 1px solid var(--line);
+}
+
+.contactKey {
+  color: var(--ink-faint);
+}
+
+.contactValue {
+  font-size: clamp(1rem, 1.8vw, 1.375rem);
+  overflow-wrap: anywhere;
+  transition: color 0.3s;
+}
+
+.contactValue:hover {
+  color: var(--ink-muted);
+}
+
+.copy {
+  justify-self: end;
+  white-space: nowrap;
+  padding: 0.35rem 0.7rem;
+  border: 1px solid var(--line);
+  color: var(--ink-muted);
+  transition: color 0.3s, border-color 0.3s;
+}
+
+.copy:hover {
+  color: var(--ink);
+  border-color: var(--ink-muted);
+}
+
+.footerLinks {
+  display: flex;
+  gap: 1.5rem;
+}
+
+.footerLinks a {
+  transition: color 0.3s;
+}
+
+.footerLinks a:hover {
+  color: var(--ink);
+}
+
+/* ---------- Work hover preview ---------- */
+.preview {
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 30;
+  width: 15rem;
+  border: 1px solid var(--line);
+  transform-origin: 0 0;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.35s var(--ease-out);
+}
+
+.preview[data-visible="true"] {
+  opacity: 1;
+}
+
+.previewCanvas {
+  aspect-ratio: 1;
+  background: rgb(17 18 21 / 0.72);
+  backdrop-filter: blur(6px);
+}
+
+.previewGlyph {
+  width: 100%;
+  height: 100%;
+}
+
+/* Inside the frame on a solid strip, so it never prints over the list. */
+.previewCaption {
+  display: block;
+  padding: calc(0.5rem / var(--s, 1)) calc(0.75rem / var(--s, 1)) calc(0.6rem / var(--s, 1));
+  border-top: 1px solid var(--line);
+  background: var(--bg-raised);
+  color: var(--ink-faint);
+  font-size: calc(0.625rem / var(--s, 1));
+  line-height: 1.5;
+  letter-spacing: 0.06em;
+  text-transform: none;
+}
+
+.footer {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 0.75rem 2rem;
+  padding-block: 2rem 2.5rem;
+  border-top: 1px solid var(--line);
+  color: var(--ink-faint);
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 960px) {
+  .prose,
+  .facts {
+    grid-column: 1 / -1;
+  }
+
+  .featuredRow {
+    grid-template-columns: minmax(0, 1fr) 2rem;
+    gap: 0.75rem 1rem;
+  }
+
+  .featuredRow .rowMeta {
+    grid-column: 1 / -1;
+    flex-direction: row;
+    gap: 1rem;
+  }
+
+  .featuredSummary {
+    grid-column: 1;
+  }
+
+  .arrow {
+    grid-row: 2;
+    grid-column: 2;
+  }
+
+  .others,
+  .skills {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .when,
+  .jobBody {
+    grid-column: 1 / -1;
+  }
+
+  .when {
+    padding-top: 0;
+  }
+}
+
+@media (max-width: 600px) {
+  .others,
+  .skills,
+  .courses {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .contactList li {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+
+  .contactKey {
+    grid-column: 1 / -1;
+  }
+}

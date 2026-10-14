@@ -1,0 +1,22 @@
+.canvas {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  height: 100lvh;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 1.2s var(--ease-out);
+}
+
+.canvas[data-active="true"] {
+  opacity: 1;
+  visibility: visible;
+}
+
+.canvas[data-mode="creative"] {
+  pointer-events: auto;
+  cursor: crosshair;
+}

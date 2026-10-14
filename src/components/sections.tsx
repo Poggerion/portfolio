@@ -1,0 +1,311 @@
+import type { CSSProperties } from "react";
+import Link from "next/link";
+import { capra, experiences } from "@/content/experience";
+import { profile } from "@/content/profile";
+import { projects } from "@/content/projects";
+import { education, skillGroups } from "@/content/skills";
+import { ui } from "@/content/ui";
+import type { Localized } from "@/content/types";
+import { casePath, t, type Locale } from "@/lib/i18n";
+import { basePath } from "@/lib/site";
+import { CopyButton } from "./CopyButton";
+import { WorkPreview } from "./WorkPreview";
+import { Words } from "./Words";
+import styles from "./sections.module.css";
+
+const delay = (ms: number) => ({ "--d": ms }) as CSSProperties;
+
+function Head({ id, label, lang, aside }: { id: string; label: Localized; lang: Locale; aside?: string }) {
+  return (
+    <header className={styles.head}>
+      <h2 id={`${id}-title`} className={styles.title} data-reveal="words">
+        <Words text={t(label, lang)} />
+      </h2>
+      {aside && (
+        <p className={`mono ${styles.headAside}`} data-reveal="" style={delay(300)}>
+          {aside}
+        </p>
+      )}
+      <span className={styles.rule} data-reveal="line" aria-hidden="true" />
+    </header>
+  );
+}
+
+/** Technologies as whole items; separators come from CSS so a line never breaks inside one. */
+function Stack({ items, explored, lang }: { items: string[]; explored?: string[]; lang: Locale }) {
+  return (
+    <ul className={`mono ${styles.stack}`}>
+      {items.map((item) => (
+        <li key={item}>{item}</li>
+      ))}
+      {explored?.map((e) => (
+        <li key={e} className={styles.explored}>
+          {e} ({t(ui.explored, lang)})
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+export function About({ lang }: { lang: Locale }) {
+  return (
+    <section id="about" className={`wrap ${styles.section}`} aria-labelledby="about-title">
+      <Head id="about" label={ui.sections.about} lang={lang} />
+      <div className={styles.aboutGrid}>
+        <div className={styles.prose}>
+          {profile.about.map((p, i) => (
+            <p key={i} className={i === 0 ? styles.lead : undefined} data-reveal="" style={delay(i * 120)}>
+              {t(p, lang)}
+            </p>
+          ))}
+        </div>
+        <dl className={styles.facts}>
+          {profile.availability.map((row, i) => (
+            <div key={row.label.en} data-reveal="" style={delay(150 + i * 80)}>
+              <dt className="mono">{t(row.label, lang)}</dt>
+              <dd>{t(row.value, lang)}</dd>
+            </div>
+          ))}
+          <div data-reveal="" style={delay(150 + profile.availability.length * 80)}>
+            <dt className="mono">{lang === "fr" ? "Langues" : "Languages"}</dt>
+            <dd>{t(profile.languages, lang)}</dd>
+          </div>
+        </dl>
+      </div>
+    </section>
+  );
+}
+
+export function Work({ lang }: { lang: Locale }) {
+  const featured = projects.filter((p) => p.featured);
+  const others = projects.filter((p) => !p.featured);
+  const count = String(projects.length).padStart(2, "0");
+  return (
+    <section id="work" className={`wrap ${styles.section}`} aria-labelledby="work-title">
+      <Head id="work" label={ui.sections.work} lang={lang} aside={`${count} ${lang === "fr" ? "études de cas" : "case studies"}`} />
+      <div data-work-list="">
+        <ol className={styles.featured}>
+          {featured.map((p, i) => (
+            <li key={p.slug} data-reveal="" style={delay(i * 90)}>
+              <Link
+                href={casePath(lang, p.slug)}
+                className={styles.featuredRow}
+                data-project={p.slug}
+                data-domain={p.domains[0]}
+                data-glyph={projects.indexOf(p)}
+              >
+                <span className={`mono ${styles.rowMeta}`}>
+                  {t(p.period, lang)}
+                  <span>{t(ui.involvement[p.involvement], lang)}</span>
+                </span>
+                <span className={styles.featuredTitle}>{t(p.title, lang)}</span>
+                <span className={styles.featuredSummary}>{t(p.summary, lang)}</span>
+                <span className={`mono ${styles.arrow}`} aria-hidden="true">
+                  →
+                </span>
+              </Link>
+            </li>
+          ))}
+        </ol>
+        <ul className={styles.others}>
+          {others.map((p, i) => (
+            <li key={p.slug} data-reveal="" style={delay((i % 3) * 90)}>
+              <Link
+                href={casePath(lang, p.slug)}
+                className={styles.otherCard}
+                data-project={p.slug}
+                data-domain={p.domains[0]}
+                data-glyph={projects.indexOf(p)}
+              >
+                <span className={`mono ${styles.rowMeta}`}>
+                  {t(p.period, lang)}
+                  <span>{t(p.team, lang)}</span>
+                </span>
+                <span className={styles.otherTitle}>{t(p.title, lang)}</span>
+                <span className={styles.otherSummary}>{t(p.summary, lang)}</span>
+              </Link>
+            </li>
+          ))}
+        </ul>
+      </div>
+      <WorkPreview caption={t(ui.abstractVisual, lang)} />
+    </section>
+  );
+}
+
+export function ExperienceList({ lang }: { lang: Locale }) {
+  return (
+    <section id="experience" className={`wrap ${styles.section}`} aria-labelledby="experience-title">
+      <Head id="experience" label={ui.sections.experience} lang={lang} aside="2023 — 2025" />
+      <ol className={styles.timeline}>
+        {experiences.map((xp) => (
+          <li key={xp.id} className={styles.job} data-reveal="" data-domain={xp.domains[0]} data-project={xp.caseStudy}>
+            <p className={`mono ${styles.when}`}>{t(xp.period, lang)}</p>
+            <div className={styles.jobBody}>
+              <h3 className={styles.jobTitle}>{t(xp.heading, lang)}</h3>
+              <p className={styles.org}>
+                {xp.organization}
+                {xp.organizationDetail && <span> · {t(xp.organizationDetail, lang)}</span>}
+                {xp.location && <span> · {xp.location}</span>}
+              </p>
+              {xp.roles && (
+                <ul className={styles.roles}>
+                  {xp.roles.map((r) => (
+                    <li key={r.title.en}>
+                      <span>{t(r.title, lang)}</span>
+                      <span className={`mono ${styles.rolePeriod}`}>{t(r.period, lang)}</span>
+                    </li>
+                  ))}
+                </ul>
+              )}
+              {xp.highlightsLabel && <p className={`mono ${styles.subLabel}`}>{t(xp.highlightsLabel, lang)}</p>}
+              <ul className={styles.highlights}>
+                {xp.highlights.map((h, i) => (
+                  <li key={i}>{t(h, lang)}</li>
+                ))}
+              </ul>
+              <Stack items={xp.stack} explored={xp.explored} lang={lang} />
+              {xp.caseStudy && (
+                <Link href={casePath(lang, xp.caseStudy)} className={styles.inlineLink}>
+                  {t(ui.readCase, lang)} <span aria-hidden="true">→</span>
+                </Link>
+              )}
+            </div>
+          </li>
+        ))}
+      </ol>
+    </section>
+  );
+}
+
+export function Skills({ lang }: { lang: Locale }) {
+  return (
+    <section id="skills" className={`wrap ${styles.section}`} aria-labelledby="skills-title">
+      <Head id="skills" label={ui.sections.skills} lang={lang} />
+      <ul className={styles.skills}>
+        {skillGroups.map((g, i) => (
+          <li key={g.id} className={styles.skill} data-reveal="" style={delay((i % 3) * 100)}>
+            <h3 className={styles.skillTitle}>{t(g.label, lang)}</h3>
+            <p className={styles.skillEvidence}>{t(g.evidence, lang)}</p>
+            <Stack items={g.items} explored={g.explored} lang={lang} />
+          </li>
+        ))}
+      </ul>
+    </section>
+  );
+}
+
+export function EducationList({ lang }: { lang: Locale }) {
+  return (
+    <section id="education" className={`wrap ${styles.section}`} aria-labelledby="education-title">
+      <Head id="education" label={ui.sections.education} lang={lang} />
+      <ol className={styles.timeline}>
+        {education.map((e) => (
+          <li key={e.id} className={styles.job} data-reveal="">
+            <p className={`mono ${styles.when}`}>{t(e.period, lang)}</p>
+            <div className={styles.jobBody}>
+              <h3 className={styles.jobTitle}>{t(e.degree, lang)}</h3>
+              <p className={styles.org}>
+                {e.school} · {e.location}
+              </p>
+              <ul className={styles.courses}>
+                {e.courses.map((c) => (
+                  <li key={c.code.en}>
+                    <span className={`mono ${styles.courseCode}`}>{t(c.code, lang)}</span>
+                    <span className={styles.courseTitle}>{t(c.title, lang)}</span>
+                    <span className={styles.courseDetail}>{t(c.detail, lang)}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </li>
+        ))}
+        <li className={styles.job} data-reveal="">
+          <p className={`mono ${styles.when}`}>{t(capra.period, lang)}</p>
+          <div className={styles.jobBody}>
+            <h3 className={styles.jobTitle}>{t(capra.title, lang)}</h3>
+            <p className={styles.org}>{t(capra.context, lang)}</p>
+            <p className={styles.courseDetail}>{t(capra.detail, lang)}</p>
+          </div>
+        </li>
+      </ol>
+    </section>
+  );
+}
+
+export function Contact({ lang }: { lang: Locale }) {
+  const resume = profile.resume[lang];
+  const title =
+    lang === "fr"
+      ? { a: "Construisons", b: "la suite." }
+      : { a: "Let's build", b: "what's next." };
+  return (
+    <section id="contact" className={`wrap ${styles.section} ${styles.contact}`} aria-labelledby="contact-title">
+      <p className={`mono ${styles.contactLabel}`}>
+        {t(ui.sections.contact, lang)}
+        <span className={styles.rule} data-reveal="line" aria-hidden="true" />
+      </p>
+      <h2 id="contact-title" className={styles.contactTitle} data-reveal="words">
+        <Words text={title.a} /> <em>
+          <Words text={title.b} delay={180} />
+        </em>
+      </h2>
+      <p className={styles.contactLead} data-reveal="" style={delay(250)}>
+        {t(ui.contactLead, lang)}
+      </p>
+      {/* No-break spaces keep each ↗ with the end of its link text. */}
+      <ul className={styles.contactList}>
+        <li data-reveal="" style={delay(300)}>
+          <span className={`mono ${styles.contactKey}`}>{t(ui.email, lang)}</span>
+          <a href={`mailto:${profile.email}`} className={styles.contactValue} id="contact-email">
+            {profile.email}
+          </a>
+          <CopyButton value={profile.email} label={t(ui.copy, lang)} done={t(ui.copied, lang)} />
+        </li>
+        <li data-reveal="" style={delay(380)}>
+          <span className={`mono ${styles.contactKey}`}>LinkedIn</span>
+          <a href={profile.linkedin} className={styles.contactValue} target="_blank" rel="noopener noreferrer">
+            {profile.linkedinLabel}
+            {"\u00a0"}
+            <span aria-hidden="true">↗</span>
+          </a>
+        </li>
+        <li data-reveal="" style={delay(460)}>
+          <span className={`mono ${styles.contactKey}`}>GitHub</span>
+          <a href={profile.github} className={styles.contactValue} target="_blank" rel="noopener noreferrer">
+            {profile.githubLabel}
+            {"\u00a0"}
+            <span aria-hidden="true">↗</span>
+          </a>
+        </li>
+        {resume && (
+          <li data-reveal="" style={delay(540)}>
+            <span className={`mono ${styles.contactKey}`}>CV</span>
+            <a href={`${basePath}${resume}`} className={styles.contactValue}>
+              {t(ui.resume, lang)}
+              {"\u00a0"}
+              <span aria-hidden="true">↗</span>
+            </a>
+          </li>
+        )}
+      </ul>
+    </section>
+  );
+}
+
+export function Footer() {
+  return (
+    <footer className={`wrap ${styles.footer}`}>
+      <span className="mono">© 2026 {profile.name}</span>
+      <span className={styles.footerLinks}>
+        <a className="mono" href={profile.linkedin} target="_blank" rel="noopener noreferrer">
+          LinkedIn
+        </a>
+        <a className="mono" href={profile.github} target="_blank" rel="noopener noreferrer">
+          GitHub
+        </a>
+      </span>
+      <span className="mono">{profile.location}</span>
+    </footer>
+  );
+}

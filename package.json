@@ -1,0 +1,31 @@
+{
+  "name": "systems-in-motion",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "sculpture": "node scripts/generate-fallback.ts",
+    "build": "next build",
+    "typecheck": "next typegen && tsc --noEmit",
+    "lint": "eslint",
+    "test": "vitest run",
+    "check": "npm run typecheck && npm run lint && npm test && npm run build"
+  },
+  "dependencies": {
+    "next": "16.4.0",
+    "react": "19.3.0",
+    "react-dom": "19.3.0",
+    "three": "^0.186.1"
+  },
+  "devDependencies": {
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "@types/three": "^0.186.0",
+    "eslint": "^9",
+    "eslint-config-next": "16.4.0",
+    "jsdom": "^26.1.0",
+    "typescript": "^5",
+    "vitest": "^3.2.4"
+  }
+}
