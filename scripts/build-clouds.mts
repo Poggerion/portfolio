@@ -96,10 +96,33 @@ async function preview(points: Point[], file: string) {
 
 /* ---------- Photos: Sobel edges plus luminance, importance-sampled ---------- */
 
+interface Box {
+  left: number;
+  top: number;
+  width: number;
+  height: number;
+}
+
+/** Letters redrawn crisp over a sign that the photo renders too blurry to read. */
+interface Label {
+  /** One entry per line: its text and its width as a share of the box. */
+  lines: { text: string; width: number }[];
+  /** Box in source pixels, before the crop. */
+  box: Box;
+  /** Share of all points spent on the letters. */
+  share: number;
+  /** Grows the box around its centre so small letters still read on screen. */
+  grow?: number;
+  /** Slant in degrees, like the ÉTS logo. */
+  slant?: number;
+  /** Font weight (default 800); lighter keeps small letters open. */
+  weight?: number;
+}
+
 interface PhotoOptions {
   file: string;
   /** Crop in source pixels, before resizing. */
-  crop?: { left: number; top: number; width: number; height: number };
+  crop?: Box;
   width: number;
   /**
    * Background to leave out, found by flood fill from the image border (or its top edge only).
@@ -113,14 +136,18 @@ interface PhotoOptions {
   gamma?: number;
   /** Brightness as luma (default) or as the brightest channel, for coloured lights such as blue LEDs. */
   brightness?: "luma" | "max";
-  /** Local contrast first (CLAHE), so a face's features stand out from the skin. */
-  contrast?: boolean;
-  /** Extra weight of accent pixels, so a small sign still gets enough points. */
-  accentWeight?: number;
+  /**
+   * A region drawn with more points and local contrast (CLAHE), such as a face, so its features
+   * read: an ellipse (0..1 of the image) with its own weights, blended in over a soft edge.
+   */
+  focus?: { cx: number; cy: number; rx: number; ry: number; edge: number; light: number; gamma: number; boost: number };
   /** Bright subject on a light background: sample the subject's dark parts too. */
   invert?: boolean;
   /** Which pixels carry the accent, from their colour (0..255) and position (0..1). */
   accent?: (r: number, g: number, b: number, u: number, v: number) => boolean;
+  /** Extra weight of accent pixels, so a small sign still gets enough points. */
+  accentWeight?: number;
+  label?: Label;
   /** Depth from luminance. */
   relief: number;
   /** Depth from a half-ellipsoid (centre and radii in 0..1 of the image), so a head has volume. */
@@ -131,20 +158,68 @@ interface PhotoOptions {
 /** Saturated warm pixels (yellow, orange): the safety colours of Spot. */
 const warm = (r: number, g: number, b: number) => Math.max(r, g, b) - Math.min(r, g, b) > 90 && r > 150 && b < 120 && g > 60;
 
+const FONT = "Inter Display, Inter, FreeSans, DejaVu Sans, Arial, sans-serif";
+
+/** Lit pixels of one line of bold text, cropped to the ink. */
+async function inkOf(text: string, weight: number): Promise<{ w: number; h: number; lit: number[] }> {
+  const escaped = text.replace(/&/g, "&amp;").replace(/</g, "&lt;");
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${180 * text.length + 200}" height="420"><text x="100" y="310" fill="#fff" font-family="${FONT}" font-weight="${weight}" font-size="260">${escaped}</text></svg>`;
+  const { data, info } = await sharp(Buffer.from(svg)).flatten({ background: "#000" }).greyscale().trim({ threshold: 10 }).raw().toBuffer({ resolveWithObject: true });
+  const lit: number[] = [];
+  for (let k = 0; k < info.width * info.height; k++) if (data[k] > 128) lit.push(k);
+  return { w: info.width, h: info.height, lit };
+}
+
+/** Points of a label in source pixels: each line's ink stretched to its slot in the box. */
+async function labelPoints(label: Label, count: number, rand: () => number): Promise<[number, number][]> {
+  const grow = label.grow ?? 1;
+  const { left, top, width, height } = label.box;
+  const cx = left + width / 2, cy = top + height / 2;
+  const lineH = height / label.lines.length;
+  const inks = await Promise.all(label.lines.map((l) => inkOf(l.text, label.weight ?? 800)));
+  // Points per line in proportion to the ink each line covers once stretched.
+  const area = inks.map((ink, i) => (ink.lit.length / (ink.w * ink.h)) * label.lines[i].width * width * lineH);
+  const sum = area.reduce((s, v) => s + v, 0);
+  const tan = Math.tan(((label.slant ?? 0) * Math.PI) / 180);
+  const out: [number, number][] = [];
+  inks.forEach((ink, i) => {
+    const n = i === inks.length - 1 ? count - out.length : Math.round((count * area[i]) / sum);
+    for (let j = 0; j < n; j++) {
+      const k = ink.lit[Math.floor(((j + rand()) / n) * ink.lit.length)];
+      const u = ((k % ink.w) + rand()) / ink.w;
+      const v = (Math.floor(k / ink.w) + rand()) / ink.h;
+      let x = left + u * label.lines[i].width * width;
+      const y = top + (i + 0.08 + v * 0.84) * lineH;
+      x += tan * (cy - y);
+      out.push([cx + (x - cx) * grow, cy + (y - cy) * grow]);
+    }
+  });
+  return out;
+}
+
 async function photo(o: PhotoOptions): Promise<Point[]> {
   let img = sharp(join(SRC, o.file)).rotate();
   if (o.crop) img = img.extract(o.crop);
-  img = img.resize({ width: o.width });
-  if (o.contrast) img = img.clahe({ width: Math.round(o.width / 8), height: Math.round(o.width / 8), maxSlope: 3 });
-  const { data, info } = await img.removeAlpha().raw().toBuffer({ resolveWithObject: true });
+  img = img.resize({ width: o.width }).removeAlpha();
+  const { data, info } = await img.clone().raw().toBuffer({ resolveWithObject: true });
   const w = info.width, h = info.height;
+  const brightness = (buf: Buffer, k: number) => {
+    const r = buf[k * 3], g = buf[k * 3 + 1], b = buf[k * 3 + 2];
+    return (o.brightness === "max" ? Math.max(r, g, b) : 0.2126 * r + 0.7152 * g + 0.0722 * b) / 255;
+  };
   const lum = new Float32Array(w * h);
   const accent = new Uint8Array(w * h);
   for (let k = 0; k < w * h; k++) {
-    const r = data[k * 3], g = data[k * 3 + 1], b = data[k * 3 + 2];
-    lum[k] = (o.brightness === "max" ? Math.max(r, g, b) : 0.2126 * r + 0.7152 * g + 0.0722 * b) / 255;
-    accent[k] = o.accent?.(r, g, b, (k % w) / w, Math.floor(k / w) / h) ? 1 : 0;
+    lum[k] = brightness(data, k);
+    accent[k] = o.accent?.(data[k * 3], data[k * 3 + 1], data[k * 3 + 2], (k % w) / w, Math.floor(k / w) / h) ? 1 : 0;
   }
+  // Local contrast for the focus region only.
+  const contrasted = o.focus
+    ? (await img.clahe({ width: Math.round(w / 8), height: Math.round(w / 8), maxSlope: 3 }).raw().toBuffer())
+    : data;
+  const lumC = new Float32Array(w * h);
+  for (let k = 0; k < w * h; k++) lumC[k] = brightness(contrasted, k);
+
   // Background: the region that touches the border (flood fill), so light areas inside the
   // subject (a forehead, teeth, a white shirt) are kept.
   const background = new Uint8Array(w * h);
@@ -174,33 +249,60 @@ async function photo(o: PhotoOptions): Promise<Point[]> {
       if (k < w * (h - 1)) queue.push(k + w, k);
     }
   }
-  const inside = (k: number) => !background[k];
+
+  // Source pixels → this image's pixels.
+  const crop = o.crop ?? { left: 0, top: 0, width: w, height: h };
+  const scale = w / crop.width;
+  const toImage = (sx: number, sy: number): [number, number] => [(sx - crop.left) * scale, (sy - crop.top) * scale];
+  // The photo's own letters give way to the redrawn ones.
+  let hole = { x0: 0, y0: 0, x1: -1, y1: -1 };
+  if (o.label) {
+    const g = (o.label.grow ?? 1) * 1.04;
+    const { left, top, width, height } = o.label.box;
+    const [x0, y0] = toImage(left + (width * (1 - g)) / 2, top + (height * (1 - g)) / 2);
+    const [x1, y1] = toImage(left + (width * (1 + g)) / 2, top + (height * (1 + g)) / 2);
+    hole = { x0, y0, x1, y1 };
+  }
 
   const weight = new Float32Array(w * h);
+  // How much of the focus region each pixel is in, 0..1.
+  const inFocus = new Float32Array(w * h);
   let total = 0;
   for (let y = 1; y < h - 1; y++) {
     for (let x = 1; x < w - 1; x++) {
       const k = y * w + x;
-      if (!inside(k)) continue;
-      const L = (dx: number, dy: number) => lum[k + dy * w + dx];
-      const gx = -L(-1, -1) - 2 * L(-1, 0) - L(-1, 1) + L(1, -1) + 2 * L(1, 0) + L(1, 1);
-      const gy = -L(-1, -1) - 2 * L(0, -1) - L(1, -1) + L(-1, 1) + 2 * L(0, 1) + L(1, 1);
-      const edge = Math.min(1, Math.hypot(gx, gy) / 2);
+      if (background[k] || (x >= hole.x0 && x <= hole.x1 && y >= hole.y0 && y <= hole.y1)) continue;
+      const sobel = (L: Float32Array) => {
+        const at = (dx: number, dy: number) => L[k + dy * w + dx];
+        const gx = -at(-1, -1) - 2 * at(-1, 0) - at(-1, 1) + at(1, -1) + 2 * at(1, 0) + at(1, 1);
+        const gy = -at(-1, -1) - 2 * at(0, -1) - at(1, -1) + at(-1, 1) + 2 * at(0, 1) + at(1, 1);
+        return Math.min(1, Math.hypot(gx, gy) / 2);
+      };
       const tone = o.invert ? 1 - lum[k] * 0.6 : lum[k];
-      const v = (o.edge * edge + o.light * tone ** (o.gamma ?? 2) + 0.02) * (accent[k] ? (o.accentWeight ?? 1) : 1);
+      let v = o.edge * sobel(lum) + o.light * tone ** (o.gamma ?? 2) + 0.02;
+      if (o.focus) {
+        const f = o.focus;
+        const d = Math.hypot((x / w - f.cx) / f.rx, (y / h - f.cy) / f.ry);
+        const m = Math.min(1, Math.max(0, (1.15 - d) / 0.3));
+        inFocus[k] = m;
+        if (m > 0) v += m * ((f.edge * sobel(lumC) + f.light * lumC[k] ** f.gamma + 0.02) * f.boost - v);
+      }
+      v *= accent[k] ? (o.accentWeight ?? 1) : 1;
       weight[k] = v;
       total += v;
     }
   }
   const rand = rng(o.seed);
+  const letters = o.label ? Math.round(COUNT * o.label.share) : 0;
+  const samples = COUNT - letters;
   // Cumulative table, then binary search per sample.
   const cdf = new Float64Array(w * h);
   let acc = 0;
   for (let k = 0; k < w * h; k++) cdf[k] = acc += weight[k] / total;
   const points: Point[] = [];
-  for (let n = 0; n < COUNT; n++) {
+  for (let n = 0; n < samples; n++) {
     // Stratified: one sample per slice of the CDF, so the points spread evenly (less clumping).
-    const r = (n + rand()) / COUNT;
+    const r = (n + rand()) / samples;
     let lo = 0, hi = cdf.length - 1;
     while (lo < hi) {
       const mid = (lo + hi) >> 1;
@@ -218,9 +320,15 @@ async function photo(o: PhotoOptions): Promise<Point[]> {
       x: x + rand() - 0.5,
       y: -(y + rand() - 0.5),
       z,
-      i: 70 + lum[lo] * 185,
+      i: 70 + (lum[lo] + (lumC[lo] - lum[lo]) * inFocus[lo]) * 185,
       accent: accent[lo] === 1 && rand() < 0.6,
     });
+  }
+  if (o.label) {
+    for (const [sx, sy] of await labelPoints(o.label, letters, rand)) {
+      const [x, y] = toImage(sx, sy);
+      points.push({ x, y: -y, z: 0.05 + (rand() - 0.5) * 0.02, i: 255, accent: true });
+    }
   }
   // Samples come out in reading order: shuffle so every prefix covers the whole picture.
   return normalize(shuffle(points, rand));
@@ -390,19 +498,19 @@ function finish(pts: Point[], rand: () => number): Point[] {
 /* ---------- Shapes ---------- */
 
 const shapes: Record<string, () => Promise<Point[]> | Point[]> = {
-  // Felipe's face, from the top of the hair to the neck (portrait 3378 × 5067).
+  // Felipe's head and shoulders (portrait 3378 × 5067), the face drawn denser and in local
+  // contrast so its features read.
   face: () =>
     photo({
       file: "portrait.jpg",
-      crop: { left: 1420, top: 170, width: 1160, height: 1600 },
+      crop: { left: 950, top: 40, width: 2100, height: 2150 },
       width: 420,
-      mask: { tolerance: 0.1, from: "top" },
-      edge: 0.3,
-      light: 2,
-      gamma: 4.5,
-      contrast: true,
+      mask: { tolerance: 0.1 },
+      edge: 3,
+      light: 1.2,
+      focus: { cx: 0.5, cy: 0.46, rx: 0.24, ry: 0.3, edge: 0.3, light: 2, gamma: 4.5, boost: 3 },
       relief: 0.12,
-      dome: { cx: 0.5, cy: 0.5, rx: 0.5, ry: 0.56, depth: 0.5 },
+      dome: { cx: 0.5, cy: 0.42, rx: 0.25, ry: 0.34, depth: 0.35 },
       seed: 3,
     }),
   quebec,
@@ -420,7 +528,7 @@ const shapes: Record<string, () => Promise<Point[]> | Point[]> = {
       relief: 0.12,
       seed: 5,
     }),
-  // ÉTS, pavillon A at dusk: the round tower and its red sign, without the sky and the street.
+  // ÉTS, pavillon A at dusk: the round tower and its sign, without the sky and the street.
   ets: () =>
     photo({
       file: "ets-photo.png",
@@ -430,24 +538,31 @@ const shapes: Record<string, () => Promise<Point[]> | Point[]> = {
       edge: 0.8,
       light: 2,
       gamma: 2.5,
-      accent: (r, g, b, u, v) => r > 170 && g < 90 && b < 110 && u > 0.38 && u < 0.6 && v < 0.4,
-      accentWeight: 4,
+      label: { lines: [{ text: "ÉTS", width: 1 }], box: { left: 243, top: 79, width: 58, height: 21 }, share: 0.07, grow: 1.35, slant: 8 },
       relief: 0.1,
       seed: 11,
     }),
-  // Cégep de Sept-Îles: the LED facade and its name, the end of the long building beside it, no sky.
+  // Cégep de Sept-Îles: the LED facade and its name, no sky.
   cegep: () =>
     photo({
       file: "cegep-photo.png",
-      crop: { left: 560, top: 100, width: 1488, height: 1030 },
+      crop: { left: 860, top: 100, width: 1188, height: 1030 },
       width: 640,
       mask: { tolerance: 0.05, from: "top", step: true },
       edge: 0.4,
       light: 2,
       gamma: 3,
       brightness: "max",
-      accentWeight: 2,
-      accent: (r, g, b, u, v) => r > 200 && g > 200 && b > 200 && u > 0.25 && u < 0.455 && v > 0.69 && v < 0.8,
+      label: {
+        lines: [
+          { text: "CÉGEP", width: 0.64 },
+          { text: "DE SEPT-ÎLES", width: 1 },
+        ],
+        box: { left: 965, top: 848, width: 295, height: 100 },
+        share: 0.09,
+        grow: 1.6,
+        weight: 700,
+      },
       relief: 0.1,
       seed: 7,
     }),
