@@ -54,16 +54,8 @@ export const projects: Project[] = [
         },
         points: [
           {
-            fr: "Développement d'API pour Nomad, un framework interne de l'ITMI.",
-            en: "APIs for Nomad, an ITMI in-house framework.",
-          },
-          {
-            fr: "Contribution à des endpoints d'API REST, à des composantes backend et à un backend serveur en PHP.",
-            en: "Contributions to REST API endpoints, backend components and a PHP server backend.",
-          },
-          {
-            fr: "PostgreSQL : connexion, requêtes et migrations. Docker comme fondement des projets.",
-            en: "PostgreSQL: connection, queries and migrations. Docker as the foundation of each project.",
+            fr: "API REST et composantes backend en PHP pour Nomad, un framework interne de l'ITMI, avec PostgreSQL (connexion, requêtes, migrations), dans des projets conteneurisés avec Docker.",
+            en: "REST APIs and PHP backend components for Nomad, an ITMI in-house framework, with PostgreSQL (connection, queries, migrations), in Docker-based projects.",
           },
           {
             fr: "Authentification de base, authentification Microsoft et intégration Stripe.",

@@ -9,6 +9,7 @@ export const experiences: Experience[] = [
       fr: "Institut technologique de maintenance industrielle",
       en: "Institut technologique de maintenance industrielle",
     },
+    location: "Sept-Îles",
     period: { fr: "janv. 2025 – sept. 2025", en: "Jan 2025 – Sep 2025" },
     start: "2025-01",
     heading: { fr: "Développement logiciel", en: "Software development" },
@@ -32,30 +33,15 @@ export const experiences: Experience[] = [
       fr: "Contributions de janv. à sept. 2025, les deux fonctions confondues",
       en: "Contributions, Jan – Sep 2025, both roles combined",
     },
+    // The first four are shown; the rest open under "Show more". Wording follows Felipe's résumé.
     highlights: [
       {
-        fr: "Développé seul l'application mobile côté client d'un système de gestion des stationnements, déployé à l'interne pour le personnel du Cégep de Sept-Îles et quelques utilisateurs externes.",
-        en: "Sole developer of the client mobile app for a parking management system, deployed internally to Cégep de Sept-Îles staff and a few external users.",
+        fr: "Développé seul l'application mobile côté client d'un système de gestion des stationnements, déployé pour l'ensemble du personnel du Cégep de Sept-Îles et quelques utilisateurs externes.",
+        en: "Sole developer of the client mobile app for a parking management system, deployed to all Cégep de Sept-Îles staff and a few external users.",
       },
       {
         fr: "Développé l'interface web administrateur du même système en PHP et langages web : pages, formulaires et vues.",
         en: "Built the admin web interface for the same system in PHP and web languages: pages, forms and views.",
-      },
-      {
-        fr: "Développé des visualisations de données industrielles avec PHP et Grafana, et des fonctionnalités d'une application web de gestion d'inventaire et de contrats en PHP.",
-        en: "Built industrial data visualizations with PHP and Grafana, and features of a PHP inventory and contract management web app.",
-      },
-      {
-        fr: "Développé des API pour Nomad, un framework interne de l'ITMI.",
-        en: "Built APIs for Nomad, an ITMI in-house framework.",
-      },
-      {
-        fr: "Contribué à des endpoints d'API REST, à des composantes backend et à un backend serveur en PHP, dans des projets conteneurisés avec Docker.",
-        en: "Contributed to REST API endpoints, backend components and a PHP server backend, in Docker-based projects.",
-      },
-      {
-        fr: "Établi la connexion PostgreSQL, écrit des requêtes et des migrations; conçu des schémas et requêtes SQL Server pour certaines plateformes web.",
-        en: "Set up the PostgreSQL connection, wrote queries and migrations; designed SQL Server schemas and queries for some web platforms.",
       },
       {
         fr: "Mis en place l'authentification de base, l'authentification Microsoft et l'intégration Stripe.",
@@ -66,8 +52,24 @@ export const experiences: Experience[] = [
         en: "Wrote automated client and server tests in Python with pytest, including load tests.",
       },
       {
-        fr: "Travaillé en Agile/Scrum avec pull requests et revues de code dans Gitea, et tickets dans Azure DevOps Boards.",
-        en: "Worked in Agile/Scrum with pull requests and code reviews in Gitea and tickets in Azure DevOps Boards.",
+        fr: "Contribué aux API REST et aux composantes backend en PHP pour Nomad, un framework interne de l'ITMI, avec PostgreSQL (connexion, requêtes, migrations), dans des projets conteneurisés avec Docker.",
+        en: "Contributed to REST APIs and PHP backend components for Nomad, an ITMI in-house framework, with PostgreSQL (connection, queries, migrations), in Docker-based projects.",
+      },
+      {
+        fr: "Conçu des schémas et des requêtes SQL Server pour des plateformes web en développement.",
+        en: "Designed SQL Server schemas and queries for web platforms in development.",
+      },
+      {
+        fr: "Développé des visualisations de données industrielles avec PHP et Grafana, et des fonctionnalités d'une application web de gestion d'inventaire et de contrats.",
+        en: "Built industrial data visualizations with PHP and Grafana, and features of an inventory and contract management web app.",
+      },
+      {
+        fr: "Travaillé en Agile/Scrum avec pull requests, revues de code et stratégie de branches dans Gitea, et suivi du travail dans Azure DevOps Boards.",
+        en: "Worked in Agile/Scrum with pull requests, code reviews and a branching strategy in Gitea, tracking work in Azure DevOps Boards.",
+      },
+      {
+        fr: "Maintenu des applications en production, formé le personnel et échangé avec les clients.",
+        en: "Maintained applications in production, trained staff and worked with clients.",
       },
     ],
     stack: ["React Native", "TypeScript", "Expo", "PHP", "REST API", "PostgreSQL", "SQL Server", "Docker", "Grafana", "pytest"],
@@ -77,6 +79,7 @@ export const experiences: Experience[] = [
   {
     id: "itmi-robotics",
     organization: "ITMI",
+    location: "Sept-Îles",
     period: { fr: "mai 2024 – août 2024", en: "May 2024 – Aug 2024" },
     start: "2024-05",
     heading: { fr: "Conseiller technique, systèmes embarqués", en: "Technical Advisor, Embedded Systems" },
@@ -105,6 +108,7 @@ export const experiences: Experience[] = [
   {
     id: "itmi-research",
     organization: "ITMI",
+    location: "Sept-Îles",
     period: { fr: "Hiver 2024", en: "Winter 2024" },
     start: "2024-01",
     heading: { fr: "Auxiliaire de recherche", en: "Research Assistant" },
@@ -125,6 +129,7 @@ export const experiences: Experience[] = [
   {
     id: "cisss",
     organization: "CISSS de la Côte-Nord",
+    location: "Sept-Îles",
     period: { fr: "Été 2023 (stage) · automne 2023", en: "Summer 2023 (intern) · fall 2023" },
     start: "2023-05",
     heading: { fr: "Opérateur en informatique", en: "IT Operator" },

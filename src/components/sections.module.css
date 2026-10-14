@@ -1,6 +1,6 @@
 /* Sections of the home page, laid out for the reading column (≤ 40rem of text). */
 .section {
-  padding-top: clamp(4rem, 8vw, 6rem);
+  padding-top: clamp(3.5rem, 6vw, 5rem);
   scroll-margin-top: 4.5rem;
 }
 
@@ -11,7 +11,7 @@
   gap: 1.5rem;
   max-width: 40rem;
   padding-bottom: 1rem;
-  margin-bottom: 2rem;
+  margin-bottom: 1.75rem;
   border-bottom: 1px solid var(--line);
 }
 
@@ -214,7 +214,7 @@
 .job {
   display: grid;
   gap: 0.75rem;
-  padding-block: 2rem;
+  padding-block: 1.75rem;
   border-top: 1px solid var(--line);
 }
 
@@ -319,6 +319,55 @@
   font-style: italic;
 }
 
+/* "Show more": a native disclosure, so it works without JavaScript and with the keyboard. */
+.more {
+  display: grid;
+  gap: 0.6rem;
+}
+
+.moreToggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  justify-self: start;
+  width: fit-content;
+  min-height: 44px;
+  cursor: pointer;
+  list-style: none;
+  color: var(--ink-muted);
+  font-size: var(--text-sm);
+  transition: color 0.2s var(--ease-out);
+}
+
+.moreToggle::-webkit-details-marker {
+  display: none;
+}
+
+/* The sign carries the state; the label swaps between "show more" and "show less". */
+.moreToggle::before {
+  content: "+";
+  width: 0.7em;
+  font-family: var(--font-mono);
+  color: var(--accent);
+}
+
+.more[open] > .moreToggle::before {
+  content: "\2212";
+}
+
+.moreToggle:hover {
+  color: var(--ink);
+}
+
+.whenOpen,
+.more[open] > .moreToggle .whenClosed {
+  display: none;
+}
+
+.more[open] > .moreToggle .whenOpen {
+  display: inline;
+}
+
 .inlineLink {
   justify-self: start;
   display: inline-flex;
@@ -364,7 +413,7 @@
 /* ---------- Skills ---------- */
 .skills {
   display: grid;
-  gap: 2rem 1.5rem;
+  gap: 1.75rem;
   max-width: 40rem;
 }
 
@@ -374,6 +423,12 @@
   gap: 0.6rem;
   padding-top: 1rem;
   border-top: 1px solid var(--line);
+}
+
+/* The section head already draws the first rule. */
+.skill:first-child {
+  border-top: 0;
+  padding-top: 0;
 }
 
 .skillTitle {

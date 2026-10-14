@@ -1,6 +1,6 @@
 import type { Education, SkillGroup } from "./types";
 
-/** Grouped by domain, each with a sentence of evidence instead of a logo wall. */
+/** Grouped by domain, each with a sentence of evidence instead of a logo wall. Most relevant items first: six are shown, the rest open on demand. */
 export const skillGroups: SkillGroup[] = [
   {
     id: "mobile-web",
@@ -10,7 +10,7 @@ export const skillGroups: SkillGroup[] = [
       fr: "Une application React Native livrée à l'ITMI; des applications Blazor, ASP.NET Core et PHP au DEC.",
       en: "A React Native app shipped at ITMI; Blazor, ASP.NET Core and PHP apps in college.",
     },
-    items: ["TypeScript", "React Native", "Expo", "JavaScript", "PHP", "C#", "ASP.NET Core", "Blazor", "Android", "Java"],
+    items: ["TypeScript", "React Native", "Expo", "PHP", "C#", "ASP.NET Core", "JavaScript", "Blazor", "Android", "Java"],
   },
   {
     id: "quality",
@@ -20,7 +20,7 @@ export const skillGroups: SkillGroup[] = [
       fr: "Tests pytest à l'ITMI; tests unitaires, d'intégration et boîte noire à l'ÉTS; MVC et patrons de conception.",
       en: "pytest suites at ITMI; unit, integration and black-box testing at ÉTS; MVC and design patterns.",
     },
-    items: ["pytest", "JaCoCo", "JavaFX", "MVC", "Git", "Gitea", "GitLab", "Azure DevOps", "Agile/Scrum"],
+    items: ["pytest", "JaCoCo", "Git", "Gitea", "Azure DevOps", "Agile/Scrum", "JavaFX", "MVC", "GitLab"],
   },
   {
     id: "robotics",
@@ -41,7 +41,7 @@ export const skillGroups: SkillGroup[] = [
       fr: "Projet Android, Raspberry Pi et Arduino pour un client; laboratoires MQTT, Bluetooth Low Energy et LoRaWAN.",
       en: "An Android, Raspberry Pi and Arduino project for a client; MQTT, Bluetooth Low Energy and LoRaWAN labs.",
     },
-    items: ["Raspberry Pi", "Arduino", "GPIO", "I2C", "SPI", "UART", "MQTT", "C"],
+    items: ["Raspberry Pi", "Arduino", "MQTT", "GPIO", "I2C", "SPI", "UART", "C"],
   },
   {
     id: "data",
@@ -51,7 +51,7 @@ export const skillGroups: SkillGroup[] = [
       fr: "PostgreSQL et SQL Server à l'ITMI; Oracle et PL/SQL au DEC; visualisations Grafana.",
       en: "PostgreSQL and SQL Server at ITMI; Oracle and PL/SQL in college; Grafana visualizations.",
     },
-    items: ["SQL", "PostgreSQL", "SQL Server", "Oracle", "PL/SQL", "MariaDB", "Entity Framework", "Grafana"],
+    items: ["SQL", "PostgreSQL", "SQL Server", "Oracle", "PL/SQL", "Grafana", "MariaDB", "Entity Framework"],
   },
   {
     id: "infrastructure",
@@ -61,7 +61,7 @@ export const skillGroups: SkillGroup[] = [
       fr: "Docker dans les projets de l'ITMI; serveurs Linux et Windows Server, virtualisation et supervision au DEC.",
       en: "Docker across ITMI projects; Linux and Windows Server, virtualization and monitoring in college.",
     },
-    items: ["Docker", "Linux", "Bash", "PowerShell", "Windows Server", "VMware ESXi", "Zabbix", "Maven"],
+    items: ["Docker", "Linux", "Bash", "Windows Server", "VMware ESXi", "Zabbix", "PowerShell", "Maven"],
   },
 ];
 

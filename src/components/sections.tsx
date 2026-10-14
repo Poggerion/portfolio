@@ -37,6 +37,46 @@ function Stack({ items, explored, lang }: { items: string[]; explored?: string[]
   );
 }
 
+/** Result-first: the strongest highlights are shown, the rest open on demand. */
+const VISIBLE_HIGHLIGHTS = 4;
+const VISIBLE_TAGS = 6;
+
+function TagList({ items, explored, lang }: { items: string[]; explored?: string[]; lang: Locale }) {
+  return (
+    <ul className={`mono ${styles.tags}`}>
+      {items.map((item) => (
+        <li key={item}>{item}</li>
+      ))}
+      {explored?.map((e) => (
+        <li key={e} className={styles.explored}>
+          {e} ({t(ui.explored, lang)})
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+/** Six tags per skill group; the rest, and anything only explored, behind a toggle.
+    A toggle that would hide a single tag is not worth the click, so seven still show in full. */
+function Tags({ items, explored = [], lang }: { items: string[]; explored?: string[]; lang: Locale }) {
+  if (items.length + explored.length <= VISIBLE_TAGS + 1) return <TagList items={items} explored={explored} lang={lang} />;
+  const rest = items.slice(VISIBLE_TAGS);
+  return (
+    <>
+      <TagList items={items.slice(0, VISIBLE_TAGS)} lang={lang} />
+      <details className={styles.more}>
+        <summary className={styles.moreToggle}>
+          <span className={styles.whenClosed}>
+            {rest.length + explored.length} {t(ui.more, lang)}
+          </span>
+          <span className={styles.whenOpen}>{t(ui.showLess, lang)}</span>
+        </summary>
+        <TagList items={rest} explored={explored} lang={lang} />
+      </details>
+    </>
+  );
+}
+
 export function About({ lang }: { lang: Locale }) {
   return (
     <section id="about" className={`col ${styles.section}`} aria-labelledby="about-title">
@@ -157,10 +197,25 @@ export function ExperienceList({ lang }: { lang: Locale }) {
               )}
               {xp.highlightsLabel && <p className={`mono ${styles.subLabel}`}>{t(xp.highlightsLabel, lang)}</p>}
               <ul className={styles.highlights}>
-                {xp.highlights.map((h, i) => (
+                {xp.highlights.slice(0, VISIBLE_HIGHLIGHTS).map((h, i) => (
                   <li key={i}>{t(h, lang)}</li>
                 ))}
               </ul>
+              {xp.highlights.length > VISIBLE_HIGHLIGHTS && (
+                <details className={styles.more}>
+                  <summary className={styles.moreToggle}>
+                    <span className={styles.whenClosed}>
+                      {t(ui.showMore, lang)} ({xp.highlights.length - VISIBLE_HIGHLIGHTS})
+                    </span>
+                    <span className={styles.whenOpen}>{t(ui.showLess, lang)}</span>
+                  </summary>
+                  <ul className={styles.highlights}>
+                    {xp.highlights.slice(VISIBLE_HIGHLIGHTS).map((h, i) => (
+                      <li key={i}>{t(h, lang)}</li>
+                    ))}
+                  </ul>
+                </details>
+              )}
               <Stack items={xp.stack} explored={xp.explored} lang={lang} />
               {xp.caseStudy && (
                 <Link href={casePath(lang, xp.caseStudy)} className={styles.inlineLink}>
@@ -184,7 +239,7 @@ export function Skills({ lang }: { lang: Locale }) {
           <li key={g.id} className={styles.skill}>
             <h3 className={styles.skillTitle}>{t(g.label, lang)}</h3>
             <p className={styles.skillEvidence}>{t(g.evidence, lang)}</p>
-            <Stack items={g.items} explored={g.explored} lang={lang} />
+            <Tags items={g.items} explored={g.explored} lang={lang} />
           </li>
         ))}
       </ul>
