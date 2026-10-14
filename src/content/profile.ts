@@ -7,6 +7,14 @@ export const profile = {
     fr: "Building beyond code.",
     en: "Building beyond code.",
   } satisfies Localized,
+  /** Shown under the name in the hero. */
+  role: { fr: "Étudiant en génie logiciel", en: "Software engineering student" } satisfies Localized,
+  /** Hero hook: what he has built, in one sentence. */
+  hook: {
+    fr: "Du téléphone au robot : une application mobile déployée au Cégep de Sept-Îles, des outils Python pour le robot Spot, et une passion pour l'IA et les systèmes embarqués.",
+    en: "From phone to robot: a mobile app deployed at Cégep de Sept-Îles, Python tools for the Spot robot, and a passion for AI and embedded systems.",
+  } satisfies Localized,
+  /** Meta description and social previews. */
   tagline: {
     fr: "Étudiant en génie logiciel à l'ÉTS, intéressé par le développement logiciel, la robotique et les systèmes connectés.",
     en: "Software engineering student at ÉTS, interested in software development, robotics and connected systems.",
@@ -24,6 +32,10 @@ export const profile = {
    * The résumé link only renders when a value is set.
    */
   resume: { fr: null, en: null } as Record<"fr" | "en", string | null>,
+  studies: {
+    fr: "ÉTS, baccalauréat prévu en mai 2029",
+    en: "ÉTS, bachelor's expected May 2029",
+  } satisfies Localized,
   status: {
     fr: "Recherche un stage · hiver 2027",
     en: "Seeking an internship · winter 2027",

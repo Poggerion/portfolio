@@ -13,7 +13,13 @@ export const ui = {
   /** Label of the FR/EN group, in the page's language. */
   language: { fr: "Langue", en: "Language" },
   switchLanguage: { fr: "English version", en: "Version française" },
-  scroll: { fr: "Faire défiler", en: "Scroll" },
+  contactMe: { fr: "Me contacter", en: "Get in touch" },
+  downloadResume: { fr: "Télécharger le CV", en: "Download résumé" },
+  hero: {
+    status: { fr: "Statut", en: "Status" },
+    based: { fr: "Basé à", en: "Based in" },
+    studies: { fr: "Études", en: "Studies" },
+  },
   sections: {
     about: { fr: "À propos", en: "About" },
     work: { fr: "Projets choisis", en: "Selected work" },
