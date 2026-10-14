@@ -326,10 +326,10 @@ export function Contact({ lang }: { lang: Locale }) {
         {resume && (
           <li>
             <span className={`mono ${styles.contactKey}`}>CV</span>
-            <a href={`${basePath}${resume}`} className={styles.contactValue}>
+            <a href={`${basePath}${resume}`} className={styles.contactValue} download>
               {t(ui.resume, lang)}
               {"\u00a0"}
-              <span aria-hidden="true">↗</span>
+              <span aria-hidden="true">↓</span>
             </a>
           </li>
         )}

@@ -1,3 +1,5 @@
+import { existsSync, readFileSync } from "node:fs";
+import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import { experiences } from "../src/content/experience";
 import { profile } from "../src/content/profile";
@@ -37,10 +39,19 @@ describe("content", () => {
     for (const l of links) expect(l.toLowerCase()).toBe("github.com/poggerion");
   });
 
-  it("keeps the résumé link hidden until a real PDF is set", () => {
+  it("links only to résumé PDFs that exist", () => {
     for (const l of locales) {
       const r = profile.resume[l];
-      if (r !== null) expect(r).toMatch(/\.pdf$/);
+      if (r === null) continue;
+      expect(r).toMatch(/\.pdf$/);
+      expect(existsSync(join("public", r)), r).toBe(true);
+    }
+  });
+
+  it("has a 1200×630 share image per language", () => {
+    for (const l of locales) {
+      const png = readFileSync(join("public", "og", `og-${l}.png`));
+      expect([png.readUInt32BE(16), png.readUInt32BE(20)]).toEqual([1200, 630]);
     }
   });
 });

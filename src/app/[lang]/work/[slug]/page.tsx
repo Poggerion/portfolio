@@ -6,7 +6,7 @@ import { domains, profile } from "@/content/profile";
 import { getProject, projects } from "@/content/projects";
 import { ui } from "@/content/ui";
 import { casePath, homePath, isLocale, locales, t } from "@/lib/i18n";
-import { absoluteUrl } from "@/lib/site";
+import { absoluteUrl, shareImage } from "@/lib/site";
 import styles from "./case.module.css";
 
 export const dynamicParams = false;
@@ -36,7 +36,10 @@ export async function generateMetadata({ params }: PageProps<"/[lang]/work/[slug
       type: "article",
       locale: lang === "fr" ? "fr_CA" : "en_CA",
       url,
+      siteName: profile.name,
+      images: [shareImage(lang)],
     },
+    twitter: { card: "summary_large_image", title: `${title} — ${profile.name}`, description, images: [shareImage(lang)] },
   };
 }
 

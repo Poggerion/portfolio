@@ -4,7 +4,7 @@ export const profile = {
   name: "Felipe Portugal",
   /** Aesthetic signature, not a job title. */
   signature: {
-    fr: "Building beyond code.",
+    fr: "Construire au-delà du code.",
     en: "Building beyond code.",
   } satisfies Localized,
   /** Shown under the name in the hero. */
@@ -27,11 +27,11 @@ export const profile = {
   github: "https://github.com/Poggerion",
   githubLabel: "github.com/Poggerion",
   languages: { fr: "Français, anglais, espagnol", en: "French, English, Spanish" } satisfies Localized,
-  /**
-   * Résumé PDF per locale. Leave null until a PDF is placed in /public.
-   * The résumé link only renders when a value is set.
-   */
-  resume: { fr: null, en: null } as Record<"fr" | "en", string | null>,
+  /** Résumé PDFs in public/cv/, without the phone number. A null hides every résumé link. */
+  resume: {
+    fr: "/cv/felipe-portugal-cv-fr.pdf",
+    en: "/cv/felipe-portugal-cv-en.pdf",
+  } as Record<"fr" | "en", string | null>,
   studies: {
     fr: "ÉTS, baccalauréat prévu en mai 2029",
     en: "ÉTS, bachelor's expected May 2029",

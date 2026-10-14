@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import { Geist, IBM_Plex_Mono, Instrument_Serif } from "next/font/google";
 import { profile } from "@/content/profile";
 import { isLocale, locales, t, type Locale } from "@/lib/i18n";
-import { absoluteUrl } from "@/lib/site";
+import { absoluteUrl, shareImage } from "@/lib/site";
 import { ui } from "@/content/ui";
 import { SiteHeader } from "@/components/SiteHeader";
 import { HtmlState } from "@/components/HtmlState";
@@ -65,8 +65,12 @@ export async function generateMetadata({ params }: LayoutProps<"/[lang]">): Prom
       description,
       type: "website",
       locale: lang === "fr" ? "fr_CA" : "en_CA",
+      alternateLocale: lang === "fr" ? "en_CA" : "fr_CA",
       url: absoluteUrl(`/${lang}/`),
+      siteName: profile.name,
+      images: [shareImage(lang)],
     },
+    twitter: { card: "summary_large_image", title, description, images: [shareImage(lang)] },
   };
 }
 

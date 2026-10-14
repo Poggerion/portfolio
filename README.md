@@ -50,7 +50,11 @@ src/
     [lang]/            accueil par langue
     [lang]/work/[slug] études de cas, une URL partageable par projet
   components/          composants de présentation
+  components/scan/     panneau de scan et suivi de la section active
   content/             contenu bilingue, séparé de la présentation
-  lib/                 outils de langue et d'URL
-tests/                 tests du contenu
+  lib/                 outils de langue, d'URL et de section active
+public/
+  cv/                  CV en PDF, français et anglais
+  og/                  images de partage 1200 × 630, une par langue
+tests/                 tests du contenu et de la section active
 ```
