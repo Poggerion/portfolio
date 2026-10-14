@@ -144,6 +144,24 @@ canvas {
   padding-right: var(--gutter-r);
 }
 
+/* Home page reading column: gutters on phones, a measured left column beside the scan panel. */
+.col {
+  padding-left: var(--gutter);
+  padding-right: var(--gutter-r);
+}
+
+@media (min-width: 1024px) {
+  .col {
+    padding-left: clamp(40px, 5vw, 6rem);
+    padding-right: clamp(2rem, 4vw, 4.5rem);
+  }
+}
+
+/* Longest comfortable line for running text (640px). */
+.measure {
+  max-width: 40rem;
+}
+
 .mono {
   font-family: var(--font-mono);
   font-size: var(--text-xs);
@@ -189,64 +207,4 @@ canvas {
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
-}
-
-/* ---------- Scroll reveals ----------
- * Only active when the inline boot script adds .motion (JS + IntersectionObserver +
- * no reduced-motion preference). Without it, everything is visible at rest.
- */
-.motion [data-reveal] {
-  opacity: 0;
-  transform: translate3d(0, 28px, 0);
-  transition:
-    opacity 1s var(--ease-out),
-    transform 1.25s var(--ease-out);
-  transition-delay: calc(var(--d, 0) * 1ms);
-}
-
-.motion [data-reveal].is-in {
-  opacity: 1;
-  transform: none;
-}
-
-.motion [data-reveal="line"] {
-  opacity: 1;
-  transform: scaleX(0);
-  transform-origin: left center;
-  transition: transform 1.6s var(--ease-out);
-  transition-delay: calc(var(--d, 0) * 1ms);
-}
-
-.motion [data-reveal="line"].is-in {
-  transform: none;
-}
-
-.motion [data-reveal="words"] {
-  opacity: 1;
-  transform: none;
-}
-
-.w {
-  display: inline-block;
-  overflow: hidden;
-  vertical-align: top;
-  /* Room inside the mask for accents on capitals (À, É), descenders (g, p, y) and italic
-     overhangs at tight display line heights. Negative margins keep the layout unchanged. */
-  padding: 0.24em 0.1em 0.22em;
-  margin: -0.24em -0.1em -0.22em;
-}
-
-.w > span {
-  display: inline-block;
-}
-
-.motion [data-reveal="words"] .w > span {
-  /* In em, past the bottom of the mask even for an accent's ink, whatever the line height. */
-  transform: translate3d(0, 1.5em, 0);
-  transition: transform 1.15s var(--ease-out);
-  transition-delay: calc(var(--i, 0) * 60ms + var(--d, 0) * 1ms);
-}
-
-.motion [data-reveal="words"].is-in .w > span {
-  transform: none;
 }

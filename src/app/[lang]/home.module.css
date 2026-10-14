@@ -1,0 +1,11 @@
+.column {
+  min-width: 0;
+}
+
+@media (min-width: 1024px) {
+  .scrolly {
+    display: grid;
+    grid-template-columns: minmax(0, 55fr) minmax(0, 45fr);
+    align-items: start;
+  }
+}

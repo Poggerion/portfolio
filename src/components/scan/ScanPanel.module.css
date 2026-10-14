@@ -1,0 +1,110 @@
+/* Desktop only: below 1024px the page is a single column. */
+.panel {
+  display: none;
+}
+
+@media (min-width: 1024px) {
+  .panel {
+    display: block;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    height: 100svh;
+    border-left: 1px solid var(--line);
+    overflow: hidden;
+  }
+}
+
+/* Clear of the fixed header above and of the HUD below. */
+.frame {
+  position: absolute;
+  inset: 6rem 2.5rem 4.5rem;
+}
+
+/* Calibration bed: a faint lattice the cloud is drawn over, fading out toward the edges. */
+.bed {
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle, rgb(241 240 237 / 0.1) 0.75px, transparent 1.25px);
+  background-size: 22px 22px;
+  background-position: center;
+  mask-image: radial-gradient(ellipse 60% 55% at 50% 50%, #000 20%, transparent 80%);
+}
+
+.corner {
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  border: 0 solid var(--ink-ghost);
+}
+
+.corner[data-corner="tl"] {
+  top: 0;
+  left: 0;
+  border-top-width: 1px;
+  border-left-width: 1px;
+}
+
+.corner[data-corner="tr"] {
+  top: 0;
+  right: 0;
+  border-top-width: 1px;
+  border-right-width: 1px;
+}
+
+.corner[data-corner="bl"] {
+  bottom: 0;
+  left: 0;
+  border-bottom-width: 1px;
+  border-left-width: 1px;
+}
+
+.corner[data-corner="br"] {
+  bottom: 0;
+  right: 0;
+  border-bottom-width: 1px;
+  border-right-width: 1px;
+}
+
+.reticle {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 15px;
+  height: 15px;
+  transform: translate(-50%, -50%);
+}
+
+.reticle::before,
+.reticle::after {
+  content: "";
+  position: absolute;
+  background: var(--ink-ghost);
+}
+
+.reticle::before {
+  left: 7px;
+  top: 0;
+  width: 1px;
+  height: 15px;
+}
+
+.reticle::after {
+  top: 7px;
+  left: 0;
+  width: 15px;
+  height: 1px;
+}
+
+.hud {
+  position: absolute;
+  left: 2.5rem;
+  right: 2.5rem;
+  bottom: 1.75rem;
+  color: var(--ink-faint);
+  line-height: 1.5;
+}
+
+.hudNum {
+  color: var(--ink);
+}

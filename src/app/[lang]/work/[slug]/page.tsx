@@ -1,9 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import type { CSSProperties } from "react";
 import { Footer } from "@/components/sections";
-import { Words } from "@/components/Words";
 import { domains, profile } from "@/content/profile";
 import { getProject, projects } from "@/content/projects";
 import { ui } from "@/content/ui";
@@ -12,8 +10,6 @@ import { absoluteUrl } from "@/lib/site";
 import styles from "./case.module.css";
 
 export const dynamicParams = false;
-
-const delay = (ms: number) => ({ "--d": ms }) as CSSProperties;
 
 export function generateStaticParams() {
   return locales.flatMap((lang) => projects.map((p) => ({ lang, slug: p.slug })));
@@ -62,33 +58,33 @@ export default async function CaseStudy({ params }: PageProps<"/[lang]/work/[slu
 
         <header className={styles.header}>
           <div className={styles.headText}>
-            <p className={`mono ${styles.context}`} data-reveal="">
+            <p className={`mono ${styles.context}`}>
               {t(project.context, lang)}
             </p>
-            <h1 className={styles.title} data-reveal="words">
-              <Words text={t(project.title, lang)} delay={120} />
+            <h1 className={styles.title}>
+              {t(project.title, lang)}
             </h1>
-            <p className={styles.summary} data-reveal="" style={delay(380)}>
+            <p className={styles.summary}>
               {t(project.summary, lang)}
             </p>
           </div>
-          <span className={styles.rule} data-reveal="line" style={delay(450)} aria-hidden="true" />
+          <span className={styles.rule} aria-hidden="true" />
         </header>
 
         <dl className={styles.meta}>
-          <div data-reveal="" style={delay(500)}>
+          <div>
             <dt className="mono">{lang === "fr" ? "Période" : "Period"}</dt>
             <dd>{t(project.period, lang)}</dd>
           </div>
-          <div data-reveal="" style={delay(570)}>
+          <div>
             <dt className="mono">{lang === "fr" ? "Équipe" : "Team"}</dt>
             <dd>{t(project.team, lang)}</dd>
           </div>
-          <div data-reveal="" style={delay(640)}>
+          <div>
             <dt className="mono">{lang === "fr" ? "Domaines" : "Domains"}</dt>
             <dd>{domainLabels.join(", ")}</dd>
           </div>
-          <div className={styles.metaWide} data-reveal="" style={delay(710)}>
+          <div className={styles.metaWide}>
             <dt className="mono">{t(ui.stack, lang)}</dt>
             <dd>
               <ul className={styles.stackList}>
@@ -109,7 +105,7 @@ export default async function CaseStudy({ params }: PageProps<"/[lang]/work/[slu
 
         <div className={styles.body}>
           {project.sections.map((s) => (
-            <section key={s.heading.en} className={styles.block} data-reveal="">
+            <section key={s.heading.en} className={styles.block}>
               <h2 className={`mono ${styles.blockTitle}`}>{t(s.heading, lang)}</h2>
               <div className={styles.blockContent}>
                 {s.body && <p>{t(s.body, lang)}</p>}
@@ -124,7 +120,7 @@ export default async function CaseStudy({ params }: PageProps<"/[lang]/work/[slu
             </section>
           ))}
           {project.limits && (
-            <section className={`${styles.block} ${styles.limits}`} data-reveal="">
+            <section className={`${styles.block} ${styles.limits}`}>
               <h2 className={`mono ${styles.blockTitle}`}>{t(ui.limits, lang)}</h2>
               <div className={styles.blockContent}>
                 {project.limits.map((l, i) => (
@@ -135,7 +131,7 @@ export default async function CaseStudy({ params }: PageProps<"/[lang]/work/[slu
           )}
         </div>
 
-        <Link href={casePath(lang, next.slug)} className={styles.next} data-reveal="">
+        <Link href={casePath(lang, next.slug)} className={styles.next}>
           <span className="mono">{lang === "fr" ? "Projet suivant" : "Next project"}</span>
           {/* No-break space: the arrow never wraps alone onto its own line. */}
           <span className={styles.nextTitle}>

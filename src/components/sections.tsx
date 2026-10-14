@@ -1,4 +1,3 @@
-import type { CSSProperties } from "react";
 import Link from "next/link";
 import { capra, experiences } from "@/content/experience";
 import { profile } from "@/content/profile";
@@ -9,23 +8,15 @@ import type { Localized } from "@/content/types";
 import { casePath, t, type Locale } from "@/lib/i18n";
 import { basePath } from "@/lib/site";
 import { CopyButton } from "./CopyButton";
-import { Words } from "./Words";
 import styles from "./sections.module.css";
-
-const delay = (ms: number) => ({ "--d": ms }) as CSSProperties;
 
 function Head({ id, label, lang, aside }: { id: string; label: Localized; lang: Locale; aside?: string }) {
   return (
     <header className={styles.head}>
-      <h2 id={`${id}-title`} className={styles.title} data-reveal="words">
-        <Words text={t(label, lang)} />
+      <h2 id={`${id}-title`} className={styles.title}>
+        {t(label, lang)}
       </h2>
-      {aside && (
-        <p className={`mono ${styles.headAside}`} data-reveal="" style={delay(300)}>
-          {aside}
-        </p>
-      )}
-      <span className={styles.rule} data-reveal="line" aria-hidden="true" />
+      {aside && <p className={`mono ${styles.headAside}`}>{aside}</p>}
     </header>
   );
 }
@@ -48,24 +39,24 @@ function Stack({ items, explored, lang }: { items: string[]; explored?: string[]
 
 export function About({ lang }: { lang: Locale }) {
   return (
-    <section id="about" className={`wrap ${styles.section}`} aria-labelledby="about-title">
+    <section id="about" className={`col ${styles.section}`} aria-labelledby="about-title">
       <Head id="about" label={ui.sections.about} lang={lang} />
       <div className={styles.aboutGrid}>
         <div className={styles.prose}>
           {profile.about.map((p, i) => (
-            <p key={i} className={i === 0 ? styles.lead : undefined} data-reveal="" style={delay(i * 120)}>
+            <p key={i} className={i === 0 ? styles.lead : undefined}>
               {t(p, lang)}
             </p>
           ))}
         </div>
         <dl className={styles.facts}>
-          {profile.availability.map((row, i) => (
-            <div key={row.label.en} data-reveal="" style={delay(150 + i * 80)}>
+          {profile.availability.map((row) => (
+            <div key={row.label.en}>
               <dt className="mono">{t(row.label, lang)}</dt>
               <dd>{t(row.value, lang)}</dd>
             </div>
           ))}
-          <div data-reveal="" style={delay(150 + profile.availability.length * 80)}>
+          <div>
             <dt className="mono">{lang === "fr" ? "Langues" : "Languages"}</dt>
             <dd>{t(profile.languages, lang)}</dd>
           </div>
@@ -80,12 +71,12 @@ export function Work({ lang }: { lang: Locale }) {
   const others = projects.filter((p) => !p.featured);
   const count = String(projects.length).padStart(2, "0");
   return (
-    <section id="work" className={`wrap ${styles.section}`} aria-labelledby="work-title">
+    <section id="work" className={`col ${styles.section}`} aria-labelledby="work-title">
       <Head id="work" label={ui.sections.work} lang={lang} aside={`${count} ${lang === "fr" ? "études de cas" : "case studies"}`} />
       <div data-work-list="">
         <ol className={styles.featured}>
-          {featured.map((p, i) => (
-            <li key={p.slug} data-reveal="" style={delay(i * 90)}>
+          {featured.map((p) => (
+            <li key={p.slug}>
               <Link
                 href={casePath(lang, p.slug)}
                 className={styles.featuredRow}
@@ -104,8 +95,8 @@ export function Work({ lang }: { lang: Locale }) {
           ))}
         </ol>
         <ul className={styles.others}>
-          {others.map((p, i) => (
-            <li key={p.slug} data-reveal="" style={delay((i % 3) * 90)}>
+          {others.map((p) => (
+            <li key={p.slug}>
               <Link
                 href={casePath(lang, p.slug)}
                 className={styles.otherCard}
@@ -127,11 +118,11 @@ export function Work({ lang }: { lang: Locale }) {
 
 export function ExperienceList({ lang }: { lang: Locale }) {
   return (
-    <section id="experience" className={`wrap ${styles.section}`} aria-labelledby="experience-title">
+    <section id="experience" className={`col ${styles.section}`} aria-labelledby="experience-title">
       <Head id="experience" label={ui.sections.experience} lang={lang} aside="2023 — 2025" />
       <ol className={styles.timeline}>
         {experiences.map((xp) => (
-          <li key={xp.id} className={styles.job} data-reveal="">
+          <li key={xp.id} className={styles.job}>
             <p className={`mono ${styles.when}`}>{t(xp.period, lang)}</p>
             <div className={styles.jobBody}>
               <h3 className={styles.jobTitle}>{t(xp.heading, lang)}</h3>
@@ -172,11 +163,11 @@ export function ExperienceList({ lang }: { lang: Locale }) {
 
 export function Skills({ lang }: { lang: Locale }) {
   return (
-    <section id="skills" className={`wrap ${styles.section}`} aria-labelledby="skills-title">
+    <section id="skills" className={`col ${styles.section}`} aria-labelledby="skills-title">
       <Head id="skills" label={ui.sections.skills} lang={lang} />
       <ul className={styles.skills}>
-        {skillGroups.map((g, i) => (
-          <li key={g.id} className={styles.skill} data-reveal="" style={delay((i % 3) * 100)}>
+        {skillGroups.map((g) => (
+          <li key={g.id} className={styles.skill}>
             <h3 className={styles.skillTitle}>{t(g.label, lang)}</h3>
             <p className={styles.skillEvidence}>{t(g.evidence, lang)}</p>
             <Stack items={g.items} explored={g.explored} lang={lang} />
@@ -189,11 +180,11 @@ export function Skills({ lang }: { lang: Locale }) {
 
 export function EducationList({ lang }: { lang: Locale }) {
   return (
-    <section id="education" className={`wrap ${styles.section}`} aria-labelledby="education-title">
+    <section id="education" className={`col ${styles.section}`} aria-labelledby="education-title">
       <Head id="education" label={ui.sections.education} lang={lang} />
       <ol className={styles.timeline}>
         {education.map((e) => (
-          <li key={e.id} className={styles.job} data-reveal="">
+          <li key={e.id} className={styles.job}>
             <p className={`mono ${styles.when}`}>{t(e.period, lang)}</p>
             <div className={styles.jobBody}>
               <h3 className={styles.jobTitle}>{t(e.degree, lang)}</h3>
@@ -212,7 +203,7 @@ export function EducationList({ lang }: { lang: Locale }) {
             </div>
           </li>
         ))}
-        <li className={styles.job} data-reveal="">
+        <li className={styles.job}>
           <p className={`mono ${styles.when}`}>{t(capra.period, lang)}</p>
           <div className={styles.jobBody}>
             <h3 className={styles.jobTitle}>{t(capra.title, lang)}</h3>
@@ -232,29 +223,22 @@ export function Contact({ lang }: { lang: Locale }) {
       ? { a: "Construisons", b: "la suite." }
       : { a: "Let's build", b: "what's next." };
   return (
-    <section id="contact" className={`wrap ${styles.section} ${styles.contact}`} aria-labelledby="contact-title">
-      <p className={`mono ${styles.contactLabel}`}>
-        {t(ui.sections.contact, lang)}
-        <span className={styles.rule} data-reveal="line" aria-hidden="true" />
-      </p>
-      <h2 id="contact-title" className={styles.contactTitle} data-reveal="words">
-        <Words text={title.a} /> <em>
-          <Words text={title.b} delay={180} />
-        </em>
+    <section id="contact" className={`col ${styles.section} ${styles.contact}`} aria-labelledby="contact-title">
+      <p className={`mono ${styles.contactLabel}`}>{t(ui.sections.contact, lang)}</p>
+      <h2 id="contact-title" className={styles.contactTitle}>
+        {title.a} <em>{title.b}</em>
       </h2>
-      <p className={styles.contactLead} data-reveal="" style={delay(250)}>
-        {t(ui.contactLead, lang)}
-      </p>
+      <p className={styles.contactLead}>{t(ui.contactLead, lang)}</p>
       {/* No-break spaces keep each ↗ with the end of its link text. */}
       <ul className={styles.contactList}>
-        <li data-reveal="" style={delay(300)}>
+        <li>
           <span className={`mono ${styles.contactKey}`}>{t(ui.email, lang)}</span>
           <a href={`mailto:${profile.email}`} className={styles.contactValue} id="contact-email">
             {profile.email}
           </a>
           <CopyButton value={profile.email} label={t(ui.copy, lang)} done={t(ui.copied, lang)} />
         </li>
-        <li data-reveal="" style={delay(380)}>
+        <li>
           <span className={`mono ${styles.contactKey}`}>LinkedIn</span>
           <a href={profile.linkedin} className={styles.contactValue} target="_blank" rel="noopener noreferrer">
             {profile.linkedinLabel}
@@ -262,7 +246,7 @@ export function Contact({ lang }: { lang: Locale }) {
             <span aria-hidden="true">↗</span>
           </a>
         </li>
-        <li data-reveal="" style={delay(460)}>
+        <li>
           <span className={`mono ${styles.contactKey}`}>GitHub</span>
           <a href={profile.github} className={styles.contactValue} target="_blank" rel="noopener noreferrer">
             {profile.githubLabel}
@@ -271,7 +255,7 @@ export function Contact({ lang }: { lang: Locale }) {
           </a>
         </li>
         {resume && (
-          <li data-reveal="" style={delay(540)}>
+          <li>
             <span className={`mono ${styles.contactKey}`}>CV</span>
             <a href={`${basePath}${resume}`} className={styles.contactValue}>
               {t(ui.resume, lang)}
@@ -287,7 +271,7 @@ export function Contact({ lang }: { lang: Locale }) {
 
 export function Footer() {
   return (
-    <footer className={`wrap ${styles.footer}`}>
+    <footer className={`col ${styles.footer}`}>
       <span className="mono">© 2026 {profile.name}</span>
       <span className={styles.footerLinks}>
         <a className="mono" href={profile.linkedin} target="_blank" rel="noopener noreferrer">

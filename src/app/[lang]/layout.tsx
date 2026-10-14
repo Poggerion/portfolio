@@ -6,14 +6,14 @@ import { isLocale, locales, t, type Locale } from "@/lib/i18n";
 import { absoluteUrl } from "@/lib/site";
 import { ui } from "@/content/ui";
 import { SiteHeader } from "@/components/SiteHeader";
-import { RevealObserver } from "@/components/RevealObserver";
+import { HtmlState } from "@/components/HtmlState";
 import "../globals.css";
 
 /**
- * Runs before first paint. .js: scripts run. .motion: reveal animations can complete.
- * data-scrolled: content passes under the fixed header, which then gets its backdrop.
+ * Runs before first paint. .js: scripts run. data-scrolled: content passes under the fixed
+ * header, which then gets its backdrop.
  */
-const bootScript = `(function(){try{var d=document.documentElement;d.classList.add("js");if("IntersectionObserver" in window&&!matchMedia("(prefers-reduced-motion: reduce)").matches){d.classList.add("motion")}var s=function(){d.toggleAttribute("data-scrolled",window.scrollY>8)};addEventListener("scroll",s,{passive:true});s()}catch(e){}})();`;
+const bootScript = `(function(){try{var d=document.documentElement;d.classList.add("js");var s=function(){d.toggleAttribute("data-scrolled",window.scrollY>8)};addEventListener("scroll",s,{passive:true});s()}catch(e){}})();`;
 
 const serif = Instrument_Serif({
   variable: "--font-instrument-serif",
@@ -92,7 +92,7 @@ export default async function LangLayout({ children, params }: LayoutProps<"/[la
         </a>
         <SiteHeader lang={locale} />
         {children}
-        <RevealObserver />
+        <HtmlState />
       </body>
     </html>
   );

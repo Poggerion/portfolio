@@ -26,7 +26,7 @@ export function Hero({ lang }: { lang: Locale }) {
   const signatureLang = sharedSignature && lang !== SIGNATURE_LANG ? SIGNATURE_LANG : undefined;
   return (
     <section className={styles.hero} aria-labelledby="hero-title">
-      <div className={`wrap ${styles.grid}`}>
+      <div className={`col ${styles.grid}`}>
         <p className={`mono ${styles.signature}`} lang={signatureLang}>
           <span className={styles.sigRule} aria-hidden="true" />
           {t(profile.signature, lang)}
