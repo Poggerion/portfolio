@@ -15,7 +15,7 @@ export function Hero({ lang }: { lang: Locale }) {
           {t(profile.signature, lang)}
         </p>
 
-        <h1 id="hero-title" className={styles.title}>
+        <h1 id="hero-title" className={styles.title} translate="no">
           <span className={styles.first}>{first}</span> <em className={styles.last}>{last}</em>
         </h1>
 

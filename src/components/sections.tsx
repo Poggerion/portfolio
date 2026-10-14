@@ -24,7 +24,7 @@ function Head({ id, label, lang, aside }: { id: string; label: Localized; lang: 
 /** Technologies as whole items; separators come from CSS so a line never breaks inside one. */
 function Stack({ items, explored, lang }: { items: string[]; explored?: string[]; lang: Locale }) {
   return (
-    <ul className={`mono ${styles.stack}`}>
+    <ul className={`mono ${styles.stack}`} translate="no">
       {items.map((item) => (
         <li key={item}>{item}</li>
       ))}
@@ -43,7 +43,7 @@ const VISIBLE_TAGS = 6;
 
 function TagList({ items, explored, lang }: { items: string[]; explored?: string[]; lang: Locale }) {
   return (
-    <ul className={`mono ${styles.tags}`}>
+    <ul className={`mono ${styles.tags}`} translate="no">
       {items.map((item) => (
         <li key={item}>{item}</li>
       ))}
@@ -141,7 +141,7 @@ export function Work({ lang }: { lang: Locale }) {
               </h3>
               <p className={styles.cardRole}>{t(f.role, lang)}</p>
               <p className={styles.cardImpact}>{t(f.impact, lang)}</p>
-              <ul className={`mono ${styles.tags}`} aria-label={t(ui.stack, lang)}>
+              <ul className={`mono ${styles.tags}`} aria-label={t(ui.stack, lang)} translate="no">
                 {f.stack.map((s) => (
                   <li key={s}>{s}</li>
                 ))}
@@ -290,7 +290,7 @@ export function Contact({ lang }: { lang: Locale }) {
   const title =
     lang === "fr"
       ? { a: "Construisons", b: "la suite." }
-      : { a: "Let's build", b: "what's next." };
+      : { a: "Let’s build", b: "what’s next." };
   return (
     <section id="contact" className={`col ${styles.section} ${styles.contact}`} aria-labelledby="contact-title">
       <p className={`mono ${styles.contactLabel}`}>{t(ui.sections.contact, lang)}</p>

@@ -11,12 +11,12 @@ export const profile = {
   role: { fr: "Étudiant en génie logiciel", en: "Software engineering student" } satisfies Localized,
   /** Hero hook: what he has built, in one sentence. */
   hook: {
-    fr: "Du téléphone au robot : une application mobile déployée au Cégep de Sept-Îles, des outils Python pour le robot Spot, et une passion pour l'IA et les systèmes embarqués.",
+    fr: "Du téléphone au robot : une application mobile déployée au Cégep de Sept-Îles, des outils Python pour le robot Spot, et une passion pour l’IA et les systèmes embarqués.",
     en: "From phone to robot: a mobile app deployed at Cégep de Sept-Îles, Python tools for the Spot robot, and a passion for AI and embedded systems.",
   } satisfies Localized,
   /** Meta description and social previews. */
   tagline: {
-    fr: "Étudiant en génie logiciel à l'ÉTS, intéressé par le développement logiciel, la robotique et les systèmes connectés.",
+    fr: "Étudiant en génie logiciel à l’ÉTS, intéressé par le développement logiciel, la robotique et les systèmes connectés.",
     en: "Software engineering student at ÉTS, interested in software development, robotics and connected systems.",
   } satisfies Localized,
   location: "Montréal, Québec",
@@ -34,7 +34,7 @@ export const profile = {
   } as Record<"fr" | "en", string | null>,
   studies: {
     fr: "ÉTS, baccalauréat prévu en mai 2029",
-    en: "ÉTS, bachelor's expected May 2029",
+    en: "ÉTS, bachelor’s expected May 2029",
   } satisfies Localized,
   status: {
     fr: "Recherche un stage · hiver 2027",
@@ -64,21 +64,21 @@ export const profile = {
     },
     {
       label: { fr: "Diplôme", en: "Graduation" },
-      value: { fr: "Baccalauréat prévu en mai 2029", en: "Bachelor's expected May 2029" },
+      value: { fr: "Baccalauréat prévu en mai 2029", en: "Bachelor’s expected May 2029" },
     },
   ] satisfies { label: Localized; value: Localized }[],
   about: [
     {
-      fr: "Je suis passionné par l'intelligence artificielle et les systèmes embarqués.",
-      en: "I'm passionate about artificial intelligence and embedded systems.",
+      fr: "Je suis passionné par l’intelligence artificielle et les systèmes embarqués.",
+      en: "I’m passionate about artificial intelligence and embedded systems.",
     },
     {
-      fr: "Mon parcours a commencé au Cégep de Sept-Îles, avec un DEC en techniques de l'informatique. J'ai ensuite travaillé à l'Institut technologique de maintenance industrielle (ITMI) : d'abord en robotique, sur le robot Spot de Boston Dynamics en Python et sur la récupération de données de capteurs en Rust, puis sur un système de gestion des stationnements. J'ai été le seul développeur de son application mobile, et j'ai développé son interface web administrateur en PHP.",
+      fr: "Mon parcours a commencé au Cégep de Sept-Îles, avec un DEC en techniques de l’informatique. J’ai ensuite travaillé à l’Institut technologique de maintenance industrielle (ITMI) : d’abord en robotique, sur le robot Spot de Boston Dynamics en Python et sur la récupération de données de capteurs en Rust, puis sur un système de gestion des stationnements. J’ai été le seul développeur de son application mobile, et j’ai développé son interface web administrateur en PHP.",
       en: "My path started at Cégep de Sept-Îles, with a college diploma in computer science technology. I then worked at the Institut technologique de maintenance industrielle (ITMI): first in robotics, on Boston Dynamics' Spot robot in Python and on sensor data collection in Rust, then on a parking management system. I was the sole developer of its mobile app, and I built its admin web interface in PHP.",
     },
     {
-      fr: "Je poursuis aujourd'hui un baccalauréat en génie logiciel à l'ÉTS, à Montréal, et je cherche un stage pour l'hiver 2027.",
-      en: "I'm now completing a bachelor's in software engineering at ÉTS in Montréal, and looking for a winter 2027 internship.",
+      fr: "Je poursuis aujourd’hui un baccalauréat en génie logiciel à l’ÉTS, à Montréal, et je cherche un stage pour l’hiver 2027.",
+      en: "I’m now completing a bachelor’s in software engineering at ÉTS in Montréal, and looking for a winter 2027 internship.",
     },
   ] satisfies Localized[],
 };
@@ -96,7 +96,7 @@ export const domains: { id: Domain; label: Localized; blurb: Localized }[] = [
     id: "robotics",
     label: { fr: "Robotique", en: "Robotics" },
     blurb: {
-      fr: "Missions et traitement d'images avec le robot Spot.",
+      fr: "Missions et traitement d’images avec le robot Spot.",
       en: "Missions and image processing with the Spot robot.",
     },
   },

@@ -90,7 +90,7 @@ export default async function CaseStudy({ params }: PageProps<"/[lang]/work/[slu
           <div className={styles.metaWide}>
             <dt className="mono">{t(ui.stack, lang)}</dt>
             <dd>
-              <ul className={styles.stackList}>
+              <ul className={styles.stackList} translate="no">
                 {project.stack.map((s) => (
                   <li key={s}>{s}</li>
                 ))}

@@ -36,15 +36,15 @@ export const experiences: Experience[] = [
     // The first four are shown; the rest open under "Show more". Wording follows Felipe's résumé.
     highlights: [
       {
-        fr: "Développé seul l'application mobile côté client d'un système de gestion des stationnements, déployé pour l'ensemble du personnel du Cégep de Sept-Îles et quelques utilisateurs externes.",
+        fr: "Développé seul l’application mobile côté client d’un système de gestion des stationnements, déployé pour l’ensemble du personnel du Cégep de Sept-Îles et quelques utilisateurs externes.",
         en: "Sole developer of the client mobile app for a parking management system, deployed to all Cégep de Sept-Îles staff and a few external users.",
       },
       {
-        fr: "Développé l'interface web administrateur du même système en PHP et langages web : pages, formulaires et vues.",
+        fr: "Développé l’interface web administrateur du même système en PHP et langages web : pages, formulaires et vues.",
         en: "Built the admin web interface for the same system in PHP and web languages: pages, forms and views.",
       },
       {
-        fr: "Mis en place l'authentification de base, l'authentification Microsoft et l'intégration Stripe.",
+        fr: "Mis en place l’authentification de base, l’authentification Microsoft et l’intégration Stripe.",
         en: "Implemented basic authentication, Microsoft authentication and Stripe integration.",
       },
       {
@@ -52,7 +52,7 @@ export const experiences: Experience[] = [
         en: "Wrote automated client and server tests in Python with pytest, including load tests.",
       },
       {
-        fr: "Contribué aux API REST et aux composantes backend en PHP pour Nomad, un framework interne de l'ITMI, avec PostgreSQL (connexion, requêtes, migrations), dans des projets conteneurisés avec Docker.",
+        fr: "Contribué aux API REST et aux composantes backend en PHP pour Nomad, un framework interne de l’ITMI, avec PostgreSQL (connexion, requêtes, migrations), dans des projets conteneurisés avec Docker.",
         en: "Contributed to REST APIs and PHP backend components for Nomad, an ITMI in-house framework, with PostgreSQL (connection, queries, migrations), in Docker-based projects.",
       },
       {
@@ -60,7 +60,7 @@ export const experiences: Experience[] = [
         en: "Designed SQL Server schemas and queries for web platforms in development.",
       },
       {
-        fr: "Développé des visualisations de données industrielles avec PHP et Grafana, et des fonctionnalités d'une application web de gestion d'inventaire et de contrats.",
+        fr: "Développé des visualisations de données industrielles avec PHP et Grafana, et des fonctionnalités d’une application web de gestion d’inventaire et de contrats.",
         en: "Built industrial data visualizations with PHP and Grafana, and features of an inventory and contract management web app.",
       },
       {

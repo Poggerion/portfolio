@@ -1,14 +1,7 @@
 /* Sections of the home page, laid out for the reading column (≤ 40rem of text). */
-/* Anchored sections stop below the fixed header: one line from 721px, two on phones. */
+/* Anchors stop below the fixed header through the page's scroll-padding-top (globals.css). */
 .section {
   padding-top: clamp(3.5rem, 6vw, 5rem);
-  scroll-margin-top: 4.5rem;
-}
-
-@media (max-width: 720px) {
-  .section {
-    scroll-margin-top: 6rem;
-  }
 }
 
 .head {
@@ -138,12 +131,12 @@
 }
 
 .cardRole {
-  font-size: var(--text-sm);
+  font-size: var(--text-base);
 }
 
 .cardImpact {
   color: var(--ink-muted);
-  font-size: var(--text-sm);
+  font-size: var(--text-base);
 }
 
 .tags {
@@ -280,7 +273,7 @@
   position: relative;
   padding-left: 1.4rem;
   color: var(--ink-muted);
-  font-size: var(--text-sm);
+  font-size: var(--text-base);
 }
 
 /* Decorative dash: --ink-ghost is for strokes only, never for text. */
@@ -414,7 +407,7 @@
 
 .courseDetail {
   color: var(--ink-muted);
-  font-size: var(--text-sm);
+  font-size: var(--text-base);
 }
 
 /* ---------- Skills ---------- */
@@ -446,7 +439,7 @@
 
 .skillEvidence {
   color: var(--ink-muted);
-  font-size: var(--text-sm);
+  font-size: var(--text-base);
 }
 
 /* ---------- Contact ---------- */
@@ -528,6 +521,10 @@
 .copy:hover {
   color: var(--ink);
   border-color: var(--accent);
+}
+
+.copy:active {
+  transform: translateY(1px);
 }
 
 /* ---------- Footer ---------- */

@@ -26,7 +26,7 @@ export const scanSections: ScanSection[] = [
     subject: { fr: "Façade · Cégep de Sept-Îles", en: "Facade · Cégep de Sept-Îles" },
     variants: { ets: { fr: "Façade · ÉTS, Montréal", en: "Facade · ÉTS, Montréal" } },
   },
-  { id: "contact", subject: { fr: "« Construisons la suite. »", en: "“Let's build what's next.”" } },
+  { id: "contact", subject: { fr: "« Construisons la suite. »", en: "“Let’s build what’s next.”" } },
 ];
 
 /** "03/07" for a section id. */

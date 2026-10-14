@@ -7,7 +7,7 @@ export const skillGroups: SkillGroup[] = [
     domain: "software",
     label: { fr: "Mobile et web", en: "Mobile and web" },
     evidence: {
-      fr: "Une application React Native livrée à l'ITMI; des applications Blazor, ASP.NET Core et PHP au DEC.",
+      fr: "Une application React Native livrée à l’ITMI; des applications Blazor, ASP.NET Core et PHP au DEC.",
       en: "A React Native app shipped at ITMI; Blazor, ASP.NET Core and PHP apps in college.",
     },
     items: ["TypeScript", "React Native", "Expo", "PHP", "C#", "ASP.NET Core", "JavaScript", "Blazor", "Android", "Java"],
@@ -17,7 +17,7 @@ export const skillGroups: SkillGroup[] = [
     domain: "software",
     label: { fr: "Tests et conception", en: "Testing and design" },
     evidence: {
-      fr: "Tests pytest à l'ITMI; tests unitaires, d'intégration et boîte noire à l'ÉTS; MVC et patrons de conception.",
+      fr: "Tests pytest à l’ITMI; tests unitaires, d’intégration et boîte noire à l’ÉTS; MVC et patrons de conception.",
       en: "pytest suites at ITMI; unit, integration and black-box testing at ÉTS; MVC and design patterns.",
     },
     items: ["pytest", "JaCoCo", "Git", "Gitea", "Azure DevOps", "Agile/Scrum", "JavaFX", "MVC", "GitLab"],
@@ -27,7 +27,7 @@ export const skillGroups: SkillGroup[] = [
     domain: "robotics",
     label: { fr: "Robotique et vision", en: "Robotics and vision" },
     evidence: {
-      fr: "Missions et traitement d'images avec le robot Spot, en emploi et en projet de cours.",
+      fr: "Missions et traitement d’images avec le robot Spot, en emploi et en projet de cours.",
       en: "Missions and image processing with the Spot robot, at work and in coursework.",
     },
     items: ["Python", "Spot SDK", "OpenCV", "Pillow", "NumPy", "Rust"],
@@ -48,7 +48,7 @@ export const skillGroups: SkillGroup[] = [
     domain: "data",
     label: { fr: "Données", en: "Data" },
     evidence: {
-      fr: "PostgreSQL et SQL Server à l'ITMI; Oracle et PL/SQL au DEC; visualisations Grafana.",
+      fr: "PostgreSQL et SQL Server à l’ITMI; Oracle et PL/SQL au DEC; visualisations Grafana.",
       en: "PostgreSQL and SQL Server at ITMI; Oracle and PL/SQL in college; Grafana visualizations.",
     },
     items: ["SQL", "PostgreSQL", "SQL Server", "Oracle", "PL/SQL", "Grafana", "MariaDB", "Entity Framework"],
@@ -58,7 +58,7 @@ export const skillGroups: SkillGroup[] = [
     domain: "data",
     label: { fr: "Systèmes et infrastructure", en: "Systems and infrastructure" },
     evidence: {
-      fr: "Docker dans les projets de l'ITMI; serveurs Linux et Windows Server, virtualisation et supervision au DEC.",
+      fr: "Docker dans les projets de l’ITMI; serveurs Linux et Windows Server, virtualisation et supervision au DEC.",
       en: "Docker across ITMI projects; Linux and Windows Server, virtualization and monitoring in college.",
     },
     items: ["Docker", "Linux", "Bash", "Windows Server", "VMware ESXi", "Zabbix", "PowerShell", "Maven"],
@@ -69,7 +69,7 @@ export const skillGroups: SkillGroup[] = [
 export const education: Education[] = [
   {
     id: "cegep",
-    degree: { fr: "DEC en techniques de l'informatique", en: "College Diploma (DEC) in Computer Science Technology" },
+    degree: { fr: "DEC en techniques de l’informatique", en: "College Diploma (DEC) in Computer Science Technology" },
     school: "Cégep de Sept-Îles",
     location: "Sept-Îles",
     period: { fr: "Diplômé en 2024", en: "Graduated 2024" },
@@ -102,7 +102,7 @@ export const education: Education[] = [
   },
   {
     id: "ets",
-    degree: { fr: "Baccalauréat en génie logiciel", en: "Bachelor's in Software Engineering" },
+    degree: { fr: "Baccalauréat en génie logiciel", en: "Bachelor’s in Software Engineering" },
     school: "École de technologie supérieure (ÉTS)",
     location: "Montréal",
     period: { fr: "2024 – mai 2029 (prévu)", en: "2024 – May 2029 (expected)" },
@@ -110,7 +110,7 @@ export const education: Education[] = [
       {
         code: { fr: "LOG240", en: "LOG240" },
         title: { fr: "Tests et maintenance", en: "Testing and Maintenance" },
-        detail: { fr: "Tests unitaires, d'intégration et boîte noire, couverture.", en: "Unit, integration and black-box testing, coverage." },
+        detail: { fr: "Tests unitaires, d’intégration et boîte noire, couverture.", en: "Unit, integration and black-box testing, coverage." },
       },
       {
         code: { fr: "LOG121", en: "LOG121" },

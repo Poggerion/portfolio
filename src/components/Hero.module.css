@@ -123,7 +123,8 @@
   transition:
     background-color 0.2s var(--ease-out),
     border-color 0.2s var(--ease-out),
-    color 0.2s var(--ease-out);
+    color 0.2s var(--ease-out),
+    transform 0.1s var(--ease-out);
 }
 
 .primary {
@@ -144,6 +145,12 @@
 
 .secondary:hover {
   border-color: var(--accent);
+}
+
+/* Pressed: a one-pixel give, transform only. */
+.primary:active,
+.secondary:active {
+  transform: translateY(1px);
 }
 
 .fileType {

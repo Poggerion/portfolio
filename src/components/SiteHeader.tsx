@@ -10,7 +10,7 @@ export function SiteHeader({ lang }: { lang: Locale }) {
   return (
     <header className={styles.header}>
       <div className={styles.inner}>
-        <Link href={homePath(lang)} className={styles.name} aria-label={`${profile.name}, ${t(ui.home, lang)}`}>
+        <Link href={homePath(lang)} className={styles.name} translate="no" aria-label={`${profile.name}, ${t(ui.home, lang)}`}>
           {profile.name}
         </Link>
         <SiteNav lang={lang} />

@@ -7,9 +7,9 @@ export const projects: Project[] = [
   {
     slug: "parking-platform",
     featured: {
-      role: { fr: "Seul développeur de l'application mobile · ITMI", en: "Sole developer of the mobile app · ITMI" },
+      role: { fr: "Seul développeur de l’application mobile · ITMI", en: "Sole developer of the mobile app · ITMI" },
       impact: {
-        fr: "Déployée pour l'ensemble du personnel du Cégep de Sept-Îles et quelques utilisateurs externes.",
+        fr: "Déployée pour l’ensemble du personnel du Cégep de Sept-Îles et quelques utilisateurs externes.",
         en: "Deployed to all Cégep de Sept-Îles staff and a few external users.",
       },
       stack: ["React Native", "TypeScript", "Expo", "PHP"],
@@ -20,7 +20,7 @@ export const projects: Project[] = [
       en: "A React Native mobile app (sole developer) and a PHP admin web interface, for Cégep de Sept-Îles.",
     },
     involvement: "work",
-    team: { fr: "Seul développeur de l'application mobile", en: "Sole developer of the mobile app" },
+    team: { fr: "Seul développeur de l’application mobile", en: "Sole developer of the mobile app" },
     context: { fr: "ITMI · emploi et stage", en: "ITMI · internship and job" },
     period: { fr: "2025", en: "2025" },
     domains: ["software", "data"],
@@ -29,7 +29,7 @@ export const projects: Project[] = [
       {
         heading: { fr: "Contexte", en: "Context" },
         body: {
-          fr: "L'ITMI a développé un système de gestion des stationnements destiné au Cégep de Sept-Îles. Il est déployé à l'interne pour l'ensemble du personnel et quelques utilisateurs externes; il n'est pas publié sur les magasins d'applications.",
+          fr: "L’ITMI a développé un système de gestion des stationnements destiné au Cégep de Sept-Îles. Il est déployé à l’interne pour l’ensemble du personnel et quelques utilisateurs externes; il n’est pas publié sur les magasins d’applications.",
           en: "ITMI built a parking management system for Cégep de Sept-Îles. It is deployed internally to all staff and a few external users; it is not published on the app stores.",
         },
       },
@@ -37,24 +37,24 @@ export const projects: Project[] = [
         heading: { fr: "Ma contribution", en: "My contribution" },
         points: [
           {
-            fr: "Développement complet de l'application mobile côté client, en React Native, TypeScript et Expo. J'en étais le seul développeur.",
+            fr: "Développement complet de l’application mobile côté client, en React Native, TypeScript et Expo. J’en étais le seul développeur.",
             en: "Built the entire client mobile app in React Native, TypeScript and Expo, as its only developer.",
           },
           {
-            fr: "Développement de l'interface web administrateur en PHP et langages web : pages, formulaires et vues.",
+            fr: "Développement de l’interface web administrateur en PHP et langages web : pages, formulaires et vues.",
             en: "Built the admin web interface in PHP and web languages: pages, forms and views.",
           },
         ],
       },
       {
-        heading: { fr: "Autour du projet, à l'ITMI", en: "Around the project, at ITMI" },
+        heading: { fr: "Autour du projet, à l’ITMI", en: "Around the project, at ITMI" },
         body: {
-          fr: "Pendant la même période, j'ai aussi travaillé sur d'autres aspects des projets de l'équipe.",
-          en: "Over the same period, I also worked on other parts of the team's projects.",
+          fr: "Pendant la même période, j’ai aussi travaillé sur d’autres aspects des projets de l’équipe.",
+          en: "Over the same period, I also worked on other parts of the team’s projects.",
         },
         points: [
           {
-            fr: "API REST et composantes backend en PHP pour Nomad, un framework interne de l'ITMI, avec PostgreSQL (connexion, requêtes, migrations), dans des projets conteneurisés avec Docker.",
+            fr: "API REST et composantes backend en PHP pour Nomad, un framework interne de l’ITMI, avec PostgreSQL (connexion, requêtes, migrations), dans des projets conteneurisés avec Docker.",
             en: "REST APIs and PHP backend components for Nomad, an ITMI in-house framework, with PostgreSQL (connection, queries, migrations), in Docker-based projects.",
           },
           {
@@ -70,14 +70,14 @@ export const projects: Project[] = [
       {
         heading: { fr: "Façon de travailler", en: "How we worked" },
         body: {
-          fr: "Sprints et réunions quotidiennes, pull requests et revues de code dans Gitea avec une stratégie de branches, tickets dans Azure DevOps Boards. J'ai aussi assuré la maintenance d'applications en production, formé du personnel et échangé avec les clients.",
+          fr: "Sprints et réunions quotidiennes, pull requests et revues de code dans Gitea avec une stratégie de branches, tickets dans Azure DevOps Boards. J’ai aussi assuré la maintenance d’applications en production, formé du personnel et échangé avec les clients.",
           en: "Sprints and daily stand-ups, pull requests and code reviews in Gitea with a branching strategy, tickets in Azure DevOps Boards. I also maintained applications in production, trained staff and worked with clients.",
         },
       },
     ],
     limits: [
       {
-        fr: "Le code appartient à l'ITMI : aucune capture ni extrait n'est publié ici.",
+        fr: "Le code appartient à l’ITMI : aucune capture ni extrait n’est publié ici.",
         en: "The code belongs to ITMI: no screenshots or excerpts are published here.",
       },
     ],
@@ -98,7 +98,7 @@ export const projects: Project[] = [
       en: "Python prototype with the Spot SDK: autonomous missions, photos, processing on a Linux server.",
     },
     involvement: "work",
-    team: { fr: "Emploi d'été", en: "Summer job" },
+    team: { fr: "Emploi d’été", en: "Summer job" },
     context: { fr: "ITMI · conseiller technique", en: "ITMI · technical advisor" },
     period: { fr: "Mai – août 2024", en: "May – Aug 2024" },
     domains: ["robotics", "data"],
@@ -107,7 +107,7 @@ export const projects: Project[] = [
       {
         heading: { fr: "Contexte", en: "Context" },
         body: {
-          fr: "L'ITMI travaille avec un robot quadrupède Spot de Boston Dynamics. J'ai travaillé sur deux aspects : la gestion de ses missions autonomes et le traitement des images et données qu'il recueille.",
+          fr: "L’ITMI travaille avec un robot quadrupède Spot de Boston Dynamics. J’ai travaillé sur deux aspects : la gestion de ses missions autonomes et le traitement des images et données qu’il recueille.",
           en: "ITMI works with a Boston Dynamics Spot quadruped robot. I worked on two things: managing its autonomous missions, and processing the images and data it collects.",
         },
       },
@@ -135,7 +135,7 @@ export const projects: Project[] = [
       {
         heading: { fr: "Avant cela", en: "Before that" },
         body: {
-          fr: "À l'hiver 2024, comme auxiliaire de recherche, j'avais développé une preuve de concept Python avec le Spot SDK, testée et validée, et exploré le C++ avec le même SDK.",
+          fr: "À l’hiver 2024, comme auxiliaire de recherche, j’avais développé une preuve de concept Python avec le Spot SDK, testée et validée, et exploré le C++ avec le même SDK.",
           en: "In winter 2024, as a research assistant, I had built a tested and validated Python proof of concept with the Spot SDK, and explored C++ with the same SDK.",
         },
       },
@@ -143,7 +143,7 @@ export const projects: Project[] = [
     explored: ["C++"],
     limits: [
       {
-        fr: "Il s'agit d'un prototype fonctionnel, pas d'un produit commercial. Aucune mesure de performance n'est publiée.",
+        fr: "Il s’agit d’un prototype fonctionnel, pas d’un produit commercial. Aucune mesure de performance n’est publiée.",
         en: "This is a working prototype, not a commercial product. No performance figures are published.",
       },
     ],
@@ -153,7 +153,7 @@ export const projects: Project[] = [
     featured: {
       role: { fr: "Projet final · équipe de deux", en: "Final project · team of two" },
       impact: {
-        fr: "Le robot repère la source de chaleur la plus élevée avec sa caméra thermique, s'en approche et collecte des données sur place.",
+        fr: "Le robot repère la source de chaleur la plus élevée avec sa caméra thermique, s’en approche et collecte des données sur place.",
         en: "The robot finds the hottest source with its thermal camera, walks toward it and collects data on site.",
       },
       stack: ["Python", "Spot SDK", "Docker", "Bash"],
@@ -182,11 +182,11 @@ export const projects: Project[] = [
             en: "The thermal camera (Spot CAM+IR) scans the area for the hottest source.",
           },
           {
-            fr: "Le robot s'oriente selon l'angle de la caméra et se dirige vers la source.",
-            en: "The robot turns to the camera's angle and walks toward the source.",
+            fr: "Le robot s’oriente selon l’angle de la caméra et se dirige vers la source.",
+            en: "The robot turns to the camera’s angle and walks toward the source.",
           },
           {
-            fr: "Sur place, il collecte audio, photo, photo infrarouge et mesures de température, d'humidité et de gaz.",
+            fr: "Sur place, il collecte audio, photo, photo infrarouge et mesures de température, d’humidité et de gaz.",
             en: "On site, it collects audio, photos, infrared photos and temperature, humidity and gas readings.",
           },
         ],
@@ -194,14 +194,14 @@ export const projects: Project[] = [
       {
         heading: { fr: "Ce que nous avons construit", en: "What we built" },
         body: {
-          fr: "Des scripts Python adaptés de quatre exemples du Spot SDK de Boston Dynamics : le code de base vient du SDK, les modifications et l'intégration sont les nôtres. Nous avons modifié le conteneur Docker fourni pour lire les capteurs Dracal et écrire les données, adapté le docker-compose, et lancé le tout sur Spot par SSH avec un script Bash pendant la mission.",
+          fr: "Des scripts Python adaptés de quatre exemples du Spot SDK de Boston Dynamics : le code de base vient du SDK, les modifications et l’intégration sont les nôtres. Nous avons modifié le conteneur Docker fourni pour lire les capteurs Dracal et écrire les données, adapté le docker-compose, et lancé le tout sur Spot par SSH avec un script Bash pendant la mission.",
           en: "Python scripts adapted from four Boston Dynamics Spot SDK examples: the base code comes from the SDK, the changes and integration are ours. We modified the provided Docker container to read the Dracal sensors and write the data, adapted the docker-compose file, and ran it on Spot over SSH with a Bash script during the mission.",
         },
       },
     ],
     limits: [
       {
-        fr: "L'approche vers la source de chaleur se fait avec des déviations : le guidage n'est pas précis.",
+        fr: "L’approche vers la source de chaleur se fait avec des déviations : le guidage n’est pas précis.",
         en: "The approach toward the heat source drifts: the guidance is not precise.",
       },
     ],
@@ -248,9 +248,9 @@ export const projects: Project[] = [
   },
   {
     slug: "test-engineering-java",
-    title: { fr: "Tests et maintenance d'une application Java", en: "Testing and maintaining a Java app" },
+    title: { fr: "Tests et maintenance d’une application Java", en: "Testing and maintaining a Java app" },
     summary: {
-      fr: "Rétro-ingénierie, tests boîte noire et d'intégration, et tests unitaires atteignant 99 % de couverture sur AccountDAO et CategoryDAO.",
+      fr: "Rétro-ingénierie, tests boîte noire et d’intégration, et tests unitaires atteignant 99 % de couverture sur AccountDAO et CategoryDAO.",
       en: "Reverse engineering, black-box and integration tests, and unit tests reaching 99% coverage on AccountDAO and CategoryDAO.",
     },
     involvement: "team",
@@ -264,11 +264,11 @@ export const projects: Project[] = [
         heading: { fr: "Ce que nous avons fait", en: "What we did" },
         points: [
           {
-            fr: "Rétro-ingénierie de l'application FinanceJ et analyse d'impacts d'une demande de changement client.",
+            fr: "Rétro-ingénierie de l’application FinanceJ et analyse d’impacts d’une demande de changement client.",
             en: "Reverse-engineered the FinanceJ application and analysed the impact of a client change request.",
           },
           {
-            fr: "Tests boîte noire documentés par classes d'équivalence et valeurs frontalières pour ses trois fonctions principales; défauts enregistrés dans GitLab.",
+            fr: "Tests boîte noire documentés par classes d’équivalence et valeurs frontalières pour ses trois fonctions principales; défauts enregistrés dans GitLab.",
             en: "Black-box tests documented with equivalence classes and boundary values for its three main functions; defects logged in GitLab.",
           },
           {
@@ -276,7 +276,7 @@ export const projects: Project[] = [
             en: "Unit tests for the DAO layer: 99% coverage on AccountDAO and CategoryDAO, measured with JaCoCo.",
           },
           {
-            fr: "Tests d'intégration vérifiant que le modèle de l'interface interagit réellement avec la base Derby; graphes de flux et complexité cyclomatique de McCabe.",
+            fr: "Tests d’intégration vérifiant que le modèle de l’interface interagit réellement avec la base Derby; graphes de flux et complexité cyclomatique de McCabe.",
             en: "Integration tests checking that the UI model really talks to the Derby database; control-flow graphs and McCabe cyclomatic complexity.",
           },
         ],
@@ -285,7 +285,7 @@ export const projects: Project[] = [
   },
   {
     slug: "javafx-image-editor",
-    title: { fr: "Éditeur d'images JavaFX", en: "JavaFX image editor" },
+    title: { fr: "Éditeur d’images JavaFX", en: "JavaFX image editor" },
     summary: {
       fr: "Application JavaFX en architecture MVC avec trois vues indépendantes et le patron Observateur.",
       en: "A JavaFX app in MVC with three independent views and the Observer pattern.",
@@ -301,7 +301,7 @@ export const projects: Project[] = [
         heading: { fr: "Ce que nous avons fait", en: "What we did" },
         points: [
           {
-            fr: "Affichage et manipulation d'image : zoom, translation, annulation, sauvegarde et chargement de fichier.",
+            fr: "Affichage et manipulation d’image : zoom, translation, annulation, sauvegarde et chargement de fichier.",
             en: "Image display and editing: zoom, pan, undo, save and load.",
           },
           {
@@ -338,7 +338,7 @@ export const projects: Project[] = [
             en: "OCS Inventory and its agents to inventory machines, synced with GLPI for ticket management.",
           },
           {
-            fr: "Zabbix pour superviser les hôtes Linux et Windows, avec une alerte par courriel en cas d'utilisation élevée des ressources.",
+            fr: "Zabbix pour superviser les hôtes Linux et Windows, avec une alerte par courriel en cas d’utilisation élevée des ressources.",
             en: "Zabbix to monitor Linux and Windows hosts, with an email alert on high resource usage.",
           },
         ],
@@ -346,7 +346,7 @@ export const projects: Project[] = [
     ],
     limits: [
       {
-        fr: "Projet de laboratoire réalisé dans un cours, avec des collègues et une technicienne du département. Ce n'est pas un environnement de production.",
+        fr: "Projet de laboratoire réalisé dans un cours, avec des collègues et une technicienne du département. Ce n’est pas un environnement de production.",
         en: "A lab project done in a course, with classmates and a department technician. It is not a production environment.",
       },
     ],
@@ -369,7 +369,7 @@ export const projects: Project[] = [
     stack: ["C#", "ASP.NET Core", "Blazor", "Entity Framework Core", "SQL Server", "IIS"],
     sections: [
       {
-        heading: { fr: "Ce que j'ai construit", en: "What I built" },
+        heading: { fr: "Ce que j’ai construit", en: "What I built" },
         points: [
           {
             fr: "Une application Blazor Server de gestion universitaire (étudiants, cours, inscriptions) avec Entity Framework Core, SQL Server et des migrations successives.",
@@ -380,7 +380,7 @@ export const projects: Project[] = [
             en: "An ASP.NET Core REST API, consumed by a Blazor client with HttpClient (GET, POST, PUT, DELETE).",
           },
           {
-            fr: "Un guide de déploiement de l'API sur IIS : site, pool d'applications, droits d'accès et règle de pare-feu.",
+            fr: "Un guide de déploiement de l’API sur IIS : site, pool d’applications, droits d’accès et règle de pare-feu.",
             en: "A guide to deploying the API on IIS: site, application pool, permissions and firewall rule.",
           },
           {
@@ -406,10 +406,10 @@ export const projects: Project[] = [
     stack: ["PHP", "MySQL", "PDO", "PHPMailer", "OAuth", "TOTP"],
     sections: [
       {
-        heading: { fr: "Ce que j'ai construit", en: "What I built" },
+        heading: { fr: "Ce que j’ai construit", en: "What I built" },
         points: [
           {
-            fr: "Connexion avec mots de passe hachés, sessions, rôles usager et administrateur, page d'administration des comptes.",
+            fr: "Connexion avec mots de passe hachés, sessions, rôles usager et administrateur, page d’administration des comptes.",
             en: "Sign-in with hashed passwords, sessions, user and admin roles, an account admin page.",
           },
           {
