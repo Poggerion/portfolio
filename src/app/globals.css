@@ -1,7 +1,8 @@
 /*
- * SYSTEMS IN MOTION — design tokens
+ * Design tokens
  * Near-black editorial canvas, serif display, sans body, mono annotations.
- * Monochrome by design: the only "accent" is a cool grey used for focus and live states.
+ * One accent, a thermal orange, used sparingly: the Sept-Îles to Montréal route, hot points,
+ * the status dot, focus and hover.
  */
 :root {
   --bg: #08090b;
@@ -13,7 +14,10 @@
   /* Decorative strokes only (short rules, bullets, separators). Never for text. */
   --ink-ghost: #5d5e62;
   --line: #27282c;
-  --accent: #9aa6b4;
+  /* 7.0:1 on --bg, 6.6:1 on --bg-raised: usable for text as well as marks. */
+  --accent: #ff6a3d;
+  /* --bg on --accent is 7.0:1, for filled controls. */
+  --on-accent: var(--bg);
 
   --font-display: var(--font-instrument-serif), "Iowan Old Style", "Times New Roman", serif;
   --font-sans: var(--font-geist), "Helvetica Neue", Arial, system-ui, sans-serif;
@@ -84,9 +88,10 @@ a {
 
 a:focus-visible,
 button:focus-visible,
+summary:focus-visible,
 [tabindex]:focus-visible {
-  outline: 1px solid var(--accent);
-  outline-offset: 4px;
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
 }
 
 h1,
