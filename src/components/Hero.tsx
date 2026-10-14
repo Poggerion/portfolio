@@ -2,7 +2,6 @@ import type { CSSProperties } from "react";
 import { profile } from "@/content/profile";
 import { ui } from "@/content/ui";
 import { t, type Locale } from "@/lib/i18n";
-import { basePath } from "@/lib/site";
 import styles from "./Hero.module.css";
 
 /** Letters rise one by one in the intro. The heading keeps its plain text for assistive tech. */
@@ -27,12 +26,6 @@ export function Hero({ lang }: { lang: Locale }) {
   const signatureLang = sharedSignature && lang !== SIGNATURE_LANG ? SIGNATURE_LANG : undefined;
   return (
     <section className={styles.hero} aria-labelledby="hero-title">
-      <div className={styles.stage} aria-hidden="true">
-        {/* Static render of the sculpture: first paint, no-WebGL and reduced-motion fallback. */}
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img className={styles.fallback} src={`${basePath}/sculpture.svg`} alt="" width={1000} height={1000} />
-      </div>
-
       <div className={`wrap ${styles.grid}`}>
         <p className={`mono ${styles.signature}`} lang={signatureLang}>
           <span className={styles.sigRule} aria-hidden="true" />

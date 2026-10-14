@@ -33,11 +33,6 @@
   opacity: 1;
 }
 
-/* Nothing scrolls under it in the creative mode: the scene stays open to the top. */
-:global(html[data-mode="creative"]) .header::after {
-  opacity: 0;
-}
-
 .inner {
   position: relative;
   display: flex;
@@ -128,83 +123,6 @@
   color: var(--ink);
 }
 
-.nav {
-  transition:
-    opacity 0.45s var(--ease-out),
-    transform 0.6s var(--ease-out);
-}
-
-:global(html[data-mode="creative"]) .nav {
-  opacity: 0;
-  transform: translateY(-6px);
-  pointer-events: none;
-  visibility: hidden;
-  transition:
-    opacity 0.4s var(--ease-out),
-    transform 0.5s var(--ease-out),
-    visibility 0s linear 0.5s;
-}
-
-.mode {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.6rem;
-  padding: 0.45rem 0.8rem 0.45rem 0.6rem;
-  border: 1px solid var(--line);
-  border-radius: 999px;
-  background: var(--bg);
-  color: var(--ink-muted);
-  font-family: var(--font-mono);
-  font-size: var(--text-xs);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  transition:
-    color 0.3s var(--ease-out),
-    border-color 0.3s var(--ease-out),
-    background 0.3s var(--ease-out);
-}
-
-.mode:hover {
-  color: var(--ink);
-  border-color: var(--ink-faint);
-}
-
-.mode[data-active="true"] {
-  color: var(--ink);
-  background: var(--bg-raised);
-}
-
-/* The creative mode needs scripts: without them (no .js on <html>) the toggle is not offered. */
-:global(html:not(.js)) .mode {
-  display: none;
-}
-
-.modeIcon {
-  position: relative;
-  width: 14px;
-  height: 14px;
-}
-
-.modeIcon span {
-  position: absolute;
-  inset: 0;
-  border: 1px solid currentColor;
-  border-radius: 50%;
-  transition: transform 0.9s var(--ease-out);
-}
-
-.modeIcon span:last-child {
-  transform: scale(0.45);
-}
-
-.modeIcon[data-on="true"] span:first-child {
-  transform: translateX(-3px) scale(0.62);
-}
-
-.modeIcon[data-on="true"] span:last-child {
-  transform: translateX(3px) scale(0.62);
-}
-
 @media (max-width: 720px) {
   .inner {
     flex-wrap: wrap;
@@ -220,19 +138,5 @@
 
   .nav ul {
     gap: 1.1rem;
-  }
-
-  .mode {
-    padding: 0.4rem 0.65rem 0.4rem 0.5rem;
-  }
-}
-
-@media (max-width: 380px) {
-  .modeLabel {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    overflow: hidden;
-    clip-path: inset(50%);
   }
 }

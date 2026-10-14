@@ -3,7 +3,6 @@ import { profile } from "@/content/profile";
 import { ui } from "@/content/ui";
 import { homePath, t, type Locale } from "@/lib/i18n";
 import { LanguageSwitch } from "./LanguageSwitch";
-import { ModeToggle } from "./ModeToggle";
 import styles from "./SiteHeader.module.css";
 
 const navItems = [
@@ -21,7 +20,7 @@ export function SiteHeader({ lang }: { lang: Locale }) {
         <Link href={home} className={styles.name} aria-label={`${profile.name}, ${t(ui.home, lang)}`}>
           {profile.name}
         </Link>
-        <nav aria-label={lang === "fr" ? "Navigation principale" : "Main navigation"} className={styles.nav} data-pro-only>
+        <nav aria-label={lang === "fr" ? "Navigation principale" : "Main navigation"} className={styles.nav}>
           <ul>
             {navItems.map((item) => (
               <li key={item.id}>
@@ -32,7 +31,6 @@ export function SiteHeader({ lang }: { lang: Locale }) {
             ))}
           </ul>
         </nav>
-        <ModeToggle lang={lang} />
         <LanguageSwitch lang={lang} />
       </div>
     </header>

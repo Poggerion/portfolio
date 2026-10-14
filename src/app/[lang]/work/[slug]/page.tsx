@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { CSSProperties } from "react";
-import { ProjectGlyph } from "@/components/ProjectGlyph";
 import { Footer } from "@/components/sections";
 import { Words } from "@/components/Words";
 import { domains, profile } from "@/content/profile";
@@ -73,10 +72,6 @@ export default async function CaseStudy({ params }: PageProps<"/[lang]/work/[slu
               {t(project.summary, lang)}
             </p>
           </div>
-          <figure className={styles.visual} data-reveal="" style={delay(200)}>
-            <ProjectGlyph index={index} className={styles.glyph} />
-            <figcaption className="mono">{t(ui.abstractVisual, lang)}</figcaption>
-          </figure>
           <span className={styles.rule} data-reveal="line" style={delay(450)} aria-hidden="true" />
         </header>
 

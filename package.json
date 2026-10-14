@@ -4,7 +4,6 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "sculpture": "node scripts/generate-fallback.ts",
     "build": "next build",
     "typecheck": "next typegen && tsc --noEmit",
     "lint": "eslint",

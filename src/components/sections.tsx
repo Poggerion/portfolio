@@ -9,7 +9,6 @@ import type { Localized } from "@/content/types";
 import { casePath, t, type Locale } from "@/lib/i18n";
 import { basePath } from "@/lib/site";
 import { CopyButton } from "./CopyButton";
-import { WorkPreview } from "./WorkPreview";
 import { Words } from "./Words";
 import styles from "./sections.module.css";
 
@@ -90,9 +89,6 @@ export function Work({ lang }: { lang: Locale }) {
               <Link
                 href={casePath(lang, p.slug)}
                 className={styles.featuredRow}
-                data-project={p.slug}
-                data-domain={p.domains[0]}
-                data-glyph={projects.indexOf(p)}
               >
                 <span className={`mono ${styles.rowMeta}`}>
                   {t(p.period, lang)}
@@ -113,9 +109,6 @@ export function Work({ lang }: { lang: Locale }) {
               <Link
                 href={casePath(lang, p.slug)}
                 className={styles.otherCard}
-                data-project={p.slug}
-                data-domain={p.domains[0]}
-                data-glyph={projects.indexOf(p)}
               >
                 <span className={`mono ${styles.rowMeta}`}>
                   {t(p.period, lang)}
@@ -128,7 +121,6 @@ export function Work({ lang }: { lang: Locale }) {
           ))}
         </ul>
       </div>
-      <WorkPreview caption={t(ui.abstractVisual, lang)} />
     </section>
   );
 }
@@ -139,7 +131,7 @@ export function ExperienceList({ lang }: { lang: Locale }) {
       <Head id="experience" label={ui.sections.experience} lang={lang} aside="2023 — 2025" />
       <ol className={styles.timeline}>
         {experiences.map((xp) => (
-          <li key={xp.id} className={styles.job} data-reveal="" data-domain={xp.domains[0]} data-project={xp.caseStudy}>
+          <li key={xp.id} className={styles.job} data-reveal="">
             <p className={`mono ${styles.when}`}>{t(xp.period, lang)}</p>
             <div className={styles.jobBody}>
               <h3 className={styles.jobTitle}>{t(xp.heading, lang)}</h3>

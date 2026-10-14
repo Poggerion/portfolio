@@ -56,7 +56,6 @@ html {
   background: var(--bg);
   -webkit-text-size-adjust: 100%;
   scroll-behavior: smooth;
-  /* Classic scrollbars: keep the gutter when the creative mode locks scrolling, so nothing shifts. */
   scrollbar-gutter: stable;
 }
 
@@ -173,11 +172,6 @@ canvas {
   transform: none;
 }
 
-/* #content is hidden in the creative mode, so the link would lead nowhere. */
-html[data-mode="creative"] .skip-link {
-  display: none;
-}
-
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
@@ -250,39 +244,4 @@ html[data-mode="creative"] .skip-link {
 
 .motion [data-reveal="words"].is-in .w > span {
   transform: none;
-}
-
-/* ---------- Mode transition ----------
- * html[data-mode] is set by the mode controller. Editorial content steps back,
- * the creative interface steps forward.
- */
-.editorial {
-  position: relative;
-  z-index: 1;
-  transition:
-    opacity 0.55s var(--ease-out),
-    filter 0.55s var(--ease-out),
-    transform 0.7s var(--ease-out),
-    visibility 0s linear 0s;
-}
-
-html[data-mode="creative"] .editorial {
-  opacity: 0;
-  filter: blur(6px);
-  transform: translate3d(0, -1.5vh, 0) scale(0.995);
-  visibility: hidden;
-  pointer-events: none;
-  transition:
-    opacity 0.5s var(--ease-out),
-    filter 0.5s var(--ease-out),
-    transform 0.6s var(--ease-out),
-    visibility 0s linear 0.6s;
-}
-
-html[data-mode="creative"] body {
-  overflow: hidden;
-}
-
-html.mode-returning .editorial {
-  transition-delay: 0.35s;
 }

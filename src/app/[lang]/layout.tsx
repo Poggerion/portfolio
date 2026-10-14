@@ -10,11 +10,10 @@ import { RevealObserver } from "@/components/RevealObserver";
 import "../globals.css";
 
 /**
- * Runs before first paint. .js: scripts run (the mode toggle needs them). .motion: reveal
- * animations can complete. data-mode: deep link to the creative mode. data-scrolled: content
- * passes under the fixed header, which then gets its backdrop.
+ * Runs before first paint. .js: scripts run. .motion: reveal animations can complete.
+ * data-scrolled: content passes under the fixed header, which then gets its backdrop.
  */
-const bootScript = `(function(){try{var d=document.documentElement;d.classList.add("js");if("IntersectionObserver" in window&&!matchMedia("(prefers-reduced-motion: reduce)").matches){d.classList.add("motion")}var q=new URLSearchParams(location.search);if(q.get("mode")==="creative"&&/\\/(fr|en)\\/?$/.test(location.pathname)){d.dataset.mode="creative"}var s=function(){d.toggleAttribute("data-scrolled",window.scrollY>8)};addEventListener("scroll",s,{passive:true});s()}catch(e){}})();`;
+const bootScript = `(function(){try{var d=document.documentElement;d.classList.add("js");if("IntersectionObserver" in window&&!matchMedia("(prefers-reduced-motion: reduce)").matches){d.classList.add("motion")}var s=function(){d.toggleAttribute("data-scrolled",window.scrollY>8)};addEventListener("scroll",s,{passive:true});s()}catch(e){}})();`;
 
 const serif = Instrument_Serif({
   variable: "--font-instrument-serif",

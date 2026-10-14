@@ -4,17 +4,14 @@ Portfolio de Felipe Portugal, étudiant en génie logiciel à l'ÉTS.
 
 **En ligne : [poggerion.github.io/portfolio](https://poggerion.github.io/portfolio/)**
 
-Site statique bilingue (français et anglais). Le mode professionnel présente le parcours, les projets et les compétences. Le mode créatif transforme la sculpture 3D de l'accueil en quatre domaines à explorer : logiciel, robotique, systèmes embarqués, données et infrastructure.
+Site statique bilingue (français et anglais) qui présente le parcours, les projets et les compétences.
 
 ## Technologies
 
 - Next.js (App Router, export statique) et React, en TypeScript
-- Three.js pour la sculpture, générée de façon procédurale (aucun modèle 3D importé)
 - CSS Modules, sans bibliothèque d'interface
 - Vitest et ESLint
 - GitHub Actions et GitHub Pages pour le déploiement
-
-Le site reste lisible sans WebGL et respecte la préférence « mouvement réduit » : une image SVG de la même sculpture remplace alors la scène 3D.
 
 ## Lancer en local
 
@@ -53,16 +50,7 @@ src/
     [lang]/            accueil par langue
     [lang]/work/[slug] études de cas, une URL partageable par projet
   components/          composants de présentation
-    sculpture/         scène WebGL (three.js) de la sculpture
-    creative/          mode créatif
   content/             contenu bilingue, séparé de la présentation
-  lib/
-    sculpture/         géométrie procédurale de la sculpture (partagée entre WebGL et SVG)
-scripts/
-  generate-fallback.ts rendu SVG statique de la sculpture vers public/sculpture.svg
-tests/                 tests du contenu et de la géométrie
+  lib/                 outils de langue et d'URL
+tests/                 tests du contenu
 ```
-
-## Sculpture
-
-`src/lib/sculpture/geometry.ts` génère un faisceau de filaments tressés le long d'un nœud de tore. La même géométrie alimente la scène WebGL (`src/components/sculpture/`) et l'image SVG statique (`npm run sculpture`, vers `public/sculpture.svg`).
