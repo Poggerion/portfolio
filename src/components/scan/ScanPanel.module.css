@@ -10,8 +10,16 @@
     top: 0;
     height: 100vh;
     height: 100svh;
-    border-left: 1px solid var(--line);
     overflow: hidden;
+  }
+
+  /* The dividing rule starts under the header, so it never runs through the menu. */
+  .panel::before {
+    content: "";
+    position: absolute;
+    inset: 4.5rem auto 0 0;
+    width: 1px;
+    background: var(--line);
   }
 }
 
