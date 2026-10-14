@@ -31,9 +31,14 @@ export const ui = {
     education: { fr: "Formation", en: "Education" },
     contact: { fr: "Contact", en: "Contact" },
   },
+  /** Contact title in two halves, the second in italics. The point cloud writes it too. */
+  contactTitle: {
+    a: { fr: "Au plaisir", en: "Always happy" },
+    b: { fr: "d’échanger.", en: "to talk." },
+  },
   contactLead: {
-    fr: "Vous offrez un stage à l’hiver 2027 ou un emploi étudiant à Montréal? Écrivez-moi.",
-    en: "Offering a winter 2027 internship or a student job in Montréal? Get in touch.",
+    fr: "Je suis disponible pour un stage à l’hiver 2027, à Montréal. Le courriel reste le moyen le plus simple de me joindre.",
+    en: "I’m available for a winter 2027 internship in Montréal. Email is the easiest way to reach me.",
   },
   email: { fr: "Courriel", en: "Email" },
   copy: { fr: "Copier", en: "Copy" },

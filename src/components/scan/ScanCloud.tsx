@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import type { Locale } from "@/lib/i18n";
+import { ui } from "@/content/ui";
+import { t, type Locale } from "@/lib/i18n";
 import { basePath } from "@/lib/site";
 import { useScan } from "@/lib/scan-store";
 import type { Pose, ScanCloudRenderer, Shape } from "./cloud";
@@ -9,6 +10,8 @@ import styles from "./ScanPanel.module.css";
 
 /** Built shapes in public/clouds/ (npm run clouds); "yarn" and "text" are made in the browser. */
 type ShapeName = "yarn" | "face" | "quebec" | "phone" | "spot" | "board" | "cegep" | "ets" | "text";
+
+const NAMES: ShapeName[] = ["yarn", "face", "quebec", "phone", "spot", "board", "cegep", "ets", "text"];
 
 /** The shape each section shows, and the one a hovered project shows. */
 function shapeFor(section: string, variant: string | null, project: string | null): ShapeName {
@@ -37,14 +40,14 @@ function shapeFor(section: string, variant: string | null, project: string | nul
 
 /**
  * Wide screens: the cloud fills the right part of the page beside the text, all the way down.
- * Narrow screens: it only shows, faint, behind the hero and the contact.
+ * Narrow screens: it only shows, faint, behind the hero (elsewhere it would sit behind the text).
+ * Each shape fits its box whatever its proportions (see Pose).
  */
 function poseFor(section: string): Pose {
   const w = window.innerWidth;
   const h = window.innerHeight;
-  if (w >= 1024) return { x: 0.55, y: -0.02, size: Math.min(0.74, (0.4 * w) / h), opacity: 1 };
-  const loud = section === "top" || section === "contact";
-  return { x: 0.45, y: 0.4, size: 0.5, opacity: loud ? 0.3 : 0 };
+  if (w >= 1024) return { x: 0.53, y: -0.02, size: Math.min(0.72, (0.4 * w) / h), width: 0.38, opacity: 1 };
+  return { x: 0.45, y: 0.4, size: 0.5, width: 0.9, opacity: section === "top" ? 0.3 : 0 };
 }
 
 function hasWebGL(): boolean {
@@ -105,7 +108,7 @@ export function ScanCloud({ lang }: { lang: Locale }) {
           else if (name === "text") {
             const title = document.getElementById("contact-title");
             const family = title ? getComputedStyle(title).fontFamily : "serif";
-            const lines = lang === "fr" ? ["Construisons", "la suite."] : ["Let’s build", "what’s next."];
+            const lines = [t(ui.contactTitle.a, lang), t(ui.contactTitle.b, lang)];
             p = document.fonts
               .load(`220px ${family}`)
               .catch(() => [])
@@ -115,6 +118,8 @@ export function ScanCloud({ lang }: { lang: Locale }) {
               .then((r) => (r.ok ? r.arrayBuffer() : Promise.reject(new Error(r.statusText))))
               .then(mod.decodeShape);
           }
+          // Every shape gets the same light dust around it, drawn from its own seed.
+          p = p.then((shape) => mod.withDust(shape, NAMES.indexOf(name) + 1));
           cache.set(name, p);
         }
         return p;

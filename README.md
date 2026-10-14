@@ -33,7 +33,7 @@ Pour prévisualiser l'export, servir `out/` avec n'importe quel serveur de fichi
 
 ## Nuages de points
 
-Le nuage derrière la page change de forme selon la section : portrait, carte du Québec, téléphone, Spot, carte électronique, Cégep, ÉTS, puis le titre du contact. Les formes sont précalculées dans `public/clouds/` (16 384 points par forme, 8 octets par point) avec un aperçu fixe en WebP.
+Le nuage derrière la page change de forme selon la section : portrait, carte du Québec, téléphone, Spot, carte électronique, Cégep, ÉTS, puis le titre du contact. Les formes sont précalculées dans `public/clouds/` (16 384 points par forme, 8 octets par point) avec un aperçu fixe en WebP. Un point sur vingt flotte autour de la forme, en léger bruit d’ambiance.
 
 ```sh
 npm run clouds     # régénère public/clouds/ à partir de cloud-sources/

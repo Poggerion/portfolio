@@ -101,52 +101,77 @@ interface PhotoOptions {
   /** Crop in source pixels, before resizing. */
   crop?: { left: number; top: number; width: number; height: number };
   width: number;
-  /** Ignore pixels close to the background colour (sampled in the corners). */
-  maskBackground?: number;
-  /** Weight of edges and of brightness in the sampling. */
+  /**
+   * Background to leave out, found by flood fill from the image border (or its top edge only).
+   * Global: pixels whose luminance is close to the corners'. Step: pixels close in colour to the
+   * neighbour the fill came from, which follows a sky gradient up to the subject's outline.
+   */
+  mask?: { tolerance: number; from?: "border" | "top"; step?: boolean };
+  /** Weight of edges and of brightness in the sampling; gamma sharpens the brightness (default 2). */
   edge: number;
   light: number;
+  gamma?: number;
+  /** Brightness as luma (default) or as the brightest channel, for coloured lights such as blue LEDs. */
+  brightness?: "luma" | "max";
+  /** Local contrast first (CLAHE), so a face's features stand out from the skin. */
+  contrast?: boolean;
+  /** Extra weight of accent pixels, so a small sign still gets enough points. */
+  accentWeight?: number;
   /** Bright subject on a light background: sample the subject's dark parts too. */
   invert?: boolean;
-  /** Saturated warm pixels (yellow, orange) carry the accent. */
-  warmAccent?: boolean;
+  /** Which pixels carry the accent, from their colour (0..255) and position (0..1). */
+  accent?: (r: number, g: number, b: number, u: number, v: number) => boolean;
+  /** Depth from luminance. */
   relief: number;
+  /** Depth from a half-ellipsoid (centre and radii in 0..1 of the image), so a head has volume. */
+  dome?: { cx: number; cy: number; rx: number; ry: number; depth: number };
   seed: number;
 }
+
+/** Saturated warm pixels (yellow, orange): the safety colours of Spot. */
+const warm = (r: number, g: number, b: number) => Math.max(r, g, b) - Math.min(r, g, b) > 90 && r > 150 && b < 120 && g > 60;
 
 async function photo(o: PhotoOptions): Promise<Point[]> {
   let img = sharp(join(SRC, o.file)).rotate();
   if (o.crop) img = img.extract(o.crop);
-  const { data, info } = await img.resize({ width: o.width }).removeAlpha().raw().toBuffer({ resolveWithObject: true });
+  img = img.resize({ width: o.width });
+  if (o.contrast) img = img.clahe({ width: Math.round(o.width / 8), height: Math.round(o.width / 8), maxSlope: 3 });
+  const { data, info } = await img.removeAlpha().raw().toBuffer({ resolveWithObject: true });
   const w = info.width, h = info.height;
   const lum = new Float32Array(w * h);
-  const warm = new Uint8Array(w * h);
+  const accent = new Uint8Array(w * h);
   for (let k = 0; k < w * h; k++) {
     const r = data[k * 3], g = data[k * 3 + 1], b = data[k * 3 + 2];
-    lum[k] = (0.2126 * r + 0.7152 * g + 0.0722 * b) / 255;
-    const max = Math.max(r, g, b), min = Math.min(r, g, b);
-    warm[k] = max - min > 90 && r > 150 && b < 120 && g > 60 ? 1 : 0;
+    lum[k] = (o.brightness === "max" ? Math.max(r, g, b) : 0.2126 * r + 0.7152 * g + 0.0722 * b) / 255;
+    accent[k] = o.accent?.(r, g, b, (k % w) / w, Math.floor(k / w) / h) ? 1 : 0;
   }
-  // Background colour: median of the four corners' luminance.
-  const corners = [0, w - 1, (h - 1) * w, h * w - 1].map((k) => lum[k]).sort((a, b) => a - b);
-  const bg = (corners[1] + corners[2]) / 2;
-  // Background: the region close to the corner colour that touches the border (flood fill), so
-  // light areas inside the subject (a forehead, teeth, a white shirt) are kept.
+  // Background: the region that touches the border (flood fill), so light areas inside the
+  // subject (a forehead, teeth, a white shirt) are kept.
   const background = new Uint8Array(w * h);
-  if (o.maskBackground !== undefined) {
-    const near = (k: number) => Math.abs(lum[k] - bg) <= o.maskBackground!;
+  if (o.mask) {
+    const { tolerance, from = "border", step = false } = o.mask;
+    const corners = (from === "top" ? [0, w - 1] : [0, w - 1, (h - 1) * w, h * w - 1]).map((k) => lum[k]).sort((a, b) => a - b);
+    const bg = corners.length === 2 ? (corners[0] + corners[1]) / 2 : (corners[1] + corners[2]) / 2;
+    const colourGap = (a: number, b: number) =>
+      Math.max(Math.abs(data[a * 3] - data[b * 3]), Math.abs(data[a * 3 + 1] - data[b * 3 + 1]), Math.abs(data[a * 3 + 2] - data[b * 3 + 2])) / 255;
+    const near = (k: number, prev: number) => (step ? prev < 0 || colourGap(k, prev) <= tolerance : Math.abs(lum[k] - bg) <= tolerance);
+    // Pairs of (pixel, pixel the fill came from).
     const queue: number[] = [];
-    for (let x = 0; x < w; x++) queue.push(x, (h - 1) * w + x);
-    for (let y = 0; y < h; y++) queue.push(y * w, y * w + w - 1);
+    for (let x = 0; x < w; x++) {
+      queue.push(x, -1);
+      if (from === "border") queue.push((h - 1) * w + x, -1);
+    }
+    if (from === "border") for (let y = 0; y < h; y++) queue.push(y * w, -1, y * w + w - 1, -1);
     while (queue.length) {
+      const prev = queue.pop()!;
       const k = queue.pop()!;
-      if (background[k] || !near(k)) continue;
+      if (background[k] || !near(k, prev)) continue;
       background[k] = 1;
       const x = k % w;
-      if (x > 0) queue.push(k - 1);
-      if (x < w - 1) queue.push(k + 1);
-      if (k >= w) queue.push(k - w);
-      if (k < w * (h - 1)) queue.push(k + w);
+      if (x > 0) queue.push(k - 1, k);
+      if (x < w - 1) queue.push(k + 1, k);
+      if (k >= w) queue.push(k - w, k);
+      if (k < w * (h - 1)) queue.push(k + w, k);
     }
   }
   const inside = (k: number) => !background[k];
@@ -162,7 +187,7 @@ async function photo(o: PhotoOptions): Promise<Point[]> {
       const gy = -L(-1, -1) - 2 * L(0, -1) - L(1, -1) + L(-1, 1) + 2 * L(0, 1) + L(1, 1);
       const edge = Math.min(1, Math.hypot(gx, gy) / 2);
       const tone = o.invert ? 1 - lum[k] * 0.6 : lum[k];
-      const v = o.edge * edge + o.light * tone * tone + 0.02;
+      const v = (o.edge * edge + o.light * tone ** (o.gamma ?? 2) + 0.02) * (accent[k] ? (o.accentWeight ?? 1) : 1);
       weight[k] = v;
       total += v;
     }
@@ -174,7 +199,8 @@ async function photo(o: PhotoOptions): Promise<Point[]> {
   for (let k = 0; k < w * h; k++) cdf[k] = acc += weight[k] / total;
   const points: Point[] = [];
   for (let n = 0; n < COUNT; n++) {
-    const r = rand();
+    // Stratified: one sample per slice of the CDF, so the points spread evenly (less clumping).
+    const r = (n + rand()) / COUNT;
     let lo = 0, hi = cdf.length - 1;
     while (lo < hi) {
       const mid = (lo + hi) >> 1;
@@ -182,15 +208,22 @@ async function photo(o: PhotoOptions): Promise<Point[]> {
       else hi = mid;
     }
     const x = lo % w, y = Math.floor(lo / w);
+    let z = (lum[lo] - 0.5) * o.relief * 2 + (rand() - 0.5) * 0.04;
+    if (o.dome) {
+      const { cx, cy, rx, ry, depth } = o.dome;
+      const d = 1 - ((x / w - cx) / rx) ** 2 - ((y / h - cy) / ry) ** 2;
+      z += depth * (Math.sqrt(Math.max(0, d)) - 0.5);
+    }
     points.push({
       x: x + rand() - 0.5,
       y: -(y + rand() - 0.5),
-      z: (lum[lo] - 0.5) * o.relief * 2 + (rand() - 0.5) * 0.04,
+      z,
       i: 70 + lum[lo] * 185,
-      accent: !!o.warmAccent && warm[lo] === 1 && rand() < 0.6,
+      accent: accent[lo] === 1 && rand() < 0.6,
     });
   }
-  return normalize(points);
+  // Samples come out in reading order: shuffle so every prefix covers the whole picture.
+  return normalize(shuffle(points, rand));
 }
 
 /* ---------- Procedural shapes ---------- */
@@ -344,30 +377,6 @@ function quebec(): Point[] {
   return finish(pts, rand);
 }
 
-/**
- * Stand-in for ÉTS building A until Felipe sends his own photo: a long facade with a grid of
- * windows and a central entrance.
- */
-function facade(): Point[] {
-  const rand = rng(41);
-  const pts: Point[] = [];
-  const add = (xy: [number, number][], i: number, accent = false, z = 0) =>
-    xy.forEach(([x, y]) => pts.push({ x, y, z: z + (rand() - 0.5) * 0.03, i, accent }));
-  add(alongPath(rectPath(-1, -0.5, 2, 1), 2600, rand, 0.01), 230);
-  add(alongPath([[-1.03, 0.5], [1.03, 0.5]], 600, rand, 0.01), 250, false, 0.05);
-  for (let r = 0; r < 5; r++) {
-    for (let c = 0; c < 16; c++) {
-      if (r < 2 && c >= 7 && c <= 8) continue;
-      const x = -0.94 + c * 0.118, y = 0.3 - r * 0.17;
-      add(alongPath(rectPath(x, y, 0.07, 0.11), 70, rand, 0.003), 180);
-      add(fillRect(x + 0.01, y + 0.01, 0.05, 0.09, 30, rand), 90 + rand() * 120, false, -0.02);
-    }
-  }
-  add(alongPath(rectPath(-0.12, -0.5, 0.24, 0.32), 500, rand, 0.004), 240, false, 0.04);
-  add(fillRect(-0.1, -0.48, 0.2, 0.28, 400, rand), 200, false, 0.02);
-  return finish(pts, rand);
-}
-
 /** Trims or pads to exactly COUNT points, then shuffles so every prefix is an even sample. */
 function finish(pts: Point[], rand: () => number): Point[] {
   shuffle(pts, rand);
@@ -381,27 +390,67 @@ function finish(pts: Point[], rand: () => number): Point[] {
 /* ---------- Shapes ---------- */
 
 const shapes: Record<string, () => Promise<Point[]> | Point[]> = {
-  // Head and shoulders from Felipe's portrait (3378 × 5067).
+  // Felipe's face, from the top of the hair to the neck (portrait 3378 × 5067).
   face: () =>
     photo({
       file: "portrait.jpg",
-      crop: { left: 950, top: 40, width: 2100, height: 2150 },
-      width: 380,
-      maskBackground: 0.1,
-      edge: 3,
-      light: 1.2,
-      relief: 0.2,
+      crop: { left: 1420, top: 170, width: 1160, height: 1600 },
+      width: 420,
+      mask: { tolerance: 0.1, from: "top" },
+      edge: 0.3,
+      light: 2,
+      gamma: 4.5,
+      contrast: true,
+      relief: 0.12,
+      dome: { cx: 0.5, cy: 0.5, rx: 0.5, ry: 0.56, depth: 0.5 },
       seed: 3,
     }),
   quebec,
   phone,
   board,
   spot: () =>
-    photo({ file: "spot-reference.png", width: 520, maskBackground: 0.06, edge: 1.4, light: 0.25, invert: true, warmAccent: true, relief: 0.12, seed: 5 }),
-  ets: facade,
-  // The lit facade with its pixel trees and the name, without the sky on the left.
+    photo({
+      file: "spot-reference.png",
+      width: 520,
+      mask: { tolerance: 0.06 },
+      edge: 1.4,
+      light: 0.25,
+      invert: true,
+      accent: warm,
+      relief: 0.12,
+      seed: 5,
+    }),
+  // ÉTS, pavillon A at dusk: the round tower and its red sign, without the sky and the street.
+  ets: () =>
+    photo({
+      file: "ets-photo.png",
+      crop: { left: 0, top: 20, width: 538, height: 268 },
+      width: 538,
+      mask: { tolerance: 0.035, from: "top", step: true },
+      edge: 0.8,
+      light: 2,
+      gamma: 2.5,
+      accent: (r, g, b, u, v) => r > 170 && g < 90 && b < 110 && u > 0.38 && u < 0.6 && v < 0.4,
+      accentWeight: 4,
+      relief: 0.1,
+      seed: 11,
+    }),
+  // Cégep de Sept-Îles: the LED facade and its name, the end of the long building beside it, no sky.
   cegep: () =>
-    photo({ file: "cegep-reference.png", crop: { left: 112, top: 0, width: 163, height: 170 }, width: 163, edge: 0.5, light: 1.6, relief: 0.1, seed: 7 }),
+    photo({
+      file: "cegep-photo.png",
+      crop: { left: 560, top: 100, width: 1488, height: 1030 },
+      width: 640,
+      mask: { tolerance: 0.05, from: "top", step: true },
+      edge: 0.4,
+      light: 2,
+      gamma: 3,
+      brightness: "max",
+      accentWeight: 2,
+      accent: (r, g, b, u, v) => r > 200 && g > 200 && b > 200 && u > 0.25 && u < 0.455 && v > 0.69 && v < 0.8,
+      relief: 0.1,
+      seed: 7,
+    }),
 };
 
 async function main() {

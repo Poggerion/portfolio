@@ -60,6 +60,33 @@ export function buildYarn(count = POINTS.full): Shape {
   return { position, intensity, accent };
 }
 
+/** One point in this many is dust: faint, drifting around the shape, never an accent. */
+export const DUST_EVERY = 20;
+
+/** Standard normal sample (Box–Muller). */
+function gauss(rand: () => number): number {
+  return Math.sqrt(-2 * Math.log(1 - rand())) * Math.cos(2 * Math.PI * rand());
+}
+
+/**
+ * Light ambient noise: every DUST_EVERY-th point leaves the shape and floats nearby, faint, so
+ * the cloud has some air around it while the shape stays sharp. Most dust stays close; a little
+ * drifts further out.
+ */
+export function withDust(shape: Shape, seed: number): Shape {
+  const rand = rng(seed);
+  const position = shape.position.slice();
+  const intensity = shape.intensity.slice();
+  const accent = shape.accent.slice();
+  for (let i = 0; i < intensity.length; i += DUST_EVERY) {
+    const spread = rand() < 0.75 ? 0.05 + 0.1 * rand() : 0.2 + 0.2 * rand();
+    for (let k = 0; k < 3; k++) position[i * 3 + k] += gauss(rand) * spread;
+    intensity[i] = 0.18 + 0.27 * rand();
+    accent[i] = 0;
+  }
+  return { position, intensity, accent };
+}
+
 /** Decodes a .bin from scripts/build-clouds.mts: Int16 x, y, z, Uint8 intensity, Uint8 accent. */
 export function decodeShape(buffer: ArrayBuffer): Shape {
   const view = new DataView(buffer);
@@ -124,6 +151,7 @@ attribute float aFromA;
 attribute float aToI;
 attribute float aToA;
 attribute float aSeed;
+attribute float aDust;
 uniform float uTime;
 uniform float uSize;
 uniform float uProgress;
@@ -144,11 +172,13 @@ void main() {
   p.z += sin(t * 3.14159) * (aSeed - 0.5) * 0.5;
   // Breathing at rest.
   p += 0.005 * vec3(sin(uTime * 0.7 + aSeed * 40.0), cos(uTime * 0.6 + aSeed * 23.0), sin(uTime * 0.5 + aSeed * 11.0));
+  // Dust drifts slowly.
+  p += aDust * 0.05 * vec3(sin(uTime * 0.13 + aSeed * 61.0), cos(uTime * 0.11 + aSeed * 37.0), sin(uTime * 0.09 + aSeed * 17.0));
   vec4 mv = modelViewMatrix * vec4(p, 1.0);
   gl_Position = projectionMatrix * mv;
   gl_PointSize = uSize * (0.7 + 0.5 * fract(aSeed * 9.1)) * (6.0 / -mv.z);
   float depth = clamp((-mv.z - 5.2) / 1.6, 0.0, 1.0);
-  vScan = sin(t * 3.14159);
+  vScan = sin(t * 3.14159) * (1.0 - aDust);
   vAlpha = (1.0 - depth * 0.7) * mix(aFromI, aToI, t);
   vAccent = mix(aFromA, aToA, t);
 }
@@ -171,12 +201,29 @@ void main() {
 }
 `;
 
-/** Where the cloud sits: x, y in fractions of the half viewport, size: shape height / viewport height. */
+/**
+ * Where the cloud sits: centre x, y in fractions of the half viewport; the shape fits a box of
+ * half-height `size` (fraction of the half viewport height) and half-width `width` (fraction of
+ * the half viewport width), so wide shapes (a building) do not run off the screen.
+ */
 export interface Pose {
   x: number;
   y: number;
   size: number;
+  width: number;
   opacity: number;
+}
+
+/** Half extents of a shape, dust left out. */
+function extent(shape: Shape): { x: number; y: number } {
+  let x = 0.01;
+  let y = 0.01;
+  for (let i = 0; i < shape.intensity.length; i++) {
+    if (i % DUST_EVERY === 0) continue;
+    x = Math.max(x, Math.abs(shape.position[i * 3]));
+    y = Math.max(y, Math.abs(shape.position[i * 3 + 1]));
+  }
+  return { x, y };
 }
 
 /** Morph from one shape to the next: 1.4 s, the scan sweeping down the new shape. */
@@ -202,6 +249,9 @@ export class ScanCloudRenderer {
   private progress = 1;
   private running = false;
   private current: Shape;
+  private ext: { x: number; y: number };
+  /** Scale of the group, eased toward the one that fits the current shape in the pose's box. */
+  private scale = 0;
 
   constructor(
     canvas: HTMLCanvasElement,
@@ -215,7 +265,11 @@ export class ScanCloudRenderer {
     const n = POINTS.full;
     const seed = new Float32Array(n);
     const rand = rng(99);
-    for (let i = 0; i < n; i++) seed[i] = rand();
+    const dust = new Float32Array(n);
+    for (let i = 0; i < n; i++) {
+      seed[i] = rand();
+      dust[i] = i % DUST_EVERY === 0 ? 1 : 0;
+    }
     const attr = (array: Float32Array, size: number) => new THREE.BufferAttribute(array, size).setUsage(THREE.DynamicDrawUsage);
     this.geometry.setAttribute("position", attr(first.position.slice(), 3));
     this.geometry.setAttribute("aFrom", attr(first.position.slice(), 3));
@@ -224,8 +278,10 @@ export class ScanCloudRenderer {
     this.geometry.setAttribute("aFromA", attr(first.accent.slice(), 1));
     this.geometry.setAttribute("aToA", attr(first.accent.slice(), 1));
     this.geometry.setAttribute("aSeed", new THREE.BufferAttribute(seed, 1));
+    this.geometry.setAttribute("aDust", new THREE.BufferAttribute(dust, 1));
     this.geometry.setDrawRange(0, count);
     this.current = first;
+    this.ext = extent(first);
     this.material = new THREE.ShaderMaterial({
       vertexShader: VERT,
       fragmentShader: FRAG,
@@ -305,6 +361,7 @@ export class ScanCloudRenderer {
     (toA.array as Float32Array).set(shape.accent);
     for (const a of [from, to, fromI, toI, fromA, toA]) a.needsUpdate = true;
     this.current = shape;
+    this.ext = extent(shape);
     if (this.spinning && !spin) this.yaw = Math.atan2(Math.sin(this.yaw), Math.cos(this.yaw));
     this.spinning = spin;
     this.progress = this.still ? 1 : 0;
@@ -330,8 +387,9 @@ export class ScanCloudRenderer {
     const dt = Math.min(0.05, (now - this.last) / 1000);
     this.last = now;
     const k = 1 - Math.exp(-dt * 3);
-    for (const key of ["x", "y", "size", "opacity"] as const) this.pose[key] += (this.target[key] - this.pose[key]) * k;
-    // Nothing to draw while the cloud is hidden (phones, between the hero and the contact).
+    for (const key of ["x", "y", "size", "width", "opacity"] as const) this.pose[key] += (this.target[key] - this.pose[key]) * k;
+    this.scale += (this.fit() - this.scale) * k;
+    // Nothing to draw while the cloud is hidden (phones, past the hero).
     if (this.pose.opacity < 0.004 && this.target.opacity === 0) return;
     this.tilt.x += (this.tiltTarget.x - this.tilt.x) * k;
     this.tilt.y += (this.tiltTarget.y - this.tilt.y) * k;
@@ -351,12 +409,23 @@ export class ScanCloudRenderer {
     this.render();
   };
 
-  private render() {
-    const { x, y, size, opacity } = this.pose;
+  private halves() {
     const halfH = Math.tan((this.camera.fov * Math.PI) / 360) * this.camera.position.z;
-    const halfW = halfH * this.camera.aspect;
+    return { halfH, halfW: halfH * this.camera.aspect };
+  }
+
+  /** The largest scale at which the current shape fits the pose's box. */
+  private fit() {
+    const { halfH, halfW } = this.halves();
+    return Math.min((this.pose.size * halfH) / this.ext.y, (this.pose.width * halfW) / this.ext.x);
+  }
+
+  private render() {
+    const { x, y, opacity } = this.pose;
+    const { halfH, halfW } = this.halves();
+    if (this.still || !this.scale) this.scale = this.fit();
     this.group.position.set(x * halfW, y * halfH, 0);
-    this.group.scale.setScalar(size * halfH);
+    this.group.scale.setScalar(this.scale);
     this.material.uniforms.uOpacity.value = opacity;
     this.renderer.render(this.scene, this.camera);
   }

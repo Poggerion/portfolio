@@ -287,15 +287,11 @@ export function EducationList({ lang }: { lang: Locale }) {
 
 export function Contact({ lang }: { lang: Locale }) {
   const resume = profile.resume[lang];
-  const title =
-    lang === "fr"
-      ? { a: "Construisons", b: "la suite." }
-      : { a: "Let’s build", b: "what’s next." };
   return (
     <section id="contact" className={`col ${styles.section} ${styles.contact}`} aria-labelledby="contact-title">
       <p className={`mono ${styles.contactLabel}`}>{t(ui.sections.contact, lang)}</p>
       <h2 id="contact-title" className={styles.contactTitle}>
-        {title.a} <em>{title.b}</em>
+        {t(ui.contactTitle.a, lang)} <em>{t(ui.contactTitle.b, lang)}</em>
       </h2>
       <p className={styles.contactLead}>{t(ui.contactLead, lang)}</p>
       {/* No-break spaces keep each ↗ with the end of its link text. */}

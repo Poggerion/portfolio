@@ -69,8 +69,8 @@ export const profile = {
   ] satisfies { label: Localized; value: Localized }[],
   about: [
     {
-      fr: "Je suis passionné par l’intelligence artificielle et les systèmes embarqués.",
-      en: "I’m passionate about artificial intelligence and embedded systems.",
+      fr: "Ce qui m’attire le plus\u00a0: l’intelligence artificielle et les systèmes embarqués.",
+      en: "What draws me most: artificial intelligence and embedded systems.",
     },
     {
       fr: "Mon parcours a commencé au Cégep de Sept-Îles, avec un DEC en techniques de l’informatique. J’ai ensuite travaillé à l’Institut technologique de maintenance industrielle (ITMI) : d’abord en robotique, sur le robot Spot de Boston Dynamics en Python et sur la récupération de données de capteurs en Rust, puis sur un système de gestion des stationnements. J’ai été le seul développeur de son application mobile, et j’ai développé son interface web administrateur en PHP.",

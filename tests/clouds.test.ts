@@ -1,7 +1,7 @@
 import { readFileSync, readdirSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
-import { POINTS, decodeShape } from "../src/components/scan/cloud";
+import { DUST_EVERY, POINTS, decodeShape, withDust } from "../src/components/scan/cloud";
 
 const dir = join("public", "clouds");
 const bins = readdirSync(dir).filter((f) => f.endsWith(".bin"));
@@ -47,5 +47,28 @@ describe("point clouds", () => {
     const light = bounds(shape.position, POINTS.light);
     expect(light.maxX - light.minX).toBeGreaterThan((all.maxX - all.minX) * 0.9);
     expect(light.maxY - light.minY).toBeGreaterThan((all.maxY - all.minY) * 0.9);
+  });
+});
+
+describe("dust around a shape", () => {
+  const shape = decodeShape(new Uint8Array(readFileSync(join(dir, "face.bin"))).buffer);
+  const dusty = withDust(shape, 2);
+
+  it("moves only every DUST_EVERY-th point, and keeps it faint and without accent", () => {
+    const wrong: number[] = [];
+    for (let i = 0; i < POINTS.full; i++) {
+      const moved = [0, 1, 2].some((k) => dusty.position[i * 3 + k] !== shape.position[i * 3 + k]);
+      const ok =
+        i % DUST_EVERY === 0
+          ? dusty.intensity[i] < 0.5 && dusty.accent[i] === 0
+          : !moved && dusty.intensity[i] === shape.intensity[i] && dusty.accent[i] === shape.accent[i];
+      if (!ok) wrong.push(i);
+    }
+    expect(wrong).toEqual([]);
+  });
+
+  it("stays light and is the same on every visit", () => {
+    expect(1 / DUST_EVERY).toBeLessThanOrEqual(0.05);
+    expect(withDust(shape, 2).position).toEqual(dusty.position);
   });
 });

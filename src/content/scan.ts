@@ -1,4 +1,5 @@
 import type { Localized } from "./types";
+import { ui } from "./ui";
 
 /**
  * The seven scans of the home page, in reading order. Each section of the page has one; the
@@ -26,7 +27,13 @@ export const scanSections: ScanSection[] = [
     subject: { fr: "Façade · Cégep de Sept-Îles", en: "Facade · Cégep de Sept-Îles" },
     variants: { ets: { fr: "Façade · ÉTS, Montréal", en: "Facade · ÉTS, Montréal" } },
   },
-  { id: "contact", subject: { fr: "« Construisons la suite. »", en: "“Let’s build what’s next.”" } },
+  {
+    id: "contact",
+    subject: {
+      fr: `« ${ui.contactTitle.a.fr} ${ui.contactTitle.b.fr} »`,
+      en: `“${ui.contactTitle.a.en} ${ui.contactTitle.b.en}”`,
+    },
+  },
 ];
 
 /** "03/07" for a section id. */
