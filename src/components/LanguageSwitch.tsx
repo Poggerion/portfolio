@@ -6,7 +6,7 @@ import { ui } from "@/content/ui";
 import { locales, swapLocale, t, type Locale } from "@/lib/i18n";
 import styles from "./SiteHeader.module.css";
 
-/** FR / EN switch. Keeps the current page and, when JavaScript runs, the current mode and section. */
+/** FR / EN switch. Keeps the current page and, when JavaScript runs, the current section. */
 export function LanguageSwitch({ lang }: { lang: Locale }) {
   const pathname = usePathname() ?? `/${lang}/`;
   const router = useRouter();
@@ -31,7 +31,7 @@ export function LanguageSwitch({ lang }: { lang: Locale }) {
                 aria-label={t(ui.switchLanguage, lang)}
                 className={styles.langLink}
                 onClick={(event) => {
-                  // Keep the mode (?mode=creative&domain=…) and the section (#…) across languages.
+                  // Keep the query and the section (#…) across languages.
                   const { search, hash } = window.location;
                   if (search || hash) {
                     event.preventDefault();

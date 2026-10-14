@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { Hero } from "@/components/Hero";
 import { ScanPanel } from "@/components/scan/ScanPanel";
+import { ScanTracker } from "@/components/scan/ScanTracker";
 import { About, Contact, EducationList, ExperienceList, Footer, Skills, Work } from "@/components/sections";
 import { isLocale } from "@/lib/i18n";
 import styles from "./home.module.css";
@@ -23,6 +24,7 @@ export default async function Home({ params }: PageProps<"/[lang]">) {
         </main>
         <ScanPanel lang={lang} />
       </div>
+      <ScanTracker />
       <Footer />
     </>
   );

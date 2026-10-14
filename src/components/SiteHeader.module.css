@@ -33,12 +33,22 @@
   opacity: 1;
 }
 
+/* Same left edge as the home page's reading column; on the right, the scan frame's edge. */
 .inner {
   position: relative;
   display: flex;
   align-items: center;
-  gap: 2rem;
+  gap: clamp(1rem, 2vw, 2rem);
   height: 4.5rem;
+  padding-left: var(--gutter);
+  padding-right: var(--gutter-r);
+}
+
+@media (min-width: 1024px) {
+  .inner {
+    padding-left: clamp(40px, 5vw, 6rem);
+    padding-right: 2.5rem;
+  }
 }
 
 .inner > * {
@@ -46,6 +56,9 @@
 }
 
 .name {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
   font-size: var(--text-sm);
   font-weight: 500;
   letter-spacing: 0.01em;
@@ -54,13 +67,24 @@
 
 .nav ul {
   display: flex;
-  gap: clamp(1.25rem, 2.6vw, 2.5rem);
+  gap: clamp(1rem, 2vw, 2rem);
+}
+
+.wide {
+  display: none;
+}
+
+@media (min-width: 1024px) {
+  .wide {
+    display: block;
+  }
 }
 
 .link,
 .langLink,
 .langActive,
-.langSep {
+.langSep,
+.counter {
   font-family: var(--font-mono);
   font-size: var(--text-xs);
   letter-spacing: 0.08em;
@@ -69,8 +93,11 @@
 
 .link {
   position: relative;
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
   color: var(--ink-muted);
-  transition: color 0.3s var(--ease-out);
+  transition: color 0.25s var(--ease-out);
 }
 
 .link::after {
@@ -78,12 +105,12 @@
   position: absolute;
   left: 0;
   right: 0;
-  bottom: -4px;
+  bottom: 10px;
   height: 1px;
   background: currentColor;
   transform: scaleX(0);
   transform-origin: right;
-  transition: transform 0.45s var(--ease-out);
+  transition: transform 0.35s var(--ease-out);
 }
 
 .link:hover {
@@ -93,6 +120,30 @@
 .link:hover::after {
   transform: scaleX(1);
   transform-origin: left;
+}
+
+/* The section being read: full ink and an accent rule under it. */
+.link[aria-current] {
+  color: var(--ink);
+}
+
+.link[aria-current]::after {
+  background: var(--accent);
+  transform: scaleX(1);
+}
+
+.counter {
+  color: var(--ink-faint);
+  font-variant-numeric: tabular-nums;
+  visibility: hidden;
+}
+
+.counter[data-live] {
+  visibility: visible;
+}
+
+.counterNum {
+  color: var(--ink);
 }
 
 .lang {
@@ -105,9 +156,22 @@
   align-items: center;
 }
 
+.langLink,
+.langActive {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  min-height: 44px;
+}
+
+/* The last code sits flush with the right edge, like the scan frame below it. */
+.langItem:last-child > * {
+  justify-content: flex-end;
+}
+
 .langSep {
   color: var(--ink-faint);
-  padding-inline: 0.4rem;
 }
 
 .langActive {
@@ -123,12 +187,14 @@
   color: var(--ink);
 }
 
+/* Phones: name, counter and language on the first line, the four section links under them. */
 @media (max-width: 720px) {
   .inner {
     flex-wrap: wrap;
     height: auto;
-    row-gap: 0.5rem;
-    padding-block: 0.9rem 0.6rem;
+    column-gap: 1rem;
+    row-gap: 0;
+    padding-block: 0.25rem;
   }
 
   .nav {
@@ -137,6 +203,6 @@
   }
 
   .nav ul {
-    gap: 1.1rem;
+    justify-content: space-between;
   }
 }

@@ -253,7 +253,7 @@ export function EducationList({ lang }: { lang: Locale }) {
       <Head id="education" label={ui.sections.education} lang={lang} />
       <ol className={styles.timeline}>
         {education.map((e) => (
-          <li key={e.id} className={styles.job}>
+          <li key={e.id} className={styles.job} data-scan-variant={e.id === "ets" ? "ets" : undefined}>
             <p className={`mono ${styles.when}`}>{t(e.period, lang)}</p>
             <div className={styles.jobBody}>
               <h3 className={styles.jobTitle}>{t(e.degree, lang)}</h3>

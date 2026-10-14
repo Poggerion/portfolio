@@ -65,26 +65,8 @@ export const skillGroups: SkillGroup[] = [
   },
 ];
 
+/** In order: the Cégep, then ÉTS. The scan follows the same order, from one facade to the other. */
 export const education: Education[] = [
-  {
-    id: "ets",
-    degree: { fr: "Baccalauréat en génie logiciel", en: "Bachelor's in Software Engineering" },
-    school: "École de technologie supérieure (ÉTS)",
-    location: "Montréal",
-    period: { fr: "2024 – mai 2029 (prévu)", en: "2024 – May 2029 (expected)" },
-    courses: [
-      {
-        code: { fr: "LOG240", en: "LOG240" },
-        title: { fr: "Tests et maintenance", en: "Testing and Maintenance" },
-        detail: { fr: "Tests unitaires, d'intégration et boîte noire, couverture.", en: "Unit, integration and black-box testing, coverage." },
-      },
-      {
-        code: { fr: "LOG121", en: "LOG121" },
-        title: { fr: "Conception orientée objet", en: "Object-Oriented Design" },
-        detail: { fr: "JavaFX, MVC, patrons de conception.", en: "JavaFX, MVC, design patterns." },
-      },
-    ],
-  },
   {
     id: "cegep",
     degree: { fr: "DEC en techniques de l'informatique", en: "College Diploma (DEC) in Computer Science Technology" },
@@ -115,6 +97,25 @@ export const education: Education[] = [
           fr: "Cours basés sur le curriculum Cisco CCNA : OSPF, VLAN, VPN IPsec.",
           en: "Courses based on the Cisco CCNA curriculum: OSPF, VLANs, IPsec VPN.",
         },
+      },
+    ],
+  },
+  {
+    id: "ets",
+    degree: { fr: "Baccalauréat en génie logiciel", en: "Bachelor's in Software Engineering" },
+    school: "École de technologie supérieure (ÉTS)",
+    location: "Montréal",
+    period: { fr: "2024 – mai 2029 (prévu)", en: "2024 – May 2029 (expected)" },
+    courses: [
+      {
+        code: { fr: "LOG240", en: "LOG240" },
+        title: { fr: "Tests et maintenance", en: "Testing and Maintenance" },
+        detail: { fr: "Tests unitaires, d'intégration et boîte noire, couverture.", en: "Unit, integration and black-box testing, coverage." },
+      },
+      {
+        code: { fr: "LOG121", en: "LOG121" },
+        title: { fr: "Conception orientée objet", en: "Object-Oriented Design" },
+        detail: { fr: "JavaFX, MVC, patrons de conception.", en: "JavaFX, MVC, design patterns." },
       },
     ],
   },

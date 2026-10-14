@@ -6,9 +6,12 @@ export const ui = {
   nav: {
     about: { fr: "À propos", en: "About" },
     work: { fr: "Projets", en: "Work" },
-    experience: { fr: "Parcours", en: "Experience" },
+    experience: { fr: "Expérience", en: "Experience" },
+    skills: { fr: "Compétences", en: "Skills" },
+    education: { fr: "Formation", en: "Education" },
     contact: { fr: "Contact", en: "Contact" },
   },
+  mainNav: { fr: "Navigation principale", en: "Main navigation" },
   home: { fr: "Accueil", en: "Home" },
   /** Label of the FR/EN group, in the page's language. */
   language: { fr: "Langue", en: "Language" },
