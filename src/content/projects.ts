@@ -24,7 +24,7 @@ export const projects: Project[] = [
     context: { fr: "ITMI · emploi et stage", en: "ITMI · internship and job" },
     period: { fr: "2025", en: "2025" },
     domains: ["software", "data"],
-    stack: ["React Native", "TypeScript", "Expo", "PHP", "REST API", "PostgreSQL", "Docker", "pytest", "Gitea", "Azure DevOps"],
+    stack: ["React Native", "TypeScript", "Expo", "Stripe", "PHP", "REST API", "PostgreSQL", "Docker", "pytest", "Gitea", "Azure DevOps"],
     caseStudy: {
       status: { fr: "Emploi et stage · ITMI", en: "Internship and job · ITMI" },
       lede: {
@@ -43,18 +43,26 @@ export const projects: Project[] = [
       problem: {
         body: [
           {
-            fr: "Le Cégep de Sept-Îles est le client d’un système de gestion des stationnements développé par l’ITMI. Le système a deux faces : une application mobile pour ses usagers et une interface web pour l’administrer.",
-            en: "Cégep de Sept-Îles is the client of a parking management system built by ITMI. The system has two sides: a mobile app for its users and a web interface to administer it.",
+            fr: "Le Cégep de Sept-Îles est le client d’un système de gestion des stationnements développé par l’ITMI. Ses usagers sont l’ensemble du personnel du Cégep et quelques utilisateurs externes.",
+            en: "Cégep de Sept-Îles is the client of a parking management system built by ITMI. Its users are all Cégep staff and a few external users.",
           },
           {
-            fr: "Ses usagers sont l’ensemble du personnel du Cégep et quelques utilisateurs externes.",
-            en: "Its users are all Cégep staff and a few external users.",
+            fr: "Dans l’application mobile, un usager paie son stationnement avec Stripe, selon l’horodateur, à la session ou au mois. Il consulte ses vignettes virtuelles, associées à ses plaques d’immatriculation, et peut ajouter des plaques.",
+            en: "In the mobile app, users pay for parking with Stripe, by meter, per session or per month. They see their virtual permits, tied to their licence plates, and can add plates.",
+          },
+          {
+            fr: "Les surveillants vérifient les plaques auprès du serveur : une plaque absente du système mène à une amende. L’administrateur, lui, gère toutes les données du système depuis une interface web contrôlée.",
+            en: "Enforcement officers check plates against the server: a plate missing from the system leads to a fine. The administrator manages all the system’s data from a controlled web interface.",
           },
         ],
         constraints: [
           {
             fr: "Distribution interne : l’application n’est pas publiée sur les magasins d’applications.",
             en: "Internal distribution: the app is not published on the app stores.",
+          },
+          {
+            fr: "Les choix techniques étaient déjà décidés : mon rôle était de les mettre en œuvre.",
+            en: "The technical choices were already made: my role was to implement them.",
           },
           {
             fr: "Le code et les interfaces appartiennent à l’ITMI : rien de confidentiel n’est montré ici.",
@@ -66,21 +74,21 @@ export const projects: Project[] = [
         lanes: [
           {
             nodes: [
-              { title: { fr: "Usagers", en: "Users" }, detail: { fr: "Personnel du Cégep et quelques utilisateurs externes", en: "Cégep staff and a few external users" } },
+              { title: { fr: "Usagers et surveillants", en: "Users and officers" }, detail: { fr: "Personnel du Cégep, quelques utilisateurs externes, surveillants", en: "Cégep staff, a few external users, enforcement officers" } },
               {
                 title: { fr: "Application mobile", en: "Mobile app" },
-                detail: { fr: "React Native · TypeScript · Expo", en: "React Native · TypeScript · Expo" },
+                detail: { fr: "React Native · TypeScript · Expo · paiement Stripe, vignettes, plaques", en: "React Native · TypeScript · Expo · Stripe payment, permits, plates" },
                 mine: true,
                 link: { label: { fr: "utilisent", en: "use" } },
               },
               {
-                title: { fr: "Système de gestion des stationnements", en: "Parking management system" },
-                detail: { fr: "ITMI · non détaillé ici", en: "ITMI · not detailed here" },
-                link: { label: { fr: "échanges", en: "exchanges" }, both: true },
+                title: { fr: "Serveur", en: "Server" },
+                detail: { fr: "Nomad, framework interne de l’ITMI, complété pour le projet", en: "Nomad, ITMI’s in-house framework, extended for the project" },
+                link: { label: { fr: "requêtes", en: "requests" }, both: true },
               },
               {
                 title: { fr: "Interface web administrateur", en: "Admin web interface" },
-                detail: { fr: "PHP et langages web · pages, formulaires, vues", en: "PHP and web languages · pages, forms, views" },
+                detail: { fr: "PHP et langages web · journaux, gestion des données", en: "PHP and web languages · logs, data management" },
                 mine: true,
                 link: { label: { fr: "administration", en: "administration" }, both: true },
               },
@@ -88,27 +96,32 @@ export const projects: Project[] = [
           },
         ],
         explanation: {
-          fr: "Les usagers passent par l’application mobile; l’administration du système se fait dans l’interface web. J’ai développé ces deux parties. Le reste du système n’est pas détaillé ici.",
-          en: "Users go through the mobile app; the system is administered in the web interface. I built both parts. The rest of the system is not detailed here.",
+          fr: "Les usagers paient, consultent leurs vignettes et ajoutent leurs plaques dans l’application mobile; les surveillants y vérifient les plaques auprès du serveur. Le serveur repose sur Nomad, un framework interne de l’ITMI, complété pour le projet. L’administrateur consulte les journaux et gère les données dans l’interface web. J’ai développé l’application mobile et l’interface web; le serveur n’est pas détaillé ici.",
+          en: "Users pay, view their permits and add plates in the mobile app; enforcement officers use it to check plates against the server. The server is built on Nomad, ITMI’s in-house framework, extended for the project. The administrator reads the logs and manages the data in the web interface. I built the mobile app and the web interface; the server is not detailed here.",
         },
       },
       contributions: [
         {
-          fr: "Développement complet de l’application mobile côté client, en React Native, TypeScript et Expo. J’en étais le seul développeur.",
-          en: "Built the entire client mobile app in React Native, TypeScript and Expo, as its only developer.",
+          fr: "Développement complet de l’application mobile côté client, en React Native, TypeScript et Expo : paiement avec Stripe, vignettes virtuelles, ajout de plaques et vérification des plaques par les surveillants. J’en étais le seul développeur.",
+          en: "Built the entire client mobile app in React Native, TypeScript and Expo, as its only developer: Stripe payment, virtual permits, adding plates and plate checks by enforcement officers.",
         },
         {
-          fr: "Développement de l’interface web administrateur en PHP et langages web : pages, formulaires et vues.",
-          en: "Built the admin web interface in PHP and web languages: pages, forms and views.",
+          fr: "Développement de l’interface web administrateur en PHP et langages web : pages, formulaires et vues où l’administrateur consulte les journaux et efface, ajoute ou modifie les données.",
+          en: "Built the admin web interface in PHP and web languages: pages, forms and views where the administrator reads the logs and deletes, adds or edits data.",
+        },
+        {
+          fr: "Mise en œuvre des choix techniques déjà décidés, et amélioration de certains points, comme les interfaces.",
+          en: "Implemented the technical choices already made, and improved some parts, such as the interfaces.",
         },
       ],
       decisions: [
-        { fr: "Application mobile en React Native avec Expo, écrite en TypeScript.", en: "Mobile app in React Native with Expo, written in TypeScript." },
+        { fr: "Application mobile en React Native avec Expo, écrite en TypeScript, et serveur sur Nomad, le framework interne de l’ITMI : des choix déjà décidés.", en: "Mobile app in React Native with Expo, written in TypeScript, and a server on Nomad, ITMI’s in-house framework: choices already made." },
+        { fr: "Paiement avec Stripe : selon l’horodateur, à la session ou au mois.", en: "Payment with Stripe: by meter, per session or per month." },
         { fr: "Administration par une interface web en PHP, distincte de l’application mobile.", en: "Administration through a PHP web interface, separate from the mobile app." },
         { fr: "Distribution interne, sans publication sur les magasins d’applications.", en: "Internal distribution, without publishing on the app stores." },
       ],
       stack: [
-        { label: { fr: "Pour ce système", en: "For this system" }, items: ["React Native", "TypeScript", "Expo", "PHP"] },
+        { label: { fr: "Pour ce système", en: "For this system" }, items: ["React Native", "TypeScript", "Expo", "Stripe", "PHP"] },
         { label: { fr: "À l’ITMI, même période", en: "At ITMI, same period" }, items: ["REST API", "PostgreSQL", "Docker", "pytest", "Gitea", "Azure DevOps"] },
       ],
       around: [
@@ -131,8 +144,8 @@ export const projects: Project[] = [
               en: "REST APIs and PHP backend components for Nomad, an ITMI in-house framework, with PostgreSQL (connection, queries, migrations), in Docker-based projects.",
             },
             {
-              fr: "Authentification de base, authentification Microsoft et intégration Stripe.",
-              en: "Basic authentication, Microsoft authentication and Stripe integration.",
+              fr: "Authentification de base et authentification Microsoft.",
+              en: "Basic authentication and Microsoft authentication.",
             },
             {
               fr: "Tests automatisés client et serveur en Python avec pytest, incluant des tests de charge.",
@@ -146,6 +159,10 @@ export const projects: Project[] = [
           fr: "Application déployée à l’interne pour l’ensemble du personnel du Cégep de Sept-Îles et quelques utilisateurs externes.",
           en: "App deployed internally to all Cégep de Sept-Îles staff and a few external users.",
         },
+        {
+          fr: "Paiement, vignettes virtuelles, plaques et vérification par les surveillants réunis dans une seule application.",
+          en: "Payment, virtual permits, plates and officer checks in a single app.",
+        },
       ],
       limits: [
         { fr: "Aucun nombre d’utilisateurs ni aucune mesure d’usage n’est publié.", en: "No user count or usage figure is published." },
@@ -153,6 +170,12 @@ export const projects: Project[] = [
           fr: "Le code appartient à l’ITMI : aucune capture ni extrait n’est publié ici.",
           en: "The code belongs to ITMI: no screenshots or excerpts are published here.",
         },
+      ],
+      learnings: [
+        { fr: "Utiliser des API REST.", en: "Working with REST APIs." },
+        { fr: "Déboguer sur différentes plateformes.", en: "Debugging across platforms." },
+        { fr: "React et ses hooks, Expo et la mise en cache.", en: "React and its hooks, Expo and caching." },
+        { fr: "Intégrer un paiement avec Stripe.", en: "Integrating payment with Stripe." },
       ],
     },
   },
@@ -193,12 +216,16 @@ export const projects: Project[] = [
       problem: {
         body: [
           {
-            fr: "L’ITMI travaille avec un robot quadrupède Spot de Boston Dynamics. En mission autonome, il prend des photos et recueille des données avec différents payloads.",
-            en: "ITMI works with a Boston Dynamics Spot quadruped robot. On autonomous missions, it takes photos and collects data with several payloads.",
+            fr: "L’ITMI travaille avec un robot quadrupède Spot de Boston Dynamics. En mission autonome, il prend des photos et recueille des données avec un payload de Boston Dynamics : une caméra et des capteurs.",
+            en: "ITMI works with a Boston Dynamics Spot quadruped robot. On autonomous missions, it takes photos and collects data with a Boston Dynamics payload: a camera and sensors.",
           },
           {
-            fr: "J’ai travaillé sur deux points : la gestion de ses missions autonomes, et le traitement automatisé des photos de mission jusqu’aux personnes qui en ont besoin.",
-            en: "I worked on two things: managing its autonomous missions, and automatically processing mission photos all the way to the people who need them.",
+            fr: "Sur les photos, on voit des capteurs physiques, par exemple de pression : il faut en extraire les données. Les techniciens sur le terrain en ont besoin.",
+            en: "The photos show physical gauges, for example pressure gauges, and their readings have to be extracted. Field technicians need them.",
+          },
+          {
+            fr: "J’ai travaillé sur deux points : la gestion de ses missions autonomes, et le traitement automatisé des photos de mission jusqu’aux techniciens.",
+            en: "I worked on two things: managing its autonomous missions, and automatically processing mission photos all the way to the technicians.",
           },
           {
             fr: "Avant cet emploi, à l’hiver 2024, j’avais déjà travaillé sur Spot comme auxiliaire de recherche : une preuve de concept Python avec le Spot SDK, testée et validée, et une exploration du C++ avec le même SDK.",
@@ -218,18 +245,18 @@ export const projects: Project[] = [
               },
               {
                 title: { fr: "Spot en mission autonome", en: "Spot on an autonomous mission" },
-                detail: { fr: "Photos et données des payloads", en: "Photos and payload data" },
+                detail: { fr: "Photos et données du payload : caméra et capteurs", en: "Photos and payload data: camera and sensors" },
                 link: { label: { fr: "mission choisie", en: "selected mission" } },
               },
               {
                 title: { fr: "Traitement automatisé", en: "Automated processing" },
-                detail: { fr: "Serveur Linux · OpenCV, Pillow, NumPy", en: "Linux server · OpenCV, Pillow, NumPy" },
+                detail: { fr: "Serveur Linux · Python, OpenCV, Pillow, NumPy · lecture des capteurs photographiés", en: "Linux server · Python, OpenCV, Pillow, NumPy · reading the photographed gauges" },
                 mine: true,
                 link: { label: { fr: "téléversement", en: "upload" } },
               },
               {
-                title: { fr: "Personnes concernées", en: "People who need them" },
-                detail: { fr: "Résultats transmis", en: "Results sent" },
+                title: { fr: "Techniciens sur le terrain", en: "Field technicians" },
+                detail: { fr: "Fichier Excel sur SharePoint", en: "Excel file on SharePoint" },
                 link: { label: { fr: "transmission", en: "sent" } },
               },
             ],
@@ -249,8 +276,8 @@ export const projects: Project[] = [
           },
         ],
         explanation: {
-          fr: "Avec le prototype, on choisit une mission existante ou on en enregistre une nouvelle. Spot l’exécute de façon autonome et prend des photos. Les photos sont téléversées vers un serveur Linux, traitées automatiquement avec les données des payloads, puis transmises aux personnes concernées. À côté, un programme en Rust récupère les données de capteurs extérieurs pour Grafana.",
-          en: "With the prototype, you pick an existing mission or record a new one. Spot carries it out autonomously and takes photos. The photos are uploaded to a Linux server, processed automatically with the payload data, then sent to the people who need them. Alongside, a Rust program collects outdoor sensor data for Grafana.",
+          fr: "Avec le prototype, on choisit une mission existante ou on en enregistre une nouvelle. Spot l’exécute de façon autonome et prend des photos. Les photos sont téléversées vers un serveur Linux, où un traitement automatisé en extrait les données des capteurs photographiés, avec les données du payload. Les résultats arrivent aux techniciens sur le terrain dans un fichier Excel sur SharePoint. À côté, un programme en Rust récupère les données de capteurs extérieurs pour Grafana.",
+          en: "With the prototype, you pick an existing mission or record a new one. Spot carries it out autonomously and takes photos. The photos are uploaded to a Linux server, where automated processing extracts the readings of the photographed gauges, together with the payload data. The results reach field technicians in an Excel file on SharePoint. Alongside, a Rust program collects outdoor sensor data for Grafana.",
         },
       },
       contributions: [
@@ -263,8 +290,8 @@ export const projects: Project[] = [
           en: "Photo capture during missions and upload to a Linux server.",
         },
         {
-          fr: "Traitement automatisé des photos sur le serveur avec les données de différents payloads (OpenCV, Pillow, NumPy), puis transmission aux utilisateurs concernés.",
-          en: "Automated processing of the photos on the server with data from several payloads (OpenCV, Pillow, NumPy), then delivery to the people who need them.",
+          fr: "Traitement automatisé des photos sur le serveur en Python (OpenCV, Pillow, NumPy) : extraire les données des capteurs physiques photographiés, comme la pression, avec les données du payload, puis les transmettre aux techniciens dans un fichier Excel sur SharePoint.",
+          en: "Automated photo processing on the server in Python (OpenCV, Pillow, NumPy): extracting the readings of the photographed physical gauges, such as pressure, with the payload data, then delivering them to technicians in an Excel file on SharePoint.",
         },
         {
           fr: "Récupération en Rust des données de différents capteurs extérieurs, exploitées dans Grafana.",
@@ -276,10 +303,11 @@ export const projects: Project[] = [
         { fr: "Missions pilotées en Python avec le Spot SDK de Boston Dynamics.", en: "Missions driven in Python with the Boston Dynamics Spot SDK." },
         { fr: "Traitement des photos sur un serveur Linux, après téléversement.", en: "Photo processing on a Linux server, after upload." },
         { fr: "Traitement d’images en Python avec OpenCV, Pillow et NumPy.", en: "Image processing in Python with OpenCV, Pillow and NumPy." },
+        { fr: "Résultats remis aux techniciens dans un fichier Excel sur SharePoint.", en: "Results delivered to technicians in an Excel file on SharePoint." },
         { fr: "Rust pour récupérer les données de capteurs, Grafana pour les exploiter.", en: "Rust to collect the sensor data, Grafana to put it to use." },
       ],
       stack: [
-        { label: { fr: "Cet emploi", en: "This job" }, items: ["Python", "Spot SDK", "OpenCV", "Pillow", "NumPy", "Linux", "Rust", "Grafana"] },
+        { label: { fr: "Cet emploi", en: "This job" }, items: ["Python", "Spot SDK", "OpenCV", "Pillow", "NumPy", "Linux", "SharePoint", "Rust", "Grafana"] },
         { label: { fr: "Hiver 2024, auxiliaire de recherche", en: "Winter 2024, research assistant" }, items: ["Python", "Spot SDK"], explored: ["C++"] },
       ],
       results: [
@@ -288,8 +316,8 @@ export const projects: Project[] = [
           en: "A working prototype to select and record autonomous missions.",
         },
         {
-          fr: "Photos de mission traitées automatiquement sur le serveur, puis transmises aux personnes concernées.",
-          en: "Mission photos processed automatically on the server, then sent to the people who need them.",
+          fr: "Données des capteurs photographiés extraites automatiquement sur le serveur, puis remises aux techniciens sur le terrain.",
+          en: "Readings from the photographed gauges extracted automatically on the server, then delivered to field technicians.",
         },
         { fr: "Données de capteurs extérieurs exploitées dans Grafana.", en: "Outdoor sensor data put to use in Grafana." },
         { fr: "Personnel formé et documentation technique rédigée.", en: "Staff trained and technical documentation written." },
@@ -400,14 +428,22 @@ export const projects: Project[] = [
             en: "Cégep de Sept-Îles and its teachers were the clients of this project: a portable monitoring system with notifications about people being present or absent.",
           },
           {
+            fr: "Le système utilise des capteurs à ultrasons et une caméra. Il a servi en laboratoire et à la maison, pour un usage personnel.",
+            en: "The system uses ultrasonic sensors and a camera. It was used in a lab and at home, for personal use.",
+          },
+          {
             fr: "J’ai mené le projet du cahier des charges jusqu’à la validation des livrables avec le client.",
             en: "I ran the project from the specification to the deliverable sign-off with the client.",
           },
         ],
         constraints: [
           {
-            fr: "Un système portable, réparti sur trois appareils : un Arduino, un Raspberry Pi et un appareil Android.",
-            en: "A portable system spread over three devices: an Arduino, a Raspberry Pi and an Android device.",
+            fr: "Un système portable : de petits boîtiers contiennent le système de surveillance et le Raspberry Pi.",
+            en: "A portable system: small enclosures hold the monitoring system and the Raspberry Pi.",
+          },
+          {
+            fr: "Trois appareils à faire travailler ensemble : un Arduino, un Raspberry Pi et un appareil Android.",
+            en: "Three devices working together: an Arduino, a Raspberry Pi and an Android device.",
           },
         ],
       },
@@ -415,7 +451,7 @@ export const projects: Project[] = [
         lanes: [
           {
             nodes: [
-              { title: { fr: "Capteurs", en: "Sensors" }, detail: { fr: "Type non précisé ici", en: "Type not specified here" } },
+              { title: { fr: "Capteurs", en: "Sensors" }, detail: { fr: "Capteurs à ultrasons", en: "Ultrasonic sensors" } },
               {
                 title: { fr: "Arduino", en: "Arduino" },
                 detail: { fr: "Acquisition par capteurs", en: "Sensor acquisition" },
@@ -430,7 +466,7 @@ export const projects: Project[] = [
               },
               {
                 title: { fr: "Application Android", en: "Android app" },
-                detail: { fr: "Java · notifications : présence ou absence de personnes", en: "Java · notifications: people present or absent" },
+                detail: { fr: "Java · compte lié au Raspberry Pi · notifications : présence ou absence de personnes", en: "Java · account linked to the Raspberry Pi · notifications: people present or absent" },
                 mine: true,
                 link: { label: { fr: "communications réseau", en: "network communication" }, both: true },
               },
@@ -438,12 +474,12 @@ export const projects: Project[] = [
           },
         ],
         explanation: {
-          fr: "L’Arduino lit les capteurs et transmet leurs informations au Raspberry Pi. Le Raspberry Pi, au centre, traite les requêtes et gère le système. L’application mobile affiche des notifications sur la présence ou l’absence de personnes. Les capteurs, la liaison entre les appareils et la méthode de détection ne sont pas détaillés ici.",
-          en: "The Arduino reads the sensors and passes their information to the Raspberry Pi. The Raspberry Pi, at the centre, handles requests and manages the system. The mobile app shows notifications about people being present or absent. The sensors, the links between the devices and the detection method are not detailed here.",
+          fr: "L’Arduino lit les capteurs et transmet leurs informations au Raspberry Pi. Le Raspberry Pi, au centre, traite les requêtes et gère le système. L’application mobile se connecte avec un compte lié au Raspberry Pi et affiche des notifications sur la présence ou l’absence de personnes. Le système comprend aussi une caméra. Le branchement de la caméra, la liaison entre les appareils et la méthode de détection ne sont pas détaillés ici.",
+          en: "The Arduino reads the sensors and passes their information to the Raspberry Pi. The Raspberry Pi, at the centre, handles requests and manages the system. The mobile app signs in with an account linked to the Raspberry Pi and shows notifications about people being present or absent. The system also includes a camera. How the camera is connected, the links between the devices and the detection method are not detailed here.",
         },
       },
       contributions: [
-        { fr: "Application Android en Java avec Android Studio : l’interface et ses notifications.", en: "Android app in Java with Android Studio: the interface and its notifications." },
+        { fr: "Application Android en Java avec Android Studio : l’interface, la connexion par compte liée au Raspberry Pi et les notifications.", en: "Android app in Java with Android Studio: the interface, account sign-in linked to the Raspberry Pi, and notifications." },
         { fr: "Programme Python sur le Raspberry Pi : traitement local et communications réseau.", en: "Python program on the Raspberry Pi: local processing and network communication." },
         { fr: "Programmation de l’Arduino pour l’acquisition par capteurs et la transmission au Raspberry Pi.", en: "Arduino programming for sensor acquisition and transmission to the Raspberry Pi." },
         {
@@ -468,6 +504,7 @@ export const projects: Project[] = [
       results: [
         { fr: "Système réalisé seul pour un client réel, le Cégep et ses professeurs.", en: "A system built alone for a real client, the college and its teachers." },
         { fr: "Livrables validés avec le client.", en: "Deliverables signed off with the client." },
+        { fr: "Système utilisé en laboratoire et à la maison.", en: "System used in a lab and at home." },
       ],
       limits: [
         {
