@@ -8,7 +8,7 @@
  *   Int16 x, Int16 y, Int16 z (−1..1 scaled by 32767), Uint8 intensity, Uint8 accent (0 or 1).
  * Points are shuffled, so any prefix is an even sample: phones use the first 6 144.
  */
-import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import sharp from "sharp";
 
@@ -38,7 +38,8 @@ function rng(seed: number) {
 }
 
 /** Fits points in −1..1 on their longest side, centred, y up. */
-function normalize(points: Point[]): Point[] {
+/** The transform normalize applies to these points, so other positions (a city, a face) can follow it. */
+function normalizer(points: Point[]) {
   let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
   for (const p of points) {
     minX = Math.min(minX, p.x); maxX = Math.max(maxX, p.x);
@@ -46,8 +47,30 @@ function normalize(points: Point[]): Point[] {
   }
   const cx = (minX + maxX) / 2, cy = (minY + maxY) / 2;
   const half = Math.max(maxX - minX, maxY - minY) / 2 || 1;
-  return points.map((p) => ({ ...p, x: (p.x - cx) / half, y: (p.y - cy) / half, z: Math.max(-1, Math.min(1, p.z)) }));
+  return { map: (x: number, y: number): [number, number] => [(x - cx) / half, (y - cy) / half], half };
 }
+
+function normalize(points: Point[]): Point[] {
+  const { map } = normalizer(points);
+  return points.map((p) => {
+    const [x, y] = map(p.x, p.y);
+    return { ...p, x, y, z: Math.max(-1, Math.min(1, p.z)) };
+  });
+}
+
+/** Ellipse in shape coordinates (centre and radii, −1..1). */
+interface Ellipse {
+  cx: number;
+  cy: number;
+  rx: number;
+  ry: number;
+}
+
+/**
+ * Facts about the shapes the page needs besides the points, written to public/clouds/meta.json:
+ * where the map's cities are, and the part of the portrait to keep free of drifting dust.
+ */
+const meta: Record<string, { markers?: Record<string, [number, number]>; route?: [number, number][]; calm?: Ellipse }> = {};
 
 function shuffle<T>(items: T[], rand: () => number): T[] {
   for (let i = items.length - 1; i > 0; i--) {
@@ -152,6 +175,9 @@ interface PhotoOptions {
   relief: number;
   /** Depth from a half-ellipsoid (centre and radii in 0..1 of the image), so a head has volume. */
   dome?: { cx: number; cy: number; rx: number; ry: number; depth: number };
+  /** Region (0..1 of the image) where the page keeps dust off, recorded in meta under `name`. */
+  calm?: { cx: number; cy: number; rx: number; ry: number };
+  name?: string;
   seed: number;
 }
 
@@ -330,6 +356,11 @@ async function photo(o: PhotoOptions): Promise<Point[]> {
       points.push({ x, y: -y, z: 0.05 + (rand() - 0.5) * 0.02, i: 255, accent: true });
     }
   }
+  if (o.calm && o.name) {
+    const { map, half } = normalizer(points);
+    const [cx, cy] = map(o.calm.cx * w, -o.calm.cy * h);
+    meta[o.name] = { ...meta[o.name], calm: { cx, cy, rx: (o.calm.rx * w) / half, ry: (o.calm.ry * h) / half } };
+  }
   // Samples come out in reading order: shuffle so every prefix covers the whole picture.
   return normalize(shuffle(points, rand));
 }
@@ -475,24 +506,36 @@ function quebec(): Point[] {
       [-66.38, 50.21], [-68.15, 49.22], [-69.72, 48.14], [-71.21, 46.81], [-72.54, 46.34], [-73.57, 45.5],
     ] as [number, number][]
   ).map(proj);
-  add(alongPath(route, 3000, rand, 0.05), 255, true, 0.1);
+  add(alongPath(route, 3000, rand, 0.025), 255, true, 0.1);
   for (const end of [route[0], route[route.length - 1]]) {
     add(Array.from({ length: 300 }, () => {
-      const a = rand() * Math.PI * 2, r = 0.35 * Math.sqrt(rand());
+      const a = rand() * Math.PI * 2, r = 0.2 * Math.sqrt(rand());
       return [end[0] + Math.cos(a) * r, end[1] + Math.sin(a) * r] as [number, number];
     }), 255, true, 0.15);
   }
-  return finish(pts, rand);
+  // The page labels both cities and draws the direction of the route over the cloud.
+  const anchors = route.map((p) => [...p] as [number, number]);
+  const points = finish(pts, rand, anchors);
+  meta.quebec = { markers: { "sept-iles": anchors[0], montreal: anchors[anchors.length - 1] }, route: anchors };
+  return points;
 }
 
-/** Trims or pads to exactly COUNT points, then shuffles so every prefix is an even sample. */
-function finish(pts: Point[], rand: () => number): Point[] {
+/**
+ * Trims or pads to exactly COUNT points, then shuffles so every prefix is an even sample.
+ * `anchors` (positions in the same units as the points) are moved with the points, in place.
+ */
+function finish(pts: Point[], rand: () => number, anchors?: [number, number][]): Point[] {
   shuffle(pts, rand);
   while (pts.length < COUNT) {
     const p = pts[Math.floor(rand() * pts.length)];
     pts.push({ ...p, x: p.x + (rand() - 0.5) * 0.004, y: p.y + (rand() - 0.5) * 0.004 });
   }
-  return normalize(shuffle(pts.slice(0, COUNT), rand));
+  const kept = shuffle(pts.slice(0, COUNT), rand);
+  if (anchors) {
+    const { map } = normalizer(kept);
+    anchors.forEach((a, k) => (anchors[k] = map(...a)));
+  }
+  return normalize(kept);
 }
 
 /* ---------- Shapes ---------- */
@@ -508,9 +551,13 @@ const shapes: Record<string, () => Promise<Point[]> | Point[]> = {
       mask: { tolerance: 0.1 },
       edge: 3,
       light: 1.2,
-      focus: { cx: 0.5, cy: 0.46, rx: 0.24, ry: 0.3, edge: 0.3, light: 2, gamma: 4.5, boost: 3 },
-      relief: 0.12,
+      // Gentle tone curve and shallow relief: the eyes keep their points (no dark hollows) and
+      // the features do not shift against each other when the cloud turns slightly.
+      focus: { cx: 0.5, cy: 0.46, rx: 0.24, ry: 0.3, edge: 0.5, light: 2, gamma: 3, boost: 3 },
+      relief: 0.06,
       dome: { cx: 0.5, cy: 0.42, rx: 0.25, ry: 0.34, depth: 0.35 },
+      calm: { cx: 0.5, cy: 0.42, rx: 0.27, ry: 0.36 },
+      name: "face",
       seed: 3,
     }),
   quebec,
@@ -580,6 +627,12 @@ async function main() {
     await preview(points, join(OUT, `${name}.webp`));
     console.log(`${name}: ${COUNT} points, ${(bin.length / 1024).toFixed(0)} KB`);
   }
+  // Merged, so building one shape keeps the others' entries. Bundled with the page code.
+  const file = join("src", "components", "scan", "shape-meta.json");
+  const previous = existsSync(file) ? JSON.parse(readFileSync(file, "utf8")) : {};
+  const round = (v: unknown): unknown =>
+    typeof v === "number" ? Math.round(v * 1e4) / 1e4 : Array.isArray(v) ? v.map(round) : v && typeof v === "object" ? Object.fromEntries(Object.entries(v).map(([k, x]) => [k, round(x)])) : v;
+  writeFileSync(file, JSON.stringify(round({ ...previous, ...meta }), null, 2) + "\n");
 }
 
 main().catch((e) => {

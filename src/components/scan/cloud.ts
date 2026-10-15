@@ -63,17 +63,34 @@ export function buildYarn(count = POINTS.full): Shape {
 /** One point in this many is dust: faint, drifting around the shape, never an accent. */
 export const DUST_EVERY = 20;
 
+/** How far dust drifts from where it was placed, on each axis, in shape units (see the shader). */
+export const DUST_DRIFT = 0.05;
+
 /** Standard normal sample (Box–Muller). */
 function gauss(rand: () => number): number {
   return Math.sqrt(-2 * Math.log(1 - rand())) * Math.cos(2 * Math.PI * rand());
 }
 
+/** Ellipse in shape coordinates: centre and radii. */
+export interface Ellipse {
+  cx: number;
+  cy: number;
+  rx: number;
+  ry: number;
+}
+
+/**
+ * Dust kept out of a calm region lands in a ring around it: from far enough that its drift never
+ * brings it back in, to this many radii further, spread evenly so it does not outline the region.
+ */
+const CALM_RING_WIDTH = 0.7;
+
 /**
  * Light ambient noise: every DUST_EVERY-th point leaves the shape and floats nearby, faint, so
  * the cloud has some air around it while the shape stays sharp. Most dust stays close; a little
- * drifts further out.
+ * drifts further out. `calm`: a region dust stays out of (a face, the contact signature).
  */
-export function withDust(shape: Shape, seed: number): Shape {
+export function withDust(shape: Shape, seed: number, calm?: Ellipse): Shape {
   const rand = rng(seed);
   const position = shape.position.slice();
   const intensity = shape.intensity.slice();
@@ -81,6 +98,23 @@ export function withDust(shape: Shape, seed: number): Shape {
   for (let i = 0; i < intensity.length; i += DUST_EVERY) {
     const spread = rand() < 0.75 ? 0.05 + 0.1 * rand() : 0.2 + 0.2 * rand();
     for (let k = 0; k < 3; k++) position[i * 3 + k] += gauss(rand) * spread;
+    if (calm) {
+      // Moved out along its own direction from the centre, to an even spread over the ring.
+      let u = (position[i * 3] - calm.cx) / calm.rx;
+      let v = (position[i * 3 + 1] - calm.cy) / calm.ry;
+      let r = Math.hypot(u, v);
+      const inner = 1 + (1.5 * DUST_DRIFT) / Math.min(calm.rx, calm.ry);
+      const outer = inner + CALM_RING_WIDTH;
+      if (r < inner) {
+        if (r < 1e-6) {
+          const a = rand() * Math.PI * 2;
+          [u, v, r] = [Math.cos(a), Math.sin(a), 1];
+        }
+        const out = Math.sqrt(inner * inner + rand() * (outer * outer - inner * inner)) / r;
+        position[i * 3] = calm.cx + u * out * calm.rx;
+        position[i * 3 + 1] = calm.cy + v * out * calm.ry;
+      }
+    }
     intensity[i] = 0.18 + 0.27 * rand();
     accent[i] = 0;
   }
@@ -144,6 +178,32 @@ export function textShape(lines: string[], font: string, count = POINTS.full): S
   return { position, intensity, accent };
 }
 
+/**
+ * How a shape moves once formed:
+ * - spin: turns on itself (the ball of yarn);
+ * - sway: faces the reader, with a very slow sway and a slight lean toward the mouse;
+ * - steady: faces the reader and holds still (the contact signature).
+ */
+export type Motion = "spin" | "sway" | "steady";
+
+/**
+ * Limits of the motion at rest. Kept small so the portrait never distorts: features at different
+ * depths shift against each other as the cloud turns, so the turn itself stays tiny.
+ */
+export const MOTION = {
+  /** Sway amplitude, radians (about 1.2°). */
+  sway: 0.02,
+  /** Sway speed, radians per second (one cycle in about 35 s). */
+  swaySpeed: 0.18,
+  /** Largest lean toward the mouse, radians (1°). */
+  pointer: Math.PI / 180,
+  /** Breathing amplitude of each point, in shape units. */
+  breathe: 0.0015,
+  /** How far points lift off while they travel: usual, and on the way to a calm shape. */
+  lift: 0.5,
+  calmLift: 0.08,
+};
+
 const VERT = /* glsl */ `
 attribute vec3 aFrom;
 attribute float aFromI;
@@ -155,6 +215,8 @@ attribute float aDust;
 uniform float uTime;
 uniform float uSize;
 uniform float uProgress;
+uniform float uLift;
+uniform float uRest;
 varying float vAlpha;
 varying float vAccent;
 varying float vScan;
@@ -168,12 +230,11 @@ float local(float y) {
 void main() {
   float t = local(position.y);
   vec3 p = mix(aFrom, position, t);
-  // Points lift off a little while they travel.
-  p.z += sin(t * 3.14159) * (aSeed - 0.5) * 0.5;
-  // Breathing at rest.
-  p += 0.005 * vec3(sin(uTime * 0.7 + aSeed * 40.0), cos(uTime * 0.6 + aSeed * 23.0), sin(uTime * 0.5 + aSeed * 11.0));
-  // Dust drifts slowly.
-  p += aDust * 0.05 * vec3(sin(uTime * 0.13 + aSeed * 61.0), cos(uTime * 0.11 + aSeed * 37.0), sin(uTime * 0.09 + aSeed * 17.0));
+  // Points lift off a little while they travel (barely, on the way to the face or the signature).
+  p.z += sin(t * 3.14159) * (aSeed - 0.5) * uLift;
+  // Breathing at rest, and dust drifting slowly; both fade out for a shape that holds still.
+  p += uRest * ${MOTION.breathe.toFixed(4)} * vec3(sin(uTime * 0.7 + aSeed * 40.0), cos(uTime * 0.6 + aSeed * 23.0), sin(uTime * 0.5 + aSeed * 11.0));
+  p += uRest * aDust * ${DUST_DRIFT.toFixed(3)} * vec3(sin(uTime * 0.13 + aSeed * 61.0), cos(uTime * 0.11 + aSeed * 37.0), sin(uTime * 0.09 + aSeed * 17.0));
   vec4 mv = modelViewMatrix * vec4(p, 1.0);
   gl_Position = projectionMatrix * mv;
   gl_PointSize = uSize * (0.7 + 0.5 * fract(aSeed * 9.1)) * (6.0 / -mv.z);
@@ -215,7 +276,7 @@ export interface Pose {
 }
 
 /** Half extents of a shape, dust left out. */
-function extent(shape: Shape): { x: number; y: number } {
+export function extent(shape: Shape): { x: number; y: number } {
   let x = 0.01;
   let y = 0.01;
   for (let i = 0; i < shape.intensity.length; i++) {
@@ -245,8 +306,9 @@ export class ScanCloudRenderer {
   private tilt = { x: 0, y: 0 };
   private tiltTarget = { x: 0, y: 0 };
   private yaw = 0.2;
-  private spinning = true;
-  private progress = 1;
+  private motion: Motion = "spin";
+  private rest = 1;
+  private morph = 1;
   private running = false;
   private current: Shape;
   private ext: { x: number; y: number };
@@ -292,6 +354,8 @@ export class ScanCloudRenderer {
         uTime: { value: 0 },
         uSize: { value: 2 },
         uProgress: { value: 1 },
+        uLift: { value: MOTION.lift },
+        uRest: { value: 1 },
         uOpacity: { value: pose.opacity },
         uInk: { value: new THREE.Color("#f1f0ed") },
         uAccent: { value: new THREE.Color("#ff6a3d") },
@@ -328,14 +392,32 @@ export class ScanCloudRenderer {
     }
   }
 
-  /** Pointer in −1..1 on both axes; the cloud leans up to 4° toward it. */
+  /** Called after every frame drawn, so overlays (the map's labels) can follow the cloud. */
+  onFrame: (() => void) | null = null;
+
+  /** Morph progress toward the current shape, 0..1. */
+  get progress() {
+    return this.morph;
+  }
+
+  /** Pointer in −1..1 on both axes; the cloud leans up to MOTION.pointer toward it. */
   setPointer(x: number, y: number) {
-    const max = (4 * Math.PI) / 180;
+    const max = this.motion === "steady" ? 0 : MOTION.pointer;
     this.tiltTarget = { x: y * max, y: x * max };
   }
 
-  /** Morphs to a shape. `spin`: the shape turns on itself (the ball of yarn) instead of facing the reader. */
-  morphTo(shape: Shape, spin: boolean) {
+  /**
+   * Where a point of the current shape (shape coordinates) is on the page, in CSS pixels, as
+   * last drawn. Null when it is behind the camera.
+   */
+  project(x: number, y: number, z = 0): { x: number; y: number } | null {
+    const v = new THREE.Vector3(x, y, z).applyMatrix4(this.group.matrixWorld).project(this.camera);
+    if (v.z > 1) return null;
+    return { x: ((v.x + 1) / 2) * window.innerWidth, y: ((1 - v.y) / 2) * window.innerHeight };
+  }
+
+  /** Morphs to a shape, which then moves as `motion` says. */
+  morphTo(shape: Shape, motion: Motion) {
     if (shape === this.current) return;
     const g = this.geometry;
     const from = g.getAttribute("aFrom") as THREE.BufferAttribute;
@@ -346,7 +428,7 @@ export class ScanCloudRenderer {
     const toA = g.getAttribute("aToA") as THREE.BufferAttribute;
     const seed = g.getAttribute("aSeed") as THREE.BufferAttribute;
     // Start from where every point is now, even mid-morph (same easing as the shader).
-    const p = this.progress;
+    const p = this.morph;
     for (let i = 0; i < POINTS.full; i++) {
       const y = to.array[i * 3 + 1];
       const delay = (1 - (y + 1) * 0.5) * 0.45 + seed.array[i] * 0.08;
@@ -362,10 +444,12 @@ export class ScanCloudRenderer {
     for (const a of [from, to, fromI, toI, fromA, toA]) a.needsUpdate = true;
     this.current = shape;
     this.ext = extent(shape);
-    if (this.spinning && !spin) this.yaw = Math.atan2(Math.sin(this.yaw), Math.cos(this.yaw));
-    this.spinning = spin;
-    this.progress = this.still ? 1 : 0;
-    this.material.uniforms.uProgress.value = this.progress;
+    if (this.motion === "spin" && motion !== "spin") this.yaw = Math.atan2(Math.sin(this.yaw), Math.cos(this.yaw));
+    if (motion === "steady") this.tiltTarget = { x: 0, y: 0 };
+    this.motion = motion;
+    this.material.uniforms.uLift.value = motion === "spin" ? MOTION.lift : MOTION.calmLift;
+    this.morph = this.still ? 1 : 0;
+    this.material.uniforms.uProgress.value = this.morph;
     if (this.still) this.render();
   }
 
@@ -394,15 +478,20 @@ export class ScanCloudRenderer {
     this.tilt.x += (this.tiltTarget.x - this.tilt.x) * k;
     this.tilt.y += (this.tiltTarget.y - this.tilt.y) * k;
     const t = (now - this.start) / 1000;
-    this.progress = Math.min(1, this.progress + dt / MORPH_S);
-    this.material.uniforms.uProgress.value = this.progress;
+    this.morph = Math.min(1, this.morph + dt / MORPH_S);
+    this.material.uniforms.uProgress.value = this.morph;
     this.material.uniforms.uTime.value = t;
-    if (this.spinning) {
+    // A steady shape stops breathing once it has formed.
+    const rest = this.motion === "steady" && this.morph >= 1 ? 0 : 1;
+    this.rest += (rest - this.rest) * k;
+    this.material.uniforms.uRest.value = this.rest;
+    if (this.motion === "spin") {
       this.yaw += dt * 0.06;
       this.group.rotation.x = -0.35 + this.tilt.x;
     } else {
-      // Facing the reader, with a slow sway.
-      this.yaw += (Math.sin(t * 0.25) * 0.14 - this.yaw) * k;
+      // Facing the reader: a very slow sway, or none.
+      const sway = this.motion === "sway" ? Math.sin(t * MOTION.swaySpeed) * MOTION.sway : 0;
+      this.yaw += (sway - this.yaw) * k;
       this.group.rotation.x += (this.tilt.x - this.group.rotation.x) * k;
     }
     this.group.rotation.y = this.yaw + this.tilt.y;
@@ -428,10 +517,12 @@ export class ScanCloudRenderer {
     this.group.scale.setScalar(this.scale);
     this.material.uniforms.uOpacity.value = opacity;
     this.renderer.render(this.scene, this.camera);
+    this.onFrame?.();
   }
 
   dispose() {
     this.pause();
+    this.onFrame = null;
     this.geometry.dispose();
     this.material.dispose();
     this.renderer.dispose();

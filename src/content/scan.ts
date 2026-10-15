@@ -36,6 +36,15 @@ export const scanSections: ScanSection[] = [
   },
 ];
 
+/**
+ * Labels of the Québec map (scan 02): the two ends of the route, in the order of the journey.
+ * Same text in both languages.
+ */
+export const mapMarks = [
+  { id: "sept-iles", order: "01", name: "Sept-Îles", detail: "Cégep · ITMI", side: "right" },
+  { id: "montreal", order: "02", name: "Montréal", detail: "ÉTS", side: "left" },
+] as const;
+
 /** "03/07" for a section id. */
 export function scanNumber(id: string): string {
   const index = Math.max(0, scanSections.findIndex((s) => s.id === id));

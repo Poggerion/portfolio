@@ -5,7 +5,9 @@ import { ui } from "@/content/ui";
 import { t, type Locale } from "@/lib/i18n";
 import { basePath } from "@/lib/site";
 import { useScan } from "@/lib/scan-store";
-import type { Pose, ScanCloudRenderer, Shape } from "./cloud";
+import type { Ellipse, Motion, Pose, ScanCloudRenderer, Shape } from "./cloud";
+import { MapMarks, followCloud } from "./MapMarks";
+import meta from "./shape-meta.json";
 import styles from "./ScanPanel.module.css";
 
 /** Built shapes in public/clouds/ (npm run clouds); "yarn" and "text" are made in the browser. */
@@ -38,6 +40,11 @@ function shapeFor(section: string, variant: string | null, project: string | nul
   }
 }
 
+/** The ball of yarn turns, the contact signature holds still once written, the rest sway very slightly. */
+function motionFor(name: ShapeName): Motion {
+  return name === "yarn" ? "spin" : name === "text" ? "steady" : "sway";
+}
+
 /**
  * Wide screens: the cloud fills the right part of the page beside the text, all the way down.
  * Narrow screens: it only shows, faint, behind the hero (elsewhere it would sit behind the text).
@@ -63,14 +70,18 @@ function hasWebGL(): boolean {
 const HOVER_RELEASE_MS = 300;
 /** On arrival the ball of yarn holds this long before it turns into the face. */
 const INTRO_HOLD_MS = 1200;
+/** The map's labels appear once the morph is this far along (the route ends at the bottom, drawn last). */
+const MARKS_AT = 0.9;
 
 /**
  * Fixed canvas behind the page. The ball of yarn appears, then becomes Felipe's face, then takes
  * the shape of each section as the reader scrolls. Three.js loads once the page is idle. Under
- * reduced motion the shapes change without moving; without WebGL, a still image of the shape.
+ * reduced motion the shapes change without moving; without WebGL, a still image of the shape
+ * (with the map's labels), and the contact signature as dotted type.
  */
 export function ScanCloud({ lang }: { lang: Locale }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const marksRef = useRef<HTMLDivElement>(null);
   const apply = useRef<() => void>(() => {});
   const { section, variant } = useScan();
   const state = useRef({ section, variant, project: null as string | null });
@@ -118,8 +129,9 @@ export function ScanCloud({ lang }: { lang: Locale }) {
               .then((r) => (r.ok ? r.arrayBuffer() : Promise.reject(new Error(r.statusText))))
               .then(mod.decodeShape);
           }
-          // Every shape gets the same light dust around it, drawn from its own seed.
-          p = p.then((shape) => mod.withDust(shape, NAMES.indexOf(name) + 1));
+          // Every shape gets the same light dust around it, drawn from its own seed. None lands
+          // on the face or on the signature.
+          p = p.then((shape) => mod.withDust(shape, NAMES.indexOf(name) + 1, calmFor(name, shape, mod.extent)));
           cache.set(name, p);
         }
         return p;
@@ -130,9 +142,19 @@ export function ScanCloud({ lang }: { lang: Locale }) {
       if (cancelled) return;
       const cloud: ScanCloudRenderer = new mod.ScanCloudRenderer(canvas, count, first, poseFor(s0.section), still);
       canvas.dataset.ready = "";
-      cloud.play();
 
       let wanted: ShapeName | null = null;
+      let shown: ShapeName | null = null;
+      // The map's labels follow the cloud, once the map has formed.
+      const syncMarks = () => {
+        const marks = marksRef.current;
+        if (!marks) return;
+        const show = shown === "quebec" && cloud.progress >= MARKS_AT;
+        if (show) followCloud(marks, (x, y, z) => cloud.project(x, y, z));
+        if (show !== marks.hasAttribute("data-show")) marks.toggleAttribute("data-show", show);
+      };
+      cloud.onFrame = syncMarks;
+      cloud.play();
       apply.current = () => {
         if (!introDone) return;
         const s = state.current;
@@ -142,7 +164,10 @@ export function ScanCloud({ lang }: { lang: Locale }) {
         wanted = name;
         load(name)
           .then((shape) => {
-            if (!cancelled && wanted === name) cloud.morphTo(shape, name === "yarn");
+            if (cancelled || wanted !== name) return;
+            shown = name;
+            cloud.morphTo(shape, motionFor(name));
+            syncMarks();
           })
           .catch(() => {});
       };
@@ -216,10 +241,31 @@ export function ScanCloud({ lang }: { lang: Locale }) {
   return (
     <>
       <canvas ref={canvasRef} className={styles.canvas} aria-hidden="true" hidden={noWebGL} />
+      {!noWebGL && <MapMarks ref={marksRef} />}
       {fallback && (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img className={styles.still} src={`${basePath}/clouds/${fallback}.webp`} alt="" width={480} height={480} />
+        <div className={styles.still}>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={`${basePath}/clouds/${fallback}.webp`} alt="" width={480} height={480} />
+          {fallback === "quebec" && <MapMarks still />}
+        </div>
+      )}
+      {noWebGL && section === "contact" && (
+        // The signature as dotted type, where the cloud would write it.
+        <p className={styles.signature} aria-hidden="true">
+          <span>{t(ui.contactTitle.a, lang)}</span>
+          <span className={styles.signatureAccent}>{t(ui.contactTitle.b, lang)}</span>
+        </p>
       )}
     </>
   );
+}
+
+/** Where dust must not land: the face (measured when the shape is built) and the signature. */
+function calmFor(name: ShapeName, shape: Shape, extent: (s: Shape) => { x: number; y: number }): Ellipse | undefined {
+  if (name === "face") return meta.face.calm;
+  if (name === "text") {
+    const e = extent(shape);
+    return { cx: 0, cy: 0, rx: e.x * 1.15, ry: e.y * 1.5 };
+  }
+  return undefined;
 }

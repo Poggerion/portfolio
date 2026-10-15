@@ -1,7 +1,9 @@
 import { readFileSync, readdirSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
-import { DUST_EVERY, POINTS, decodeShape, withDust } from "../src/components/scan/cloud";
+import { DUST_DRIFT, DUST_EVERY, MOTION, POINTS, decodeShape, withDust } from "../src/components/scan/cloud";
+import { previewPercent, quebecMarkers, quebecRoute } from "../src/components/scan/MapMarks";
+import meta from "../src/components/scan/shape-meta.json";
 
 const dir = join("public", "clouds");
 const bins = readdirSync(dir).filter((f) => f.endsWith(".bin"));
@@ -70,5 +72,80 @@ describe("dust around a shape", () => {
   it("stays light and is the same on every visit", () => {
     expect(1 / DUST_EVERY).toBeLessThanOrEqual(0.05);
     expect(withDust(shape, 2).position).toEqual(dusty.position);
+  });
+});
+
+describe("calm portrait", () => {
+  const shape = decodeShape(new Uint8Array(readFileSync(join(dir, "face.bin"))).buffer);
+  const calm = meta.face.calm;
+  const dusty = withDust(shape, 2, calm);
+
+  it("keeps the face free of dust", () => {
+    const inside: number[] = [];
+    for (let i = 0; i < POINTS.full; i += DUST_EVERY) {
+      const u = (dusty.position[i * 3] - calm.cx) / calm.rx;
+      const v = (dusty.position[i * 3 + 1] - calm.cy) / calm.ry;
+      // Still outside after the shader's drift (up to DUST_DRIFT on each axis).
+      if (Math.hypot(u, v) < 1 + (DUST_DRIFT * Math.SQRT2) / Math.min(calm.rx, calm.ry)) inside.push(i);
+    }
+    expect(inside).toEqual([]);
+  });
+
+  it("measures the face on the head, above the shoulders", () => {
+    expect(calm.cy).toBeGreaterThan(0);
+    expect(calm.rx).toBeGreaterThan(0.3);
+    expect(calm.rx).toBeLessThan(0.8);
+    expect(Math.abs(calm.cx)).toBeLessThan(0.2);
+  });
+
+  it("turns and leans only slightly, and barely lifts points on the way", () => {
+    const deg = Math.PI / 180;
+    expect(MOTION.sway).toBeLessThanOrEqual(1.5 * deg);
+    expect(MOTION.pointer).toBeLessThanOrEqual(1 * deg + 1e-9);
+    expect(MOTION.breathe).toBeLessThanOrEqual(0.002);
+    expect(MOTION.calmLift).toBeLessThan(MOTION.lift / 4);
+  });
+});
+
+describe("Québec map labels", () => {
+  const shape = decodeShape(new Uint8Array(readFileSync(join(dir, "quebec.bin"))).buffer);
+  const sept = quebecMarkers["sept-iles"];
+  const mtl = quebecMarkers.montreal;
+
+  it("places Sept-Îles north-east of Montréal, inside the shape", () => {
+    for (const [x, y] of [sept, mtl]) {
+      expect(Math.abs(x)).toBeLessThanOrEqual(1);
+      expect(Math.abs(y)).toBeLessThanOrEqual(1);
+    }
+    expect(sept[0]).toBeGreaterThan(mtl[0]);
+    expect(sept[1]).toBeGreaterThan(mtl[1]);
+  });
+
+  it("runs the route from Sept-Îles to Montréal", () => {
+    expect(quebecRoute[0]).toEqual(sept);
+    expect(quebecRoute[quebecRoute.length - 1]).toEqual(mtl);
+  });
+
+  it("puts each label on the orange end of the route in the cloud", () => {
+    for (const [x, y] of [sept, mtl]) {
+      let near = 0;
+      for (let i = 0; i < POINTS.full; i++) {
+        if (shape.accent[i] && Math.hypot(shape.position[i * 3] - x, shape.position[i * 3 + 1] - y) < 0.02) near++;
+      }
+      expect(near).toBeGreaterThan(20);
+    }
+  });
+
+  it("maps shape coordinates onto the still image", () => {
+    expect(previewPercent([0, 0])).toEqual([50, 50]);
+    const [x, y] = previewPercent([1, 1]);
+    expect(x).toBeCloseTo(96);
+    expect(y).toBeCloseTo(4);
+    for (const p of [sept, mtl]) {
+      for (const v of previewPercent(p)) {
+        expect(v).toBeGreaterThan(0);
+        expect(v).toBeLessThan(100);
+      }
+    }
   });
 });
