@@ -1,0 +1,612 @@
+/* Five-part case study. Above the fixed point cloud of the intro. */
+.page {
+  position: relative;
+  z-index: 1;
+  padding-top: 7rem;
+  padding-bottom: 6rem;
+}
+
+.back {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  color: var(--ink-muted);
+  transition: color 0.3s;
+}
+
+.back:hover {
+  color: var(--ink);
+}
+
+/* 01 — Intro: what a recruiter needs, on the first screen. */
+.intro {
+  position: relative;
+  padding-block: clamp(1.25rem, 3vw, 2.5rem) clamp(2rem, 4vw, 3rem);
+  border-bottom: 1px solid var(--line);
+}
+
+.introText {
+  display: grid;
+  gap: 1.25rem;
+}
+
+@media (min-width: 1024px) {
+  .introText {
+    max-width: 52%;
+  }
+}
+
+.status {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.75rem;
+  color: var(--ink-faint);
+}
+
+.partNumber {
+  color: var(--accent);
+}
+
+.title {
+  /* Room above for accented capitals (É, À), which rise past the tight line height. */
+  margin-top: 0.12em;
+  font-family: var(--font-display);
+  font-size: clamp(2.5rem, 5vw, 4.5rem);
+  line-height: 0.95;
+  letter-spacing: -0.03em;
+  max-width: 18ch;
+}
+
+.lede {
+  max-width: 46ch;
+  color: var(--ink-muted);
+  font-size: var(--text-lg);
+  line-height: 1.45;
+}
+
+.glance {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.25rem 2rem;
+  margin-top: 0.75rem;
+}
+
+.glance div {
+  display: grid;
+  align-content: start;
+  gap: 0.35rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--line);
+}
+
+.glance dt {
+  color: var(--ink-faint);
+}
+
+.glance dd {
+  font-size: var(--text-sm);
+  line-height: 1.5;
+}
+
+@media (max-width: 599px) {
+  .glance {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* The project's point cloud: a fixed layer behind the page on wide screens, a still image in the intro elsewhere. */
+.cloud {
+  display: none;
+}
+
+.canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  transition: opacity 1.2s var(--ease-out);
+}
+
+.canvas[data-ready] {
+  opacity: 1;
+}
+
+.still {
+  display: block;
+  width: min(72vw, 320px);
+  height: auto;
+  margin-top: 2rem;
+}
+
+@media (min-width: 1024px) {
+  .cloud {
+    display: block;
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  .still {
+    display: none;
+  }
+
+  /* Without WebGL: the still image where the cloud would be, beside the intro, scrolling with it. */
+  .cloud[data-still] ~ .page .still {
+    display: block;
+    position: absolute;
+    right: 0;
+    top: 50%;
+    width: min(34vw, 60vh);
+    margin: 0;
+    transform: translateY(-50%);
+    pointer-events: none;
+  }
+}
+
+/* Contents: the four parts after the intro. */
+.contents {
+  padding-block: 0.75rem;
+  border-bottom: 1px solid var(--line);
+}
+
+.contents ol {
+  display: flex;
+  flex-wrap: wrap;
+  column-gap: 2rem;
+}
+
+.contents a {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  min-height: 44px;
+  color: var(--ink-muted);
+  font-size: var(--text-sm);
+  transition: color 0.2s var(--ease-out);
+}
+
+.contents a:hover {
+  color: var(--ink);
+}
+
+/* 02 to 05 */
+.part {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: 1.5rem;
+  padding-block: clamp(3rem, 6vw, 4.5rem);
+  border-bottom: 1px solid var(--line);
+}
+
+.partTitle {
+  grid-column: 1 / span 4;
+  display: grid;
+  align-content: start;
+  gap: 0.75rem;
+  font-family: var(--font-display);
+  font-size: var(--display-sm);
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+
+.partBody {
+  grid-column: 5 / span 8;
+  display: grid;
+  align-content: start;
+  gap: 1.75rem;
+  max-width: 44rem;
+  font-size: var(--text-md);
+  line-height: 1.65;
+}
+
+.partWide .partTitle {
+  grid-column: 1 / -1;
+}
+
+.partWide .plain {
+  grid-column: 5 / span 8;
+}
+
+.sub {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.subTitle {
+  color: var(--ink-faint);
+}
+
+.list {
+  display: grid;
+  gap: 0.9rem;
+}
+
+.list li {
+  position: relative;
+  padding-left: 1.6rem;
+}
+
+.list li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.85em;
+  width: 0.75rem;
+  height: 1px;
+  background: var(--ink-ghost);
+}
+
+.limits {
+  color: var(--ink-muted);
+  font-size: var(--text-base);
+}
+
+.stack {
+  display: grid;
+  gap: 1rem;
+}
+
+.stack div {
+  display: grid;
+  gap: 0.25rem;
+}
+
+.stack dt {
+  color: var(--ink-muted);
+  font-size: var(--text-sm);
+}
+
+.stack dd {
+  font-size: var(--text-base);
+}
+
+/* Technologies wrap between items only, never inside one. */
+.stackList {
+  display: flex;
+  flex-wrap: wrap;
+  column-gap: 0.35em;
+}
+
+.stackList li {
+  white-space: nowrap;
+}
+
+.stackList li:not(:last-child)::after {
+  content: ",";
+}
+
+.stackList em {
+  color: var(--ink-muted);
+}
+
+/* Work around the project: folded, so it is never read as part of it. */
+.around {
+  border-top: 1px solid var(--line);
+}
+
+.aroundToggle {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  min-height: 44px;
+  padding-top: 0.5rem;
+  cursor: pointer;
+  list-style: none;
+  color: var(--ink-muted);
+  font-size: var(--text-base);
+  transition: color 0.2s var(--ease-out);
+}
+
+.aroundToggle::-webkit-details-marker {
+  display: none;
+}
+
+.aroundToggle::before {
+  content: "+";
+  width: 0.7em;
+  font-family: var(--font-mono);
+  color: var(--accent);
+}
+
+.around[open] > .aroundToggle::before {
+  content: "\2212";
+}
+
+.aroundToggle:hover {
+  color: var(--ink);
+}
+
+.aroundBody {
+  display: grid;
+  gap: 1rem;
+  padding: 0.5rem 0 0.75rem;
+  color: var(--ink-muted);
+  font-size: var(--text-base);
+}
+
+/* Diagram: boxes in a row, links in the gaps between them. */
+.diagram {
+  --link: 7rem;
+  grid-column: 1 / -1;
+  display: grid;
+  gap: 2.25rem;
+  margin-top: 0.5rem;
+}
+
+.lane {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.laneLabel {
+  color: var(--ink-faint);
+}
+
+.flow {
+  display: grid;
+  grid-template-columns: repeat(var(--cols), minmax(0, 1fr));
+  column-gap: var(--link);
+}
+
+.step {
+  position: relative;
+  display: flex;
+}
+
+.node {
+  flex: 1;
+  display: grid;
+  align-content: start;
+  gap: 0.35rem;
+  min-height: 7.5rem;
+  padding: 1rem 1.1rem 1.1rem;
+  border: 1px solid var(--line);
+  background: var(--bg-raised);
+}
+
+.step[data-mine] .node {
+  border-color: rgb(255 106 61 / 0.6);
+}
+
+.mineTag {
+  color: var(--accent);
+}
+
+.nodeTitle {
+  font-size: var(--text-base);
+  font-weight: 500;
+  line-height: 1.3;
+}
+
+.nodeDetail {
+  color: var(--ink-muted);
+  font-size: var(--text-sm);
+  line-height: 1.45;
+}
+
+.link {
+  position: absolute;
+  right: 100%;
+  top: 50%;
+  width: var(--link);
+  display: grid;
+  justify-items: center;
+  gap: 0.4rem;
+  padding-inline: 0.6rem;
+  transform: translateY(-50%);
+}
+
+.linkLabel {
+  order: -1;
+  color: var(--ink-faint);
+  text-align: center;
+  line-height: 1.3;
+}
+
+.arrow {
+  position: relative;
+  width: 100%;
+  height: 1px;
+  background: var(--ink-ghost);
+}
+
+.arrow::after,
+.link[data-both] .arrow::before {
+  content: "";
+  position: absolute;
+  top: -4px;
+  border: 4.5px solid transparent;
+}
+
+.arrow::after {
+  right: -1px;
+  border-right: 0;
+  border-left: 7px solid var(--ink-ghost);
+}
+
+.link[data-both] .arrow::before {
+  left: -1px;
+  border-left: 0;
+  border-right: 7px solid var(--ink-ghost);
+}
+
+/* A light running along each link: the flow, very quietly. None under reduced motion. */
+.pulse {
+  position: absolute;
+  top: -2px;
+  left: 0;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--accent);
+  opacity: 0;
+  animation: flow 2.8s linear infinite;
+}
+
+@keyframes flow {
+  0% {
+    left: 0;
+    opacity: 0;
+  }
+  15%,
+  85% {
+    opacity: 1;
+  }
+  100% {
+    left: calc(100% - 5px);
+    opacity: 0;
+  }
+}
+
+.caption {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--ink-faint);
+}
+
+.legendMine,
+.legendOther {
+  width: 0.7rem;
+  height: 0.7rem;
+  border: 1px solid var(--accent);
+}
+
+.legendOther {
+  margin-left: 1rem;
+  border-color: var(--ink-ghost);
+}
+
+.note {
+  color: var(--ink-muted);
+  font-size: var(--text-sm);
+}
+
+@media (min-width: 1024px) and (max-width: 1279px) {
+  .diagram {
+    --link: 5rem;
+  }
+}
+
+/* Narrow screens: the boxes stack, links run down between them. */
+@media (max-width: 1023px) {
+  .flow {
+    grid-template-columns: minmax(0, 1fr);
+    column-gap: 0;
+    row-gap: 3.25rem;
+  }
+
+  .node {
+    min-height: 0;
+  }
+
+  .link {
+    right: auto;
+    top: auto;
+    bottom: 100%;
+    left: 1.25rem;
+    width: auto;
+    height: 3.25rem;
+    grid-auto-flow: column;
+    align-items: center;
+    justify-items: start;
+    gap: 0.75rem;
+    padding: 0;
+    transform: none;
+  }
+
+  .linkLabel {
+    order: 0;
+    text-align: left;
+  }
+
+  .arrow {
+    width: 1px;
+    height: 100%;
+  }
+
+  .arrow::after,
+  .link[data-both] .arrow::before {
+    top: auto;
+    left: -4px;
+    right: auto;
+  }
+
+  .arrow::after {
+    bottom: -1px;
+    border: 4.5px solid transparent;
+    border-bottom: 0;
+    border-top: 7px solid var(--ink-ghost);
+  }
+
+  .link[data-both] .arrow::before {
+    top: -1px;
+    border: 4.5px solid transparent;
+    border-top: 0;
+    border-bottom: 7px solid var(--ink-ghost);
+  }
+
+  .pulse {
+    top: 0;
+    left: -2px;
+    animation-name: flow-down;
+  }
+
+  @keyframes flow-down {
+    0% {
+      top: 0;
+      opacity: 0;
+    }
+    15%,
+    85% {
+      opacity: 1;
+    }
+    100% {
+      top: calc(100% - 5px);
+      opacity: 0;
+    }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pulse {
+    display: none;
+  }
+}
+
+@media (max-width: 960px) {
+  .partTitle,
+  .partBody,
+  .partWide .plain {
+    grid-column: 1 / -1;
+  }
+}
+
+.next {
+  display: grid;
+  gap: 0.75rem;
+  padding-top: clamp(3.5rem, 8vw, 6rem);
+  color: var(--ink-muted);
+}
+
+.nextTitle {
+  font-family: var(--font-display);
+  font-size: var(--display-md);
+  line-height: 1;
+  letter-spacing: -0.03em;
+  color: var(--ink);
+  transition: color 0.3s;
+}
+
+.next:hover .nextTitle {
+  color: var(--ink-muted);
+}

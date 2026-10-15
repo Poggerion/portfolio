@@ -48,6 +48,49 @@ export interface CaseStudySection {
   points?: Localized[];
 }
 
+/** One box of a case study diagram, and the link that leads into it from the box before. */
+export interface FlowNode {
+  title: Localized;
+  detail?: Localized;
+  /** Built by Felipe: drawn with the accent and named in the legend. */
+  mine?: boolean;
+  /** The link from the previous box. Left out on the first box of a lane. */
+  link?: { label?: Localized; both?: boolean };
+}
+
+/**
+ * The five-part case study (V2): what a recruiter reads on the first screen, then the problem, a
+ * diagram, the work and the choices, and the verified results. Every statement is in
+ * facts_felipe.md or in Felipe's own validations; what is unknown is left out, not guessed.
+ */
+export interface CaseStudy {
+  /** Kind of work, shown above the title (e.g. "Job · ITMI"). */
+  status: Localized;
+  /** One plain sentence: what the project is. */
+  lede: Localized;
+  /** At a glance, on the first screen. */
+  role: Localized;
+  outcome: Localized;
+  /** Who the work was for. */
+  client: Localized;
+  problem: { body: Localized[]; constraints?: Localized[] };
+  diagram: {
+    lanes: { label?: Localized; nodes: FlowNode[] }[];
+    /** The diagram in plain words, for readers who skip it and for screen readers. */
+    explanation: Localized;
+  };
+  contributions: Localized[];
+  /** Technical choices of the project that are confirmed, whoever made them. */
+  decisions: Localized[];
+  stack: { label: Localized; items: string[]; explored?: string[] }[];
+  /** Further work around the project, kept apart from it. */
+  around?: { heading: Localized; body?: Localized; points?: Localized[] }[];
+  results: Localized[];
+  limits: Localized[];
+  /** Only what Felipe has stated. */
+  learnings?: Localized[];
+}
+
 export interface Project {
   slug: string;
   title: Localized;
@@ -61,8 +104,10 @@ export interface Project {
   domains: Domain[];
   stack: string[];
   explored?: string[];
-  /** Case study body. */
-  sections: CaseStudySection[];
+  /** Case study body (pages not yet rewritten in the five-part form). */
+  sections?: CaseStudySection[];
+  /** Five-part case study; replaces `sections` and `limits` on the page when present. */
+  caseStudy?: CaseStudy;
   /** Honest limits a reader should know (e.g. prototype, approximate behaviour). */
   limits?: Localized[];
   /** Featured projects get a large card with the fields below. */

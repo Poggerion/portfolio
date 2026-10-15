@@ -25,62 +25,136 @@ export const projects: Project[] = [
     period: { fr: "2025", en: "2025" },
     domains: ["software", "data"],
     stack: ["React Native", "TypeScript", "Expo", "PHP", "REST API", "PostgreSQL", "Docker", "pytest", "Gitea", "Azure DevOps"],
-    sections: [
-      {
-        heading: { fr: "Contexte", en: "Context" },
-        body: {
-          fr: "L’ITMI a développé un système de gestion des stationnements destiné au Cégep de Sept-Îles. Il est déployé à l’interne pour l’ensemble du personnel et quelques utilisateurs externes; il n’est pas publié sur les magasins d’applications.",
-          en: "ITMI built a parking management system for Cégep de Sept-Îles. It is deployed internally to all staff and a few external users; it is not published on the app stores.",
-        },
+    caseStudy: {
+      status: { fr: "Emploi et stage · ITMI", en: "Internship and job · ITMI" },
+      lede: {
+        fr: "Une application mobile et une interface d’administration pour le système de gestion des stationnements que l’ITMI a développé pour le Cégep de Sept-Îles.",
+        en: "A mobile app and an admin interface for the parking management system ITMI built for Cégep de Sept-Îles.",
       },
-      {
-        heading: { fr: "Ma contribution", en: "My contribution" },
-        points: [
+      role: {
+        fr: "Seul développeur de l’application mobile; interface web administrateur en PHP",
+        en: "Sole developer of the mobile app; PHP admin web interface",
+      },
+      outcome: {
+        fr: "Déployée à l’interne pour l’ensemble du personnel du Cégep de Sept-Îles et quelques utilisateurs externes.",
+        en: "Deployed internally to all Cégep de Sept-Îles staff and a few external users.",
+      },
+      client: { fr: "Cégep de Sept-Îles", en: "Cégep de Sept-Îles" },
+      problem: {
+        body: [
           {
-            fr: "Développement complet de l’application mobile côté client, en React Native, TypeScript et Expo. J’en étais le seul développeur.",
-            en: "Built the entire client mobile app in React Native, TypeScript and Expo, as its only developer.",
+            fr: "Le Cégep de Sept-Îles est le client d’un système de gestion des stationnements développé par l’ITMI. Le système a deux faces : une application mobile pour ses usagers et une interface web pour l’administrer.",
+            en: "Cégep de Sept-Îles is the client of a parking management system built by ITMI. The system has two sides: a mobile app for its users and a web interface to administer it.",
           },
           {
-            fr: "Développement de l’interface web administrateur en PHP et langages web : pages, formulaires et vues.",
-            en: "Built the admin web interface in PHP and web languages: pages, forms and views.",
+            fr: "Ses usagers sont l’ensemble du personnel du Cégep et quelques utilisateurs externes.",
+            en: "Its users are all Cégep staff and a few external users.",
+          },
+        ],
+        constraints: [
+          {
+            fr: "Distribution interne : l’application n’est pas publiée sur les magasins d’applications.",
+            en: "Internal distribution: the app is not published on the app stores.",
+          },
+          {
+            fr: "Le code et les interfaces appartiennent à l’ITMI : rien de confidentiel n’est montré ici.",
+            en: "The code and interfaces belong to ITMI: nothing confidential is shown here.",
           },
         ],
       },
-      {
-        heading: { fr: "Autour du projet, à l’ITMI", en: "Around the project, at ITMI" },
-        body: {
-          fr: "Pendant la même période, j’ai aussi travaillé sur d’autres aspects des projets de l’équipe.",
-          en: "Over the same period, I also worked on other parts of the team’s projects.",
-        },
-        points: [
+      diagram: {
+        lanes: [
           {
-            fr: "API REST et composantes backend en PHP pour Nomad, un framework interne de l’ITMI, avec PostgreSQL (connexion, requêtes, migrations), dans des projets conteneurisés avec Docker.",
-            en: "REST APIs and PHP backend components for Nomad, an ITMI in-house framework, with PostgreSQL (connection, queries, migrations), in Docker-based projects.",
-          },
-          {
-            fr: "Authentification de base, authentification Microsoft et intégration Stripe.",
-            en: "Basic authentication, Microsoft authentication and Stripe integration.",
-          },
-          {
-            fr: "Tests automatisés client et serveur en Python avec pytest, incluant des tests de charge.",
-            en: "Automated client and server tests in Python with pytest, including load tests.",
+            nodes: [
+              { title: { fr: "Usagers", en: "Users" }, detail: { fr: "Personnel du Cégep et quelques utilisateurs externes", en: "Cégep staff and a few external users" } },
+              {
+                title: { fr: "Application mobile", en: "Mobile app" },
+                detail: { fr: "React Native · TypeScript · Expo", en: "React Native · TypeScript · Expo" },
+                mine: true,
+                link: { label: { fr: "utilisent", en: "use" } },
+              },
+              {
+                title: { fr: "Système de gestion des stationnements", en: "Parking management system" },
+                detail: { fr: "ITMI · non détaillé ici", en: "ITMI · not detailed here" },
+                link: { label: { fr: "échanges", en: "exchanges" }, both: true },
+              },
+              {
+                title: { fr: "Interface web administrateur", en: "Admin web interface" },
+                detail: { fr: "PHP et langages web · pages, formulaires, vues", en: "PHP and web languages · pages, forms, views" },
+                mine: true,
+                link: { label: { fr: "administration", en: "administration" }, both: true },
+              },
+            ],
           },
         ],
-      },
-      {
-        heading: { fr: "Façon de travailler", en: "How we worked" },
-        body: {
-          fr: "Sprints et réunions quotidiennes, pull requests et revues de code dans Gitea avec une stratégie de branches, tickets dans Azure DevOps Boards. J’ai aussi assuré la maintenance d’applications en production, formé du personnel et échangé avec les clients.",
-          en: "Sprints and daily stand-ups, pull requests and code reviews in Gitea with a branching strategy, tickets in Azure DevOps Boards. I also maintained applications in production, trained staff and worked with clients.",
+        explanation: {
+          fr: "Les usagers passent par l’application mobile; l’administration du système se fait dans l’interface web. J’ai développé ces deux parties. Le reste du système n’est pas détaillé ici.",
+          en: "Users go through the mobile app; the system is administered in the web interface. I built both parts. The rest of the system is not detailed here.",
         },
       },
-    ],
-    limits: [
-      {
-        fr: "Le code appartient à l’ITMI : aucune capture ni extrait n’est publié ici.",
-        en: "The code belongs to ITMI: no screenshots or excerpts are published here.",
-      },
-    ],
+      contributions: [
+        {
+          fr: "Développement complet de l’application mobile côté client, en React Native, TypeScript et Expo. J’en étais le seul développeur.",
+          en: "Built the entire client mobile app in React Native, TypeScript and Expo, as its only developer.",
+        },
+        {
+          fr: "Développement de l’interface web administrateur en PHP et langages web : pages, formulaires et vues.",
+          en: "Built the admin web interface in PHP and web languages: pages, forms and views.",
+        },
+      ],
+      decisions: [
+        { fr: "Application mobile en React Native avec Expo, écrite en TypeScript.", en: "Mobile app in React Native with Expo, written in TypeScript." },
+        { fr: "Administration par une interface web en PHP, distincte de l’application mobile.", en: "Administration through a PHP web interface, separate from the mobile app." },
+        { fr: "Distribution interne, sans publication sur les magasins d’applications.", en: "Internal distribution, without publishing on the app stores." },
+      ],
+      stack: [
+        { label: { fr: "Pour ce système", en: "For this system" }, items: ["React Native", "TypeScript", "Expo", "PHP"] },
+        { label: { fr: "À l’ITMI, même période", en: "At ITMI, same period" }, items: ["REST API", "PostgreSQL", "Docker", "pytest", "Gitea", "Azure DevOps"] },
+      ],
+      around: [
+        {
+          heading: { fr: "Façon de travailler", en: "How we worked" },
+          body: {
+            fr: "Sprints et réunions quotidiennes, pull requests et revues de code dans Gitea avec une stratégie de branches, tickets dans Azure DevOps Boards. J’ai aussi assuré la maintenance d’applications en production, formé du personnel et échangé avec les clients.",
+            en: "Sprints and daily stand-ups, pull requests and code reviews in Gitea with a branching strategy, tickets in Azure DevOps Boards. I also maintained applications in production, trained staff and worked with clients.",
+          },
+        },
+        {
+          heading: { fr: "Autres travaux à l’ITMI, même période", en: "Other work at ITMI, same period" },
+          body: {
+            fr: "Ces travaux touchent d’autres projets de l’équipe, pas seulement les stationnements.",
+            en: "This work covers other team projects, not only the parking system.",
+          },
+          points: [
+            {
+              fr: "API REST et composantes backend en PHP pour Nomad, un framework interne de l’ITMI, avec PostgreSQL (connexion, requêtes, migrations), dans des projets conteneurisés avec Docker.",
+              en: "REST APIs and PHP backend components for Nomad, an ITMI in-house framework, with PostgreSQL (connection, queries, migrations), in Docker-based projects.",
+            },
+            {
+              fr: "Authentification de base, authentification Microsoft et intégration Stripe.",
+              en: "Basic authentication, Microsoft authentication and Stripe integration.",
+            },
+            {
+              fr: "Tests automatisés client et serveur en Python avec pytest, incluant des tests de charge.",
+              en: "Automated client and server tests in Python with pytest, including load tests.",
+            },
+          ],
+        },
+      ],
+      results: [
+        {
+          fr: "Application déployée à l’interne pour l’ensemble du personnel du Cégep de Sept-Îles et quelques utilisateurs externes.",
+          en: "App deployed internally to all Cégep de Sept-Îles staff and a few external users.",
+        },
+      ],
+      limits: [
+        { fr: "Aucun nombre d’utilisateurs ni aucune mesure d’usage n’est publié.", en: "No user count or usage figure is published." },
+        {
+          fr: "Le code appartient à l’ITMI : aucune capture ni extrait n’est publié ici.",
+          en: "The code belongs to ITMI: no screenshots or excerpts are published here.",
+        },
+      ],
+    },
   },
   {
     slug: "spot-mission-imaging",
@@ -103,50 +177,135 @@ export const projects: Project[] = [
     period: { fr: "Mai – août 2024", en: "May – Aug 2024" },
     domains: ["robotics", "data"],
     stack: ["Python", "Spot SDK", "OpenCV", "Pillow", "NumPy", "Linux", "Rust", "Grafana"],
-    sections: [
-      {
-        heading: { fr: "Contexte", en: "Context" },
-        body: {
-          fr: "L’ITMI travaille avec un robot quadrupède Spot de Boston Dynamics. J’ai travaillé sur deux aspects : la gestion de ses missions autonomes et le traitement des images et données qu’il recueille.",
-          en: "ITMI works with a Boston Dynamics Spot quadruped robot. I worked on two things: managing its autonomous missions, and processing the images and data it collects.",
-        },
+    explored: ["C++"],
+    caseStudy: {
+      status: { fr: "Emploi d’été · ITMI", en: "Summer job · ITMI" },
+      lede: {
+        fr: "Gérer les missions autonomes du robot Spot de l’ITMI et traiter automatiquement les photos qu’il prend en mission.",
+        en: "Managing the autonomous missions of ITMI’s Spot robot, and automatically processing the photos it takes on missions.",
       },
-      {
-        heading: { fr: "Ma contribution", en: "My contribution" },
-        points: [
+      role: { fr: "Conseiller technique, systèmes embarqués", en: "Technical Advisor, Embedded Systems" },
+      outcome: {
+        fr: "Un prototype fonctionnel qui sélectionne et enregistre des missions autonomes, et des photos de mission traitées automatiquement sur un serveur Linux.",
+        en: "A working prototype that selects and records autonomous missions, with mission photos processed automatically on a Linux server.",
+      },
+      client: { fr: "ITMI, Sept-Îles", en: "ITMI, Sept-Îles" },
+      problem: {
+        body: [
           {
-            fr: "Prototype fonctionnel en Python avec le Spot SDK : sélection de missions autonomes existantes et enregistrement de nouvelles missions.",
-            en: "Working Python prototype with the Spot SDK: selecting existing autonomous missions and recording new ones.",
+            fr: "L’ITMI travaille avec un robot quadrupède Spot de Boston Dynamics. En mission autonome, il prend des photos et recueille des données avec différents payloads.",
+            en: "ITMI works with a Boston Dynamics Spot quadruped robot. On autonomous missions, it takes photos and collects data with several payloads.",
           },
           {
-            fr: "Prise de photos pendant les missions et téléversement vers un serveur Linux, où elles sont traitées avec les données de différents payloads (OpenCV, Pillow, NumPy), puis transmises aux utilisateurs concernés.",
-            en: "Photo capture during missions and upload to a Linux server, where they are processed with data from several payloads (OpenCV, Pillow, NumPy), then sent to the people who need them.",
+            fr: "J’ai travaillé sur deux points : la gestion de ses missions autonomes, et le traitement automatisé des photos de mission jusqu’aux personnes qui en ont besoin.",
+            en: "I worked on two things: managing its autonomous missions, and automatically processing mission photos all the way to the people who need them.",
           },
           {
-            fr: "Récupération en Rust des données de capteurs extérieurs, exploitées dans Grafana.",
-            en: "Rust code to collect outdoor sensor data, used in Grafana.",
-          },
-          {
-            fr: "Formation du personnel et documentation technique.",
-            en: "Staff training and technical documentation.",
+            fr: "Avant cet emploi, à l’hiver 2024, j’avais déjà travaillé sur Spot comme auxiliaire de recherche : une preuve de concept Python avec le Spot SDK, testée et validée, et une exploration du C++ avec le même SDK.",
+            en: "Before this job, in winter 2024, I had already worked on Spot as a research assistant: a Python proof of concept with the Spot SDK, tested and validated, and an exploration of C++ with the same SDK.",
           },
         ],
       },
-      {
-        heading: { fr: "Avant cela", en: "Before that" },
-        body: {
-          fr: "À l’hiver 2024, comme auxiliaire de recherche, j’avais développé une preuve de concept Python avec le Spot SDK, testée et validée, et exploré le C++ avec le même SDK.",
-          en: "In winter 2024, as a research assistant, I had built a tested and validated Python proof of concept with the Spot SDK, and explored C++ with the same SDK.",
+      diagram: {
+        lanes: [
+          {
+            label: { fr: "Missions et photos", en: "Missions and photos" },
+            nodes: [
+              {
+                title: { fr: "Prototype de missions", en: "Mission prototype" },
+                detail: { fr: "Python · Spot SDK · choisir ou enregistrer une mission", en: "Python · Spot SDK · pick or record a mission" },
+                mine: true,
+              },
+              {
+                title: { fr: "Spot en mission autonome", en: "Spot on an autonomous mission" },
+                detail: { fr: "Photos et données des payloads", en: "Photos and payload data" },
+                link: { label: { fr: "mission choisie", en: "selected mission" } },
+              },
+              {
+                title: { fr: "Traitement automatisé", en: "Automated processing" },
+                detail: { fr: "Serveur Linux · OpenCV, Pillow, NumPy", en: "Linux server · OpenCV, Pillow, NumPy" },
+                mine: true,
+                link: { label: { fr: "téléversement", en: "upload" } },
+              },
+              {
+                title: { fr: "Personnes concernées", en: "People who need them" },
+                detail: { fr: "Résultats transmis", en: "Results sent" },
+                link: { label: { fr: "transmission", en: "sent" } },
+              },
+            ],
+          },
+          {
+            label: { fr: "En parallèle", en: "Alongside" },
+            nodes: [
+              { title: { fr: "Capteurs extérieurs", en: "Outdoor sensors" }, detail: { fr: "Différents capteurs", en: "Several sensors" } },
+              {
+                title: { fr: "Récupération des données", en: "Data collection" },
+                detail: { fr: "Rust", en: "Rust" },
+                mine: true,
+                link: {},
+              },
+              { title: { fr: "Grafana", en: "Grafana" }, detail: { fr: "Données exploitées", en: "Data put to use" }, link: {} },
+            ],
+          },
+        ],
+        explanation: {
+          fr: "Avec le prototype, on choisit une mission existante ou on en enregistre une nouvelle. Spot l’exécute de façon autonome et prend des photos. Les photos sont téléversées vers un serveur Linux, traitées automatiquement avec les données des payloads, puis transmises aux personnes concernées. À côté, un programme en Rust récupère les données de capteurs extérieurs pour Grafana.",
+          en: "With the prototype, you pick an existing mission or record a new one. Spot carries it out autonomously and takes photos. The photos are uploaded to a Linux server, processed automatically with the payload data, then sent to the people who need them. Alongside, a Rust program collects outdoor sensor data for Grafana.",
         },
       },
-    ],
-    explored: ["C++"],
-    limits: [
-      {
-        fr: "Il s’agit d’un prototype fonctionnel, pas d’un produit commercial. Aucune mesure de performance n’est publiée.",
-        en: "This is a working prototype, not a commercial product. No performance figures are published.",
-      },
-    ],
+      contributions: [
+        {
+          fr: "Prototype fonctionnel en Python avec le Spot SDK : sélection de missions autonomes existantes et enregistrement de nouvelles missions.",
+          en: "Working Python prototype with the Spot SDK: selecting existing autonomous missions and recording new ones.",
+        },
+        {
+          fr: "Prise de photos pendant les missions et téléversement vers un serveur Linux.",
+          en: "Photo capture during missions and upload to a Linux server.",
+        },
+        {
+          fr: "Traitement automatisé des photos sur le serveur avec les données de différents payloads (OpenCV, Pillow, NumPy), puis transmission aux utilisateurs concernés.",
+          en: "Automated processing of the photos on the server with data from several payloads (OpenCV, Pillow, NumPy), then delivery to the people who need them.",
+        },
+        {
+          fr: "Récupération en Rust des données de différents capteurs extérieurs, exploitées dans Grafana.",
+          en: "Rust code to collect data from several outdoor sensors, used in Grafana.",
+        },
+        { fr: "Formation du personnel et documentation technique.", en: "Staff training and technical documentation." },
+      ],
+      decisions: [
+        { fr: "Missions pilotées en Python avec le Spot SDK de Boston Dynamics.", en: "Missions driven in Python with the Boston Dynamics Spot SDK." },
+        { fr: "Traitement des photos sur un serveur Linux, après téléversement.", en: "Photo processing on a Linux server, after upload." },
+        { fr: "Traitement d’images en Python avec OpenCV, Pillow et NumPy.", en: "Image processing in Python with OpenCV, Pillow and NumPy." },
+        { fr: "Rust pour récupérer les données de capteurs, Grafana pour les exploiter.", en: "Rust to collect the sensor data, Grafana to put it to use." },
+      ],
+      stack: [
+        { label: { fr: "Cet emploi", en: "This job" }, items: ["Python", "Spot SDK", "OpenCV", "Pillow", "NumPy", "Linux", "Rust", "Grafana"] },
+        { label: { fr: "Hiver 2024, auxiliaire de recherche", en: "Winter 2024, research assistant" }, items: ["Python", "Spot SDK"], explored: ["C++"] },
+      ],
+      results: [
+        {
+          fr: "Prototype fonctionnel de sélection et d’enregistrement de missions autonomes.",
+          en: "A working prototype to select and record autonomous missions.",
+        },
+        {
+          fr: "Photos de mission traitées automatiquement sur le serveur, puis transmises aux personnes concernées.",
+          en: "Mission photos processed automatically on the server, then sent to the people who need them.",
+        },
+        { fr: "Données de capteurs extérieurs exploitées dans Grafana.", en: "Outdoor sensor data put to use in Grafana." },
+        { fr: "Personnel formé et documentation technique rédigée.", en: "Staff trained and technical documentation written." },
+      ],
+      limits: [
+        {
+          fr: "Il s’agit d’un prototype fonctionnel, pas d’un produit commercial.",
+          en: "This is a working prototype, not a commercial product.",
+        },
+        {
+          fr: "Aucune mesure de performance n’est publiée : ni cadence, ni volume, ni précision.",
+          en: "No performance figures are published: no rate, volume or accuracy.",
+        },
+        { fr: "Aucune vidéo de démonstration n’est disponible.", en: "No demo video is available." },
+      ],
+    },
   },
   {
     slug: "spot-thermal-mission",
@@ -208,10 +367,10 @@ export const projects: Project[] = [
   },
   {
     slug: "android-raspberry-arduino",
-    title: { fr: "Android, Raspberry Pi et Arduino", en: "Android, Raspberry Pi and Arduino" },
+    title: { fr: "Surveillance portable avec Android, Raspberry Pi et Arduino", en: "Portable monitoring with Android, Raspberry Pi and Arduino" },
     summary: {
-      fr: "Projet individuel pour un vrai client, avec une application Android, un Raspberry Pi et un Arduino.",
-      en: "Solo project for a real client, with an Android app, a Raspberry Pi and an Arduino.",
+      fr: "Projet individuel pour un vrai client : un système de surveillance portable avec un Raspberry Pi central, un Arduino pour les capteurs et une application Android.",
+      en: "Solo project for a real client: a portable monitoring system with a central Raspberry Pi, an Arduino for the sensors and an Android app.",
     },
     involvement: "solo",
     team: { fr: "Projet individuel", en: "Solo project" },
@@ -219,32 +378,104 @@ export const projects: Project[] = [
     period: { fr: "Hiver 2024", en: "Winter 2024" },
     domains: ["embedded", "software"],
     stack: ["Android", "Android Studio", "Java", "Python", "Raspberry Pi", "Arduino", "GPIO", "I2C", "SPI", "UART", "RTC"],
-    sections: [
-      {
-        heading: { fr: "Le système", en: "The system" },
-        points: [
+    caseStudy: {
+      status: { fr: "Projet individuel · Cégep de Sept-Îles", en: "Solo project · Cégep de Sept-Îles" },
+      lede: {
+        fr: "Un système de surveillance portable : des capteurs lus par un Arduino, un Raspberry Pi au centre et une application mobile avec des notifications sur la présence ou l’absence de personnes.",
+        en: "A portable monitoring system: sensors read by an Arduino, a Raspberry Pi at the centre, and a mobile app with notifications about people being present or absent.",
+      },
+      role: {
+        fr: "Seul sur le projet : application Android, Raspberry Pi, Arduino et gestion de projet",
+        en: "Solo: Android app, Raspberry Pi, Arduino and project management",
+      },
+      outcome: {
+        fr: "Mené pour un client réel, le Cégep et ses professeurs : cahier des charges, échéancier, rencontres et validation des livrables.",
+        en: "Run for a real client, the college and its teachers: specification, schedule, meetings and deliverable sign-off.",
+      },
+      client: { fr: "Cégep de Sept-Îles et ses professeurs", en: "Cégep de Sept-Îles and its teachers" },
+      problem: {
+        body: [
           {
-            fr: "Une application Android développée avec Android Studio en Java.",
-            en: "An Android app built with Android Studio in Java.",
+            fr: "Le Cégep de Sept-Îles et ses professeurs étaient les clients de ce projet : un système de surveillance portable, avec des notifications sur la présence ou l’absence de personnes.",
+            en: "Cégep de Sept-Îles and its teachers were the clients of this project: a portable monitoring system with notifications about people being present or absent.",
           },
           {
-            fr: "Un Raspberry Pi programmé en Python (traitement local, communications réseau) et un Arduino.",
-            en: "A Raspberry Pi programmed in Python (local processing, network communication) and an Arduino.",
+            fr: "J’ai mené le projet du cahier des charges jusqu’à la validation des livrables avec le client.",
+            en: "I ran the project from the specification to the deliverable sign-off with the client.",
           },
+        ],
+        constraints: [
           {
-            fr: "Protocoles et composants utilisés dans le projet : GPIO, I2C, SPI, UART et horloge temps réel (RTC).",
-            en: "Protocols and components used in the project: GPIO, I2C, SPI, UART and a real-time clock (RTC).",
+            fr: "Un système portable, réparti sur trois appareils : un Arduino, un Raspberry Pi et un appareil Android.",
+            en: "A portable system spread over three devices: an Arduino, a Raspberry Pi and an Android device.",
           },
         ],
       },
-      {
-        heading: { fr: "Gestion de projet", en: "Project management" },
-        body: {
-          fr: "Cahier des charges, échéancier et documentation; rencontres avec le client et validation des livrables.",
-          en: "Specification, schedule and documentation; client meetings and deliverable sign-off.",
+      diagram: {
+        lanes: [
+          {
+            nodes: [
+              { title: { fr: "Capteurs", en: "Sensors" }, detail: { fr: "Type non précisé ici", en: "Type not specified here" } },
+              {
+                title: { fr: "Arduino", en: "Arduino" },
+                detail: { fr: "Acquisition par capteurs", en: "Sensor acquisition" },
+                mine: true,
+                link: { label: { fr: "acquisition", en: "acquisition" } },
+              },
+              {
+                title: { fr: "Raspberry Pi", en: "Raspberry Pi" },
+                detail: { fr: "Unité centrale · traitement des requêtes, gestion du système · Python", en: "Central unit · request handling, system management · Python" },
+                mine: true,
+                link: { label: { fr: "transmission", en: "transmission" } },
+              },
+              {
+                title: { fr: "Application Android", en: "Android app" },
+                detail: { fr: "Java · notifications : présence ou absence de personnes", en: "Java · notifications: people present or absent" },
+                mine: true,
+                link: { label: { fr: "communications réseau", en: "network communication" }, both: true },
+              },
+            ],
+          },
+        ],
+        explanation: {
+          fr: "L’Arduino lit les capteurs et transmet leurs informations au Raspberry Pi. Le Raspberry Pi, au centre, traite les requêtes et gère le système. L’application mobile affiche des notifications sur la présence ou l’absence de personnes. Les capteurs, la liaison entre les appareils et la méthode de détection ne sont pas détaillés ici.",
+          en: "The Arduino reads the sensors and passes their information to the Raspberry Pi. The Raspberry Pi, at the centre, handles requests and manages the system. The mobile app shows notifications about people being present or absent. The sensors, the links between the devices and the detection method are not detailed here.",
         },
       },
-    ],
+      contributions: [
+        { fr: "Application Android en Java avec Android Studio : l’interface et ses notifications.", en: "Android app in Java with Android Studio: the interface and its notifications." },
+        { fr: "Programme Python sur le Raspberry Pi : traitement local et communications réseau.", en: "Python program on the Raspberry Pi: local processing and network communication." },
+        { fr: "Programmation de l’Arduino pour l’acquisition par capteurs et la transmission au Raspberry Pi.", en: "Arduino programming for sensor acquisition and transmission to the Raspberry Pi." },
+        {
+          fr: "Gestion de projet : cahier des charges, échéancier, documentation, rencontres avec le client et validation des livrables.",
+          en: "Project management: specification, schedule, documentation, client meetings and deliverable sign-off.",
+        },
+      ],
+      decisions: [
+        {
+          fr: "Trois rôles séparés : l’Arduino pour l’acquisition, le Raspberry Pi comme unité centrale, l’application mobile comme interface.",
+          en: "Three separate roles: the Arduino for acquisition, the Raspberry Pi as the central unit, the mobile app as the interface.",
+        },
+        { fr: "Python sur le Raspberry Pi, Java pour l’application Android.", en: "Python on the Raspberry Pi, Java for the Android app." },
+        {
+          fr: "Protocoles et composants utilisés dans le projet : GPIO, I2C, SPI, UART et horloge temps réel (RTC).",
+          en: "Protocols and components used in the project: GPIO, I2C, SPI, UART and a real-time clock (RTC).",
+        },
+      ],
+      stack: [
+        { label: { fr: "Technologies", en: "Stack" }, items: ["Android", "Android Studio", "Java", "Python", "Raspberry Pi", "Arduino", "GPIO", "I2C", "SPI", "UART", "RTC"] },
+      ],
+      results: [
+        { fr: "Système réalisé seul pour un client réel, le Cégep et ses professeurs.", en: "A system built alone for a real client, the college and its teachers." },
+        { fr: "Livrables validés avec le client.", en: "Deliverables signed off with the client." },
+      ],
+      limits: [
+        {
+          fr: "Aucune photo ni vidéo du système n’est disponible : le schéma ci-dessus est une illustration.",
+          en: "No photo or video of the system is available: the diagram above is an illustration.",
+        },
+      ],
+    },
   },
   {
     slug: "test-engineering-java",

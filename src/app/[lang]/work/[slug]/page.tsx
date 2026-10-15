@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { CaseStudyView } from "@/components/case/CaseStudyView";
 import { Footer } from "@/components/sections";
 import { domains, profile } from "@/content/profile";
 import { getProject, projects } from "@/content/projects";
@@ -47,6 +48,15 @@ export default async function CaseStudy({ params }: PageProps<"/[lang]/work/[slu
   const { lang, slug } = await params;
   const project = getProject(slug);
   if (!isLocale(lang) || !project) notFound();
+
+  if (project.caseStudy) {
+    return (
+      <>
+        <CaseStudyView project={project} study={project.caseStudy} lang={lang} />
+        <Footer />
+      </>
+    );
+  }
 
   const index = projects.indexOf(project);
   const next = projects[(index + 1) % projects.length];
@@ -107,7 +117,7 @@ export default async function CaseStudy({ params }: PageProps<"/[lang]/work/[slu
         </dl>
 
         <div className={styles.body}>
-          {project.sections.map((s) => (
+          {project.sections?.map((s) => (
             <section key={s.heading.en} className={styles.block}>
               <h2 className={`mono ${styles.blockTitle}`}>{t(s.heading, lang)}</h2>
               <div className={styles.blockContent}>
