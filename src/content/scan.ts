@@ -1,3 +1,4 @@
+import { projects } from "./projects";
 import type { Localized } from "./types";
 import { ui } from "./ui";
 
@@ -9,7 +10,10 @@ export interface ScanSection {
   /** id of the page section (also its anchor). */
   id: string;
   subject: Localized;
-  /** Alternative subjects inside the section, keyed by the data-scan-variant of an element. */
+  /**
+   * Alternative subjects inside the section, keyed by the data-scan-variant of an element (in the
+   * work section, by project slug).
+   */
   variants?: Record<string, Localized>;
 }
 
@@ -19,7 +23,13 @@ export const scanSections: ScanSection[] = [
     id: "about",
     subject: { fr: "Sept-Îles → Montréal · 50.2°N → 45.5°N", en: "Sept-Îles → Montréal · 50.2°N → 45.5°N" },
   },
-  { id: "work", subject: { fr: "Projets · application mobile", en: "Work · mobile app" } },
+  {
+    id: "work",
+    subject: { fr: "Projets", en: "Work" },
+    variants: Object.fromEntries(
+      projects.map((p) => [p.slug, { fr: `Projet · ${p.title.fr}`, en: `Project · ${p.title.en}` }]),
+    ),
+  },
   { id: "experience", subject: { fr: "Spot · ITMI, Sept-Îles", en: "Spot · ITMI, Sept-Îles" } },
   { id: "skills", subject: { fr: "Carte électronique · Raspberry Pi", en: "Circuit board · Raspberry Pi" } },
   {

@@ -11,6 +11,7 @@
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import sharp from "sharp";
+import { projectDrawings, spot } from "./drawings.mts";
 
 export const COUNT = 16384;
 export const BYTES_PER_POINT = 8;
@@ -164,8 +165,6 @@ interface PhotoOptions {
    * read: an ellipse (0..1 of the image) with its own weights, blended in over a soft edge.
    */
   focus?: { cx: number; cy: number; rx: number; ry: number; edge: number; light: number; gamma: number; boost: number };
-  /** Bright subject on a light background: sample the subject's dark parts too. */
-  invert?: boolean;
   /** Which pixels carry the accent, from their colour (0..255) and position (0..1). */
   accent?: (r: number, g: number, b: number, u: number, v: number) => boolean;
   /** Extra weight of accent pixels, so a small sign still gets enough points. */
@@ -181,8 +180,6 @@ interface PhotoOptions {
   seed: number;
 }
 
-/** Saturated warm pixels (yellow, orange): the safety colours of Spot. */
-const warm = (r: number, g: number, b: number) => Math.max(r, g, b) - Math.min(r, g, b) > 90 && r > 150 && b < 120 && g > 60;
 
 const FONT = "Inter Display, Inter, FreeSans, DejaVu Sans, Arial, sans-serif";
 
@@ -304,8 +301,7 @@ async function photo(o: PhotoOptions): Promise<Point[]> {
         const gy = -at(-1, -1) - 2 * at(0, -1) - at(1, -1) + at(-1, 1) + 2 * at(0, 1) + at(1, 1);
         return Math.min(1, Math.hypot(gx, gy) / 2);
       };
-      const tone = o.invert ? 1 - lum[k] * 0.6 : lum[k];
-      let v = o.edge * sobel(lum) + o.light * tone ** (o.gamma ?? 2) + 0.02;
+      let v = o.edge * sobel(lum) + o.light * lum[k] ** (o.gamma ?? 2) + 0.02;
       if (o.focus) {
         const f = o.focus;
         const d = Math.hypot((x / w - f.cx) / f.rx, (y / h - f.cy) / f.ry);
@@ -407,27 +403,6 @@ function rectPath(x: number, y: number, w: number, h: number, r = 0): [number, n
 
 function fillRect(x: number, y: number, w: number, h: number, n: number, rand: () => number): [number, number][] {
   return Array.from({ length: n }, () => [x + rand() * w, y + rand() * h] as [number, number]);
-}
-
-/** A phone: rounded body, notch, a parking app with a map and a reservation card. */
-function phone(): Point[] {
-  const rand = rng(11);
-  const pts: Point[] = [];
-  const add = (xy: [number, number][], i: number, accent = false, z = 0) =>
-    xy.forEach(([x, y]) => pts.push({ x, y, z: z + (rand() - 0.5) * 0.03, i, accent }));
-  add(alongPath(rectPath(-0.5, -1, 1, 2, 0.14), 3600, rand, 0.012), 240);
-  add(alongPath(rectPath(-0.46, -0.95, 0.92, 1.9, 0.11), 1400, rand, 0.008), 150);
-  add(alongPath(rectPath(-0.12, 0.86, 0.24, 0.05, 0.025), 300, rand, 0.006), 220);
-  // Map: street grid with parking spots.
-  for (let k = 0; k < 6; k++) add(alongPath([[-0.42, 0.75 - k * 0.12], [0.42, 0.75 - k * 0.12]], 260, rand, 0.006), 110);
-  for (let k = 0; k < 6; k++) add(alongPath([[-0.36 + k * 0.15, 0.78], [-0.36 + k * 0.15, 0.1]], 230, rand, 0.006), 110);
-  add(fillRect(0.0, 0.33, 0.11, 0.08, 500, rand), 255, true, 0.05);
-  // Reservation card and button.
-  add(alongPath(rectPath(-0.4, -0.45, 0.8, 0.45, 0.04), 900, rand, 0.006), 200);
-  for (let k = 0; k < 3; k++) add(fillRect(-0.34, -0.12 - k * 0.09, 0.45 - k * 0.1, 0.025, 260, rand), 170);
-  add(fillRect(-0.4, -0.78, 0.8, 0.14, 1700, rand), 235, false, 0.03);
-  add(alongPath([[-0.18, -0.92], [0.18, -0.92]], 160, rand, 0.004), 200);
-  return finish(pts, rand);
 }
 
 /** A single-board computer: board, 40-pin header, chips, ports and traces. */
@@ -538,6 +513,57 @@ function finish(pts: Point[], rand: () => number, anchors?: [number, number][]):
   return normalize(kept);
 }
 
+/* ---------- Line drawings ---------- */
+
+/**
+ * Points from a line drawing (scripts/drawings.mts): white strokes become dense outlines, grey
+ * becomes sparse surfaces (or, for the dimmer grey, parts seen behind), orange the accent.
+ * `fill`: how much a grey pixel weighs against an outline pixel.
+ */
+async function drawing(svg: string, seed: number, fill = 0.05): Promise<Point[]> {
+  const { data, info } = await sharp(Buffer.from(svg)).ensureAlpha().raw().toBuffer({ resolveWithObject: true });
+  const w = info.width, h = info.height;
+  const rand = rng(seed);
+  // Per pixel: sampling weight, and a class that sets intensity and depth.
+  const weight = new Float32Array(w * h);
+  const kind = new Uint8Array(w * h);
+  let total = 0;
+  for (let k = 0; k < w * h; k++) {
+    const a = data[k * 4 + 3] / 255;
+    if (a < 0.05) continue;
+    const r = data[k * 4], g = data[k * 4 + 1], b = data[k * 4 + 2];
+    const accent = r > 180 && r - b > 90 && g < 190;
+    const lo = Math.min(r, g, b);
+    // 1 outline, 2 seen behind, 3 surface, 4 accent.
+    kind[k] = accent ? 4 : lo > 200 ? 1 : lo > 135 ? 2 : 3;
+    weight[k] = a * [0, 1, 0.45, fill, 1.25][kind[k]];
+    total += weight[k];
+  }
+  const cdf = new Float64Array(w * h);
+  let acc = 0;
+  for (let k = 0; k < w * h; k++) cdf[k] = acc += weight[k] / total;
+  const points: Point[] = [];
+  for (let n = 0; n < COUNT; n++) {
+    // Stratified, as for photos: one sample per slice of the CDF.
+    const target = (n + rand()) / COUNT;
+    let lo = 0, hi = cdf.length - 1;
+    while (lo < hi) {
+      const mid = (lo + hi) >> 1;
+      if (cdf[mid] < target) lo = mid + 1;
+      else hi = mid;
+    }
+    const c = kind[lo];
+    points.push({
+      x: (lo % w) + rand() - 0.5,
+      y: -(Math.floor(lo / w) + rand() - 0.5),
+      z: [0, 0, -0.08, -0.03, 0.06][c] + (rand() - 0.5) * 0.04,
+      i: [0, 232 + rand() * 23, 150, 90 + rand() * 40, 255][c],
+      accent: c === 4,
+    });
+  }
+  return normalize(shuffle(points, rand));
+}
+
 /* ---------- Shapes ---------- */
 
 const shapes: Record<string, () => Promise<Point[]> | Point[]> = {
@@ -561,20 +587,11 @@ const shapes: Record<string, () => Promise<Point[]> | Point[]> = {
       seed: 3,
     }),
   quebec,
-  phone,
   board,
-  spot: () =>
-    photo({
-      file: "spot-reference.png",
-      width: 520,
-      mask: { tolerance: 0.06 },
-      edge: 1.4,
-      light: 0.25,
-      invert: true,
-      accent: warm,
-      relief: 0.12,
-      seed: 5,
-    }),
+  // Drawn, so the robot no longer depends on a reference image of unknown rights.
+  spot: () => drawing(spot, 5),
+  // One shape per project, named after its slug.
+  ...Object.fromEntries(Object.entries(projectDrawings).map(([slug, svg], k) => [slug, () => drawing(svg, 101 + k)])),
   // ÉTS, pavillon A at dusk: the round tower and its sign, without the sky and the street.
   ets: () =>
     photo({

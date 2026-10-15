@@ -2,43 +2,15 @@
 
 import { useEffect, useRef, useState } from "react";
 import { ui } from "@/content/ui";
+import { shownProject } from "@/lib/active-section";
 import { t, type Locale } from "@/lib/i18n";
 import { basePath } from "@/lib/site";
 import { useScan } from "@/lib/scan-store";
 import type { Ellipse, Motion, Pose, ScanCloudRenderer, Shape } from "./cloud";
 import { MapMarks, followCloud } from "./MapMarks";
 import meta from "./shape-meta.json";
+import { SHAPE_NAMES, shapeFor, type ShapeName } from "./shapes";
 import styles from "./ScanPanel.module.css";
-
-/** Built shapes in public/clouds/ (npm run clouds); "yarn" and "text" are made in the browser. */
-type ShapeName = "yarn" | "face" | "quebec" | "phone" | "spot" | "board" | "cegep" | "ets" | "text";
-
-const NAMES: ShapeName[] = ["yarn", "face", "quebec", "phone", "spot", "board", "cegep", "ets", "text"];
-
-/** The shape each section shows, and the one a hovered project shows. */
-function shapeFor(section: string, variant: string | null, project: string | null): ShapeName {
-  if (project) {
-    if (project.startsWith("spot-")) return "spot";
-    if (project === "android-raspberry-arduino" || project === "server-infrastructure-lab") return "board";
-    return "phone";
-  }
-  switch (section) {
-    case "about":
-      return "quebec";
-    case "work":
-      return "phone";
-    case "experience":
-      return "spot";
-    case "skills":
-      return "board";
-    case "education":
-      return variant === "ets" ? "ets" : "cegep";
-    case "contact":
-      return "text";
-    default:
-      return "face";
-  }
-}
 
 /** The ball of yarn turns, the contact signature holds still once written, the rest sway very slightly. */
 function motionFor(name: ShapeName): Motion {
@@ -66,8 +38,6 @@ function hasWebGL(): boolean {
   }
 }
 
-/** A hovered project keeps its shape this long after the pointer leaves, so the cloud does not flicker. */
-const HOVER_RELEASE_MS = 300;
 /** On arrival the ball of yarn holds this long before it turns into the face. */
 const INTRO_HOLD_MS = 1200;
 /** The map's labels appear once the morph is this far along (the route ends at the bottom, drawn last). */
@@ -75,24 +45,28 @@ const MARKS_AT = 0.9;
 
 /**
  * Fixed canvas behind the page. The ball of yarn appears, then becomes Felipe's face, then takes
- * the shape of each section as the reader scrolls. Three.js loads once the page is idle. Under
- * reduced motion the shapes change without moving; without WebGL, a still image of the shape
- * (with the map's labels), and the contact signature as dotted type.
+ * the shape of each section as the reader scrolls; in the work section, the shape of the project
+ * being read, or of the one previewed by focus or hover. Three.js loads once the page is idle.
+ * Under reduced motion the shapes change without moving; without WebGL, a still image of the
+ * shape (with the map's labels), and the contact signature as dotted type.
  */
 export function ScanCloud({ lang }: { lang: Locale }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const marksRef = useRef<HTMLDivElement>(null);
   const apply = useRef<() => void>(() => {});
-  const { section, variant } = useScan();
-  const state = useRef({ section, variant, project: null as string | null });
+  const scan = useScan();
+  const name = shapeFor(scan.section, scan.variant, shownProject(scan));
+  const wantedName = useRef(name);
+  const section = useRef(scan.section);
   const [noWebGL, setNoWebGL] = useState(false);
-  const fallback = noWebGL && section !== "contact" ? shapeFor(section, variant, null) : null;
+  const [missing, setMissing] = useState<string | null>(null);
+  const fallback = noWebGL && name !== "text" && name !== missing ? name : null;
 
   useEffect(() => {
-    state.current.section = section;
-    state.current.variant = variant;
+    wantedName.current = name;
+    section.current = scan.section;
     apply.current();
-  }, [section, variant]);
+  }, [name, scan.section]);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -104,19 +78,20 @@ export function ScanCloud({ lang }: { lang: Locale }) {
     const still = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     let cancelled = false;
     let introDone = still;
-    let releaseTimer = 0;
-    const cleanups: (() => void)[] = [];
+    // Stops the downloads still running when the page goes (or the language changes).
+    const downloads = new AbortController();
+    const cleanups: (() => void)[] = [() => downloads.abort()];
 
     const boot = async () => {
       const mod = await import("./cloud");
       if (cancelled) return;
       const count = window.innerWidth >= 1024 ? mod.POINTS.full : mod.POINTS.light;
       const cache = new Map<ShapeName, Promise<Shape>>();
-      const load = (name: ShapeName): Promise<Shape> => {
-        let p = cache.get(name);
+      const load = (shape: ShapeName): Promise<Shape> => {
+        let p = cache.get(shape);
         if (!p) {
-          if (name === "yarn") p = Promise.resolve(mod.buildYarn());
-          else if (name === "text") {
+          if (shape === "yarn") p = Promise.resolve(mod.buildYarn());
+          else if (shape === "text") {
             const title = document.getElementById("contact-title");
             const family = title ? getComputedStyle(title).fontFamily : "serif";
             const lines = [t(ui.contactTitle.a, lang), t(ui.contactTitle.b, lang)];
@@ -125,51 +100,64 @@ export function ScanCloud({ lang }: { lang: Locale }) {
               .catch(() => [])
               .then(() => mod.textShape(lines, family));
           } else {
-            p = fetch(`${basePath}/clouds/${name}.bin`)
-              .then((r) => (r.ok ? r.arrayBuffer() : Promise.reject(new Error(r.statusText))))
+            p = fetch(`${basePath}/clouds/${shape}.bin`, { signal: downloads.signal })
+              .then((r) => (r.ok ? r.arrayBuffer() : Promise.reject(new Error(`${shape}: ${r.status}`))))
               .then(mod.decodeShape);
           }
           // Every shape gets the same light dust around it, drawn from its own seed. None lands
           // on the face or on the signature.
-          p = p.then((shape) => mod.withDust(shape, NAMES.indexOf(name) + 1, calmFor(name, shape, mod.extent)));
-          cache.set(name, p);
+          p = p.then((s) => mod.withDust(s, SHAPE_NAMES.indexOf(shape) + 1, calmFor(shape, s, mod.extent)));
+          // A failed download is forgotten, so a later visit to that shape tries again.
+          p.catch(() => cache.delete(shape));
+          cache.set(shape, p);
         }
         return p;
       };
 
-      const s0 = state.current;
-      const first = still ? await load(shapeFor(s0.section, s0.variant, null)) : await load("yarn");
+      const first = still ? await load(wantedName.current).catch(() => load("yarn")) : await load("yarn");
       if (cancelled) return;
-      const cloud: ScanCloudRenderer = new mod.ScanCloudRenderer(canvas, count, first, poseFor(s0.section), still);
+      const cloud: ScanCloudRenderer = new mod.ScanCloudRenderer(canvas, count, first, poseFor(section.current), still);
       canvas.dataset.ready = "";
 
       let wanted: ShapeName | null = null;
-      let shown: ShapeName | null = null;
+      let shown: ShapeName = still ? wantedName.current : "yarn";
+      canvas.dataset.shape = shown;
       // The map's labels follow the cloud, once the map has formed.
       const syncMarks = () => {
         const marks = marksRef.current;
         if (!marks) return;
-        const show = shown === "quebec" && cloud.progress >= MARKS_AT;
-        if (show) followCloud(marks, (x, y, z) => cloud.project(x, y, z));
-        if (show !== marks.hasAttribute("data-show")) marks.toggleAttribute("data-show", show);
+        const visible = shown === "quebec" && cloud.progress >= MARKS_AT;
+        if (visible) followCloud(marks, (x, y, z) => cloud.project(x, y, z));
+        if (visible !== marks.hasAttribute("data-show")) marks.toggleAttribute("data-show", visible);
+      };
+      const show = (target: ShapeName, shape: Shape) => {
+        shown = target;
+        canvas.dataset.shape = target;
+        cloud.morphTo(shape, motionFor(target));
+        syncMarks();
       };
       cloud.onFrame = syncMarks;
       cloud.play();
       apply.current = () => {
         if (!introDone) return;
-        const s = state.current;
-        const name = shapeFor(s.section, s.variant, s.project);
-        cloud.setPose(poseFor(s.section));
-        if (name === wanted) return;
-        wanted = name;
-        load(name)
+        const target = wantedName.current;
+        cloud.setPose(poseFor(section.current));
+        if (target === wanted) return;
+        wanted = target;
+        load(target)
           .then((shape) => {
-            if (cancelled || wanted !== name) return;
-            shown = name;
-            cloud.morphTo(shape, motionFor(name));
-            syncMarks();
+            // Only the latest request is shown: a shape that arrives after the reader moved on is
+            // kept for later, not displayed.
+            if (!cancelled && wanted === target) show(target, shape);
           })
-          .catch(() => {});
+          .catch(() => {
+            // The file could not be read: the neutral ball of yarn rather than a wrong shape.
+            if (cancelled || wanted !== target) return;
+            wanted = null;
+            void load("yarn").then((yarn) => {
+              if (!cancelled && wanted === null) show("yarn", yarn);
+            });
+          });
       };
       if (still) apply.current();
       else
@@ -178,52 +166,29 @@ export function ScanCloud({ lang }: { lang: Locale }) {
           apply.current();
         }, INTRO_HOLD_MS);
 
-      // The other shapes load in the background, once the first one is on screen.
-      const rest: ShapeName[] = ["face", "quebec", "phone", "spot", "board", "cegep", "ets"];
+      // The other shapes download in the background, one at a time, once the first is on screen.
+      const queue = SHAPE_NAMES.filter((n) => n !== "yarn" && n !== "text");
       const idle = window.requestIdleCallback ?? ((cb: () => void) => window.setTimeout(cb, 300));
-      idle(() => rest.forEach((n) => void load(n).catch(() => {})));
+      const next = () => {
+        const n = queue.shift();
+        if (n && !cancelled) void load(n).catch(() => {}).finally(() => idle(next));
+      };
+      idle(next);
 
       const onResize = () => {
         cloud.resize();
-        cloud.setPose(poseFor(state.current.section));
+        cloud.setPose(poseFor(section.current));
       };
       const onPointer = (e: PointerEvent) => {
         if (e.pointerType === "mouse") cloud.setPointer((e.clientX / window.innerWidth) * 2 - 1, (e.clientY / window.innerHeight) * 2 - 1);
       };
-      // Hovering or focusing a project shows its shape; it returns 300 ms after the pointer leaves.
-      const onOver = (e: Event) => {
-        const el = (e.target as Element | null)?.closest?.("#work [data-project]");
-        if (!el) return;
-        window.clearTimeout(releaseTimer);
-        state.current.project = el.getAttribute("data-project");
-        apply.current();
-      };
-      const onOut = (e: Event) => {
-        const el = (e.target as Element | null)?.closest?.("#work [data-project]");
-        const next = (e as FocusEvent).relatedTarget as Element | null;
-        if (!el || (next && el.contains(next))) return;
-        window.clearTimeout(releaseTimer);
-        releaseTimer = window.setTimeout(() => {
-          state.current.project = null;
-          apply.current();
-        }, HOVER_RELEASE_MS);
-      };
       const onVisibility = () => (document.hidden ? cloud.pause() : cloud.play());
       window.addEventListener("resize", onResize);
       window.addEventListener("pointermove", onPointer, { passive: true });
-      document.addEventListener("pointerover", onOver);
-      document.addEventListener("pointerout", onOut);
-      document.addEventListener("focusin", onOver);
-      document.addEventListener("focusout", onOut);
       document.addEventListener("visibilitychange", onVisibility);
       cleanups.push(() => {
-        window.clearTimeout(releaseTimer);
         window.removeEventListener("resize", onResize);
         window.removeEventListener("pointermove", onPointer);
-        document.removeEventListener("pointerover", onOver);
-        document.removeEventListener("pointerout", onOut);
-        document.removeEventListener("focusin", onOver);
-        document.removeEventListener("focusout", onOut);
         document.removeEventListener("visibilitychange", onVisibility);
         cloud.dispose();
       });
@@ -245,11 +210,18 @@ export function ScanCloud({ lang }: { lang: Locale }) {
       {fallback && (
         <div className={styles.still}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={`${basePath}/clouds/${fallback}.webp`} alt="" width={480} height={480} />
+          <img
+            src={`${basePath}/clouds/${fallback}.webp`}
+            alt=""
+            width={480}
+            height={480}
+            data-shape={fallback}
+            onError={() => setMissing(fallback)}
+          />
           {fallback === "quebec" && <MapMarks still />}
         </div>
       )}
-      {noWebGL && section === "contact" && (
+      {noWebGL && name === "text" && (
         // The signature as dotted type, where the cloud would write it.
         <p className={styles.signature} aria-hidden="true">
           <span>{t(ui.contactTitle.a, lang)}</span>

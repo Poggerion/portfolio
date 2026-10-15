@@ -3,11 +3,12 @@ import { act, createElement } from "react";
 import { createRoot, type Root } from "react-dom/client";
 import { afterEach, beforeAll, describe, expect, it } from "vitest";
 import { ScanCloud } from "../src/components/scan/ScanCloud";
-import { scanStore } from "../src/lib/scan-store";
+import { scanStore, type ScanState } from "../src/lib/scan-store";
 
 /** The cloud as a browser without WebGL shows it, on a given section. */
-async function withoutWebGL(section: string) {
-  scanStore.set({ section, variant: null, live: true });
+async function withoutWebGL(section: string, more: Partial<ScanState> = {}) {
+  scanStore.reset();
+  scanStore.update({ section, live: true, ...more });
   const host = document.createElement("div");
   document.body.append(host);
   const root = createRoot(host);
@@ -46,6 +47,18 @@ describe("scan panel without WebGL", () => {
     const marks = [...host.querySelectorAll<HTMLElement>("[data-mark]")];
     expect(marks.map((m) => m.textContent)).toEqual(["01 Sept-ÎlesCégep · ITMI", "02 MontréalÉTS"]);
     for (const m of marks) expect(m.style.left).toMatch(/%$/);
+  });
+
+  it("shows the project being read, then the one previewed: focus over hover", async () => {
+    const host = await withoutWebGL("work", { variant: "javafx-image-editor" });
+    const still = () => host.querySelector("img")?.getAttribute("data-shape");
+    expect(still()).toBe("javafx-image-editor");
+    await act(async () => scanStore.update({ hover: "php-auth-sites" }));
+    expect(still()).toBe("php-auth-sites");
+    await act(async () => scanStore.update({ focus: "spot-thermal-mission" }));
+    expect(still()).toBe("spot-thermal-mission");
+    await act(async () => scanStore.update({ focus: null, hover: null }));
+    expect(still()).toBe("javafx-image-editor");
   });
 
   it("shows the still portrait, without map labels, at the top", async () => {

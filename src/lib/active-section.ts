@@ -26,3 +26,20 @@ export function pickVariant(markers: Box[], probe: number): string | null {
   for (const marker of markers) if (marker.top <= probe) variant = marker.id;
   return variant;
 }
+
+/**
+ * The project being read in the work section: the last one whose top has crossed the probe line,
+ * or the first one while none has (it is the next thing to read).
+ */
+export function pickProject(projects: Box[], probe: number): string | null {
+  return pickVariant(projects, probe) ?? projects[0]?.id ?? null;
+}
+
+/**
+ * The project the cloud shows, by priority: keyboard focus, then the mouse, then the project
+ * being read in the work section. Null outside the work section with nothing previewed: the
+ * section's own shape shows.
+ */
+export function shownProject(s: { section: string; variant: string | null; focus: string | null; hover: string | null }): string | null {
+  return s.focus ?? s.hover ?? (s.section === "work" ? s.variant : null);
+}

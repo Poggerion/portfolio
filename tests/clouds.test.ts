@@ -4,6 +4,7 @@ import { describe, expect, it } from "vitest";
 import { DUST_DRIFT, DUST_EVERY, MOTION, POINTS, decodeShape, withDust } from "../src/components/scan/cloud";
 import { previewPercent, quebecMarkers, quebecRoute } from "../src/components/scan/MapMarks";
 import meta from "../src/components/scan/shape-meta.json";
+import { SHAPE_NAMES } from "../src/components/scan/shapes";
 
 const dir = join("public", "clouds");
 const bins = readdirSync(dir).filter((f) => f.endsWith(".bin"));
@@ -21,7 +22,7 @@ function bounds(position: Float32Array, count: number) {
 
 describe("point clouds", () => {
   it("has every shape the home page asks for, each with its still preview", () => {
-    for (const name of ["face", "quebec", "phone", "spot", "board", "cegep", "ets"]) {
+    for (const name of SHAPE_NAMES.filter((n) => n !== "yarn" && n !== "text")) {
       expect(bins).toContain(`${name}.bin`);
       expect(readdirSync(dir)).toContain(`${name}.webp`);
     }
@@ -38,8 +39,8 @@ describe("point clouds", () => {
     const shape = decodeShape(buf.buffer.slice(buf.byteOffset, buf.byteOffset + buf.length));
     const b = bounds(shape.position, POINTS.full);
     expect(Math.max(b.maxX - b.minX, b.maxY - b.minY)).toBeGreaterThan(1.95);
-    for (const v of shape.position) expect(Math.abs(v)).toBeLessThanOrEqual(1);
-    for (const a of shape.accent) expect([0, 1]).toContain(a);
+    expect(Math.max(...shape.position.map(Math.abs))).toBeLessThanOrEqual(1);
+    expect(shape.accent.every((a) => a === 0 || a === 1)).toBe(true);
   });
 
   it.each(bins)("%s: the first 6 144 points cover the whole shape (phones draw only those)", (file) => {
