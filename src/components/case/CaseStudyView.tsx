@@ -62,7 +62,7 @@ export function CaseStudyView({
     <>
       {shape && <CaseCloud shape={shape} />}
       <main id="content" className={`wrap ${styles.page}`}>
-        <Link href={`${homePath(lang)}#work`} className={`mono ${styles.back}`}>
+        <Link href={`${homePath(lang)}#work`} className={styles.back}>
           ← {t(ui.backToWork, lang)}
         </Link>
 

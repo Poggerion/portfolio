@@ -13,12 +13,23 @@
   }
 }
 
+/* Back to the projects: a navigation link, at the size of the main navigation (J7, R1). */
 .back {
   display: inline-flex;
   align-items: center;
   min-height: 44px;
+  font-family: var(--font-mono);
+  font-size: var(--text-nav);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
   color: var(--ink-muted);
   transition: color 0.3s;
+}
+
+@media (max-width: 720px) {
+  .back {
+    letter-spacing: 0.03em;
+  }
 }
 
 .back:hover {
