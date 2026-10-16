@@ -7,7 +7,6 @@ import { projects } from "../src/content/projects";
 import type { Project } from "../src/content/types";
 import { ui } from "../src/content/ui";
 
-const FEATURED = ["parking-platform", "spot-mission-imaging", "android-raspberry-arduino"];
 const fiveParts = projects.filter((p) => p.caseStudy);
 
 /** The page as served (static HTML, before any script runs). */
@@ -19,8 +18,22 @@ function page(p: Project, lang: "fr" | "en") {
 }
 
 describe("five-part case studies", () => {
-  it("covers exactly the three featured projects of the cahier", () => {
-    expect(fiveParts.map((p) => p.slug).sort()).toEqual([...FEATURED].sort());
+  it("covers all nine projects of the cahier", () => {
+    expect(fiveParts.map((p) => p.slug)).toEqual(projects.map((p) => p.slug));
+    expect(fiveParts).toHaveLength(9);
+  });
+
+  // Team and course work is never presented as Felipe's alone (cahier §5, J4).
+  it("never tags team or course work as Felipe's own", () => {
+    for (const p of fiveParts) {
+      const by = p.caseStudy!.authorship ?? "mine";
+      if (p.involvement === "team") expect(by, p.slug).toBe("team");
+      if (p.involvement === "course") expect(["lab", "course"], p.slug).toContain(by);
+      if (p.involvement === "team" || p.involvement === "course") {
+        const text = renderToStaticMarkup(createElement(CaseStudyView, { project: p, study: p.caseStudy!, lang: "fr" }));
+        expect(text, p.slug).not.toContain(ui.caseStudy.authors.mine.tag.fr);
+      }
+    }
   });
 
   it("fills every part: intro, problem, diagram, contributions and choices, results and limits", () => {
@@ -35,7 +48,7 @@ describe("five-part case studies", () => {
     }
   });
 
-  it("marks Felipe's own parts in every diagram, and links every box after the first", () => {
+  it("marks the project's own parts in every diagram, and links every box after the first", () => {
     for (const p of fiveParts) {
       const lanes = p.caseStudy!.diagram.lanes;
       expect(lanes.some((l) => l.nodes.some((n) => n.mine)), p.slug).toBe(true);
@@ -70,7 +83,7 @@ describe("five-part case studies", () => {
         p.caseStudy!.diagram.lanes.forEach((lane, k) => {
           const boxes = [...lanes[k].querySelectorAll(":scope > li")];
           expect(boxes.map((b) => b.textContent)).toEqual(
-            lane.nodes.map((n) => (n.link?.label?.[lang] ?? "") + (n.mine ? ui.caseStudy.mine[lang] : "") + n.title[lang] + (n.detail?.[lang] ?? "")),
+            lane.nodes.map((n) => (n.link?.label?.[lang] ?? "") + (n.mine ? ui.caseStudy.authors[p.caseStudy!.authorship ?? "mine"].tag[lang] : "") + n.title[lang] + (n.detail?.[lang] ?? "")),
           );
         });
       }

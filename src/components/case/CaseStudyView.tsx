@@ -84,7 +84,7 @@ export function CaseStudyView({
                 <dd>{t(study.outcome, lang)}</dd>
               </div>
               <div>
-                <dt className="mono">{t(c.client, lang)}</dt>
+                <dt className="mono">{t(study.setting ? c.setting : c.client, lang)}</dt>
                 <dd>{t(study.client, lang)}</dd>
               </div>
               <div>
@@ -138,7 +138,7 @@ export function CaseStudyView({
           aria-labelledby={`${anchor("how")}-title`}
         >
           <PartTitle part="how" lang={lang} />
-          <FlowDiagram diagram={study.diagram} lang={lang} />
+          <FlowDiagram diagram={study.diagram} authorship={study.authorship} lang={lang} />
           <div className={`${styles.partBody} ${styles.plain}`}>
             <h3 className={`mono ${styles.subTitle}`}>
               {t(c.plainWords, lang)}
@@ -156,7 +156,7 @@ export function CaseStudyView({
           <div className={styles.partBody}>
             <div className={styles.sub}>
               <h3 className={`mono ${styles.subTitle}`}>
-                {t(c.contributions, lang)}
+                {t(c.authors[study.authorship ?? "mine"].contributions, lang)}
               </h3>
               <List items={study.contributions} lang={lang} />
             </div>

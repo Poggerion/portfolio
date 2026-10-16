@@ -59,6 +59,7 @@ export const ui = {
     role: { fr: "Rôle", en: "Role" },
     outcome: { fr: "Résultat", en: "Outcome" },
     client: { fr: "Pour qui", en: "For whom" },
+    setting: { fr: "Cadre", en: "Setting" },
     period: { fr: "Période", en: "Period" },
     contents: { fr: "Sommaire", en: "Contents" },
     parts: {
@@ -69,14 +70,22 @@ export const ui = {
       results: { fr: "Résultats et limites", en: "Results and limits" },
     },
     constraints: { fr: "Contraintes connues", en: "Known constraints" },
-    mine: { fr: "Mon travail", en: "My work" },
+    /** Diagram tag and contributions heading, by who did the work. */
+    authors: {
+      mine: { tag: { fr: "Mon travail", en: "My work" }, contributions: { fr: "Ce que j’ai réalisé", en: "What I built" } },
+      team: { tag: { fr: "Travail de l’équipe", en: "Team work" }, contributions: { fr: "Ce que l’équipe a réalisé", en: "What the team built" } },
+      lab: {
+        tag: { fr: "Mis en place dans le laboratoire", en: "Set up in the lab" },
+        contributions: { fr: "Ce qui a été mis en place", en: "What was set up" },
+      },
+      course: { tag: { fr: "Dans mes travaux", en: "In my coursework" }, contributions: { fr: "Ce que j’ai réalisé dans ces travaux", en: "What I built in this coursework" } },
+    },
     other: { fr: "Autre partie du système", en: "Other part of the system" },
     diagramNote: {
       fr: "Schéma explicatif et simplifié, pas une capture du système réel.",
       en: "Explanatory, simplified diagram, not a capture of the real system.",
     },
     plainWords: { fr: "En clair", en: "In plain words" },
-    contributions: { fr: "Ce que j’ai réalisé", en: "What I built" },
     decisions: { fr: "Choix techniques confirmés", en: "Confirmed technical choices" },
     results: { fr: "Résultats vérifiés", en: "Verified results" },
     limits: { fr: "Limites", en: "Limits" },

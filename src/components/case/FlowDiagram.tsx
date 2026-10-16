@@ -1,15 +1,24 @@
 import type { CSSProperties } from "react";
 import { ui } from "@/content/ui";
-import type { CaseStudy } from "@/content/types";
+import type { Authorship, CaseStudy } from "@/content/types";
 import { t, type Locale } from "@/lib/i18n";
 import styles from "./CaseStudy.module.css";
 
 /**
  * A case study diagram drawn in HTML: boxes joined by labelled links, in a row on wide screens and
  * in a column on narrow ones. The boxes are a list, so the flow reads in order without the
- * drawing. Felipe's own parts carry the accent; a note says the diagram is a simplification.
+ * drawing. The parts done in the project (Felipe's, or his team's) carry the accent; a note says the diagram is a simplification.
  */
-export function FlowDiagram({ diagram, lang }: { diagram: CaseStudy["diagram"]; lang: Locale }) {
+export function FlowDiagram({
+  diagram,
+  authorship = "mine",
+  lang,
+}: {
+  diagram: CaseStudy["diagram"];
+  authorship?: Authorship;
+  lang: Locale;
+}) {
+  const tag = ui.caseStudy.authors[authorship].tag;
   const columns = Math.max(...diagram.lanes.map((l) => l.nodes.length));
   const hasOther = diagram.lanes.some((l) => l.nodes.some((n) => !n.mine));
   return (
@@ -29,7 +38,7 @@ export function FlowDiagram({ diagram, lang }: { diagram: CaseStudy["diagram"]; 
                   </span>
                 )}
                 <span className={styles.node}>
-                  {node.mine && <span className={`mono ${styles.mineTag}`}>{t(ui.caseStudy.mine, lang)}</span>}
+                  {node.mine && <span className={`mono ${styles.mineTag}`}>{t(tag, lang)}</span>}
                   <span className={styles.nodeTitle}>{t(node.title, lang)}</span>
                   {node.detail && <span className={styles.nodeDetail}>{t(node.detail, lang)}</span>}
                 </span>
@@ -41,7 +50,7 @@ export function FlowDiagram({ diagram, lang }: { diagram: CaseStudy["diagram"]; 
       <figcaption className={styles.caption}>
         <span className={`mono ${styles.legend}`}>
           <span className={styles.legendMine} aria-hidden="true" />
-          {t(ui.caseStudy.mine, lang)}
+          {t(tag, lang)}
           {hasOther && (
             <>
               <span className={styles.legendOther} aria-hidden="true" />

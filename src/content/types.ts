@@ -63,7 +63,14 @@ export interface FlowNode {
  * diagram, the work and the choices, and the verified results. Every statement is in
  * facts_felipe.md or in Felipe's own validations; what is unknown is left out, not guessed.
  */
+/** Who did the work a case study marks as its own: Felipe (default), his team, or a course lab. */
+export type Authorship = "mine" | "team" | "lab" | "course";
+
 export interface CaseStudy {
+  /** Whose work the diagram's highlighted boxes and the contributions are. Felipe's by default. */
+  authorship?: Authorship;
+  /** The "for whom" line names a course or setting rather than a client. */
+  setting?: boolean;
   /** Kind of work, shown above the title (e.g. "Job · ITMI"). */
   status: Localized;
   /** One plain sentence: what the project is. */

@@ -250,7 +250,7 @@ export const projects: Project[] = [
               },
               {
                 title: { fr: "Traitement automatisé", en: "Automated processing" },
-                detail: { fr: "Serveur Linux · Python, OpenCV, Pillow, NumPy · lecture des capteurs photographiés", en: "Linux server · Python, OpenCV, Pillow, NumPy · reading the photographed gauges" },
+                detail: { fr: "Serveur Linux · Python, OpenCV, Pillow, NumPy", en: "Linux server · Python, OpenCV, Pillow, NumPy" },
                 mine: true,
                 link: { label: { fr: "téléversement", en: "upload" } },
               },
@@ -276,8 +276,8 @@ export const projects: Project[] = [
           },
         ],
         explanation: {
-          fr: "Avec le prototype, on choisit une mission existante ou on en enregistre une nouvelle. Spot l’exécute de façon autonome et prend des photos. Les photos sont téléversées vers un serveur Linux, où un traitement automatisé en extrait les données des capteurs photographiés, avec les données du payload. Les résultats arrivent aux techniciens sur le terrain dans un fichier Excel sur SharePoint. À côté, un programme en Rust récupère les données de capteurs extérieurs pour Grafana.",
-          en: "With the prototype, you pick an existing mission or record a new one. Spot carries it out autonomously and takes photos. The photos are uploaded to a Linux server, where automated processing extracts the readings of the photographed gauges, together with the payload data. The results reach field technicians in an Excel file on SharePoint. Alongside, a Rust program collects outdoor sensor data for Grafana.",
+          fr: "Avec le prototype, on choisit une mission existante ou on en enregistre une nouvelle. Spot l’exécute de façon autonome et prend des photos. Les photos sont téléversées vers un serveur Linux et traitées automatiquement avec les données du payload, dans le but d’en extraire les données des capteurs photographiés. Les résultats arrivent aux techniciens sur le terrain dans un fichier Excel sur SharePoint. À côté, un programme en Rust récupère les données de capteurs extérieurs pour Grafana.",
+          en: "With the prototype, you pick an existing mission or record a new one. Spot carries it out autonomously and takes photos. The photos are uploaded to a Linux server and processed automatically with the payload data, with the aim of extracting the readings of the photographed gauges. The results reach field technicians in an Excel file on SharePoint. Alongside, a Rust program collects outdoor sensor data for Grafana.",
         },
       },
       contributions: [
@@ -290,8 +290,8 @@ export const projects: Project[] = [
           en: "Photo capture during missions and upload to a Linux server.",
         },
         {
-          fr: "Traitement automatisé des photos sur le serveur en Python (OpenCV, Pillow, NumPy) : extraire les données des capteurs physiques photographiés, comme la pression, avec les données du payload, puis les transmettre aux techniciens dans un fichier Excel sur SharePoint.",
-          en: "Automated photo processing on the server in Python (OpenCV, Pillow, NumPy): extracting the readings of the photographed physical gauges, such as pressure, with the payload data, then delivering them to technicians in an Excel file on SharePoint.",
+          fr: "Traitement automatisé des photos sur le serveur en Python (OpenCV, Pillow, NumPy), avec les données du payload, en vue d’extraire les données des capteurs physiques photographiés, comme la pression; transmission des résultats aux techniciens dans un fichier Excel sur SharePoint.",
+          en: "Automated photo processing on the server in Python (OpenCV, Pillow, NumPy), with the payload data, aimed at extracting the readings of the photographed physical gauges, such as pressure; results delivered to technicians in an Excel file on SharePoint.",
         },
         {
           fr: "Récupération en Rust des données de différents capteurs extérieurs, exploitées dans Grafana.",
@@ -316,8 +316,8 @@ export const projects: Project[] = [
           en: "A working prototype to select and record autonomous missions.",
         },
         {
-          fr: "Données des capteurs photographiés extraites automatiquement sur le serveur, puis remises aux techniciens sur le terrain.",
-          en: "Readings from the photographed gauges extracted automatically on the server, then delivered to field technicians.",
+          fr: "Photos de mission traitées automatiquement sur le serveur; résultats remis aux techniciens sur le terrain.",
+          en: "Mission photos processed automatically on the server; results delivered to field technicians.",
         },
         { fr: "Données de capteurs extérieurs exploitées dans Grafana.", en: "Outdoor sensor data put to use in Grafana." },
         { fr: "Personnel formé et documentation technique rédigée.", en: "Staff trained and technical documentation written." },
@@ -326,6 +326,10 @@ export const projects: Project[] = [
         {
           fr: "Il s’agit d’un prototype fonctionnel, pas d’un produit commercial.",
           en: "This is a working prototype, not a commercial product.",
+        },
+        {
+          fr: "La lecture automatique des instruments sur les photos n’est pas présentée ici comme une fonctionnalité pleinement validée.",
+          en: "Automatic reading of the instruments in the photos is not presented here as a fully validated feature.",
         },
         {
           fr: "Aucune mesure de performance n’est publiée : ni cadence, ni volume, ni précision.",
@@ -356,42 +360,156 @@ export const projects: Project[] = [
     period: { fr: "Automne 2023", en: "Fall 2023" },
     domains: ["robotics", "embedded"],
     stack: ["Python", "Spot SDK", "Docker", "docker-compose", "Bash", "SSH"],
-    sections: [
-      {
-        heading: { fr: "La mission", en: "The mission" },
-        points: [
+    caseStudy: {
+      status: { fr: "Projet final de cours · Cégep de Sept-Îles", en: "Final course project · Cégep de Sept-Îles" },
+      lede: {
+        fr: "Une mission autonome du robot Spot qui repère la source de chaleur la plus élevée avec sa caméra thermique, s’en approche et collecte des données sur place.",
+        en: "An autonomous Spot mission that finds the hottest heat source with the robot’s thermal camera, walks toward it and collects data on site.",
+      },
+      role: {
+        fr: "Équipe de deux : scripts de mission adaptés du Spot SDK et intégration sur le robot",
+        en: "Team of two: mission scripts adapted from the Spot SDK, and integration on the robot",
+      },
+      outcome: {
+        fr: "Le robot repère la source la plus chaude, s’en approche avec des déviations et collecte son, photos et mesures sur place.",
+        en: "The robot finds the hottest source, approaches it with some drift and collects sound, photos and readings on site.",
+      },
+      client: { fr: "Cours « Objets connectés », Cégep de Sept-Îles", en: "Connected Objects course, Cégep de Sept-Îles" },
+      setting: true,
+      authorship: "team",
+      problem: {
+        body: [
           {
-            fr: "Une mission Autowalk enregistrée à la tablette, passant par trois points.",
-            en: "An Autowalk mission recorded on the tablet, through three waypoints.",
+            fr: "Projet final du cours « Objets connectés », intitulé « Plateforme robotique Spot connectée » : faire faire au robot Spot une mission autonome qui trouve une source de chaleur et y recueille des données.",
+            en: "Final project of the Connected Objects course, titled “Connected Spot robotic platform”: have the Spot robot run an autonomous mission that finds a heat source and collects data there.",
           },
           {
-            fr: "La caméra thermique (Spot CAM+IR) balaie la zone pour repérer la source de chaleur la plus élevée.",
-            en: "The thermal camera (Spot CAM+IR) scans the area for the hottest source.",
+            fr: "Le robot suit une mission enregistrée, cherche la source la plus chaude avec sa caméra thermique, s’en approche, puis collecte sur place du son, des photos et des mesures de capteurs.",
+            en: "The robot follows a recorded mission, looks for the hottest source with its thermal camera, walks toward it, then collects sound, photos and sensor readings on site.",
+          },
+        ],
+        constraints: [
+          {
+            fr: "Le code de base vient de quatre exemples du Spot SDK de Boston Dynamics; seules les modifications et l’intégration sont de l’équipe.",
+            en: "The base code comes from four Boston Dynamics Spot SDK examples; only the changes and the integration are the team’s.",
           },
           {
-            fr: "Le robot s’oriente selon l’angle de la caméra et se dirige vers la source.",
-            en: "The robot turns to the camera’s angle and walks toward the source.",
-          },
-          {
-            fr: "Sur place, il collecte audio, photo, photo infrarouge et mesures de température, d’humidité et de gaz.",
-            en: "On site, it collects audio, photos, infrared photos and temperature, humidity and gas readings.",
+            fr: "Les capteurs Dracal se lisent depuis un conteneur Docker fourni, que l’équipe a dû modifier.",
+            en: "The Dracal sensors are read from a provided Docker container, which the team had to modify.",
           },
         ],
       },
-      {
-        heading: { fr: "Ce que nous avons construit", en: "What we built" },
-        body: {
-          fr: "Des scripts Python adaptés de quatre exemples du Spot SDK de Boston Dynamics : le code de base vient du SDK, les modifications et l’intégration sont les nôtres. Nous avons modifié le conteneur Docker fourni pour lire les capteurs Dracal et écrire les données, adapté le docker-compose, et lancé le tout sur Spot par SSH avec un script Bash pendant la mission.",
-          en: "Python scripts adapted from four Boston Dynamics Spot SDK examples: the base code comes from the SDK, the changes and integration are ours. We modified the provided Docker container to read the Dracal sensors and write the data, adapted the docker-compose file, and ran it on Spot over SSH with a Bash script during the mission.",
+      diagram: {
+        lanes: [
+          {
+            label: { fr: "La mission", en: "The mission" },
+            nodes: [
+              { title: { fr: "Mission Autowalk", en: "Autowalk mission" }, detail: { fr: "Enregistrée à la tablette, trois points", en: "Recorded on the tablet, three waypoints" } },
+              {
+                title: { fr: "Balayage thermique", en: "Thermal scan" },
+                detail: { fr: "Caméra Spot CAM+IR · source de chaleur la plus élevée", en: "Spot CAM+IR camera · hottest heat source" },
+                link: { label: { fr: "pendant la mission", en: "during the mission" } },
+              },
+              {
+                title: { fr: "Approche", en: "Approach" },
+                detail: { fr: "Orientation selon l’angle de la caméra · avec des déviations", en: "Turns to the camera’s angle · with some drift" },
+                link: { label: { fr: "source repérée", en: "source found" } },
+              },
+              {
+                title: { fr: "Collecte sur place", en: "On-site collection" },
+                detail: {
+                  fr: "Audio, photo, photo infrarouge · capteurs Dracal : température, humidité, gaz",
+                  en: "Audio, photo, infrared photo · Dracal sensors: temperature, humidity, gas",
+                },
+                link: { label: { fr: "arrivée", en: "arrival" } },
+              },
+            ],
+          },
+          {
+            label: { fr: "Le code sur le robot", en: "The code on the robot" },
+            nodes: [
+              { title: { fr: "Exemples du Spot SDK", en: "Spot SDK examples" }, detail: { fr: "Boston Dynamics · quatre exemples", en: "Boston Dynamics · four examples" } },
+              {
+                title: { fr: "Scripts Python de la mission", en: "Python mission scripts" },
+                detail: { fr: "Modifications et intégration de l’équipe", en: "Changes and integration by the team" },
+                mine: true,
+                link: { label: { fr: "adaptés", en: "adapted" } },
+              },
+            ],
+          },
+          {
+            label: { fr: "Les capteurs", en: "The sensors" },
+            nodes: [
+              { title: { fr: "Conteneur Docker fourni", en: "Provided Docker container" } },
+              {
+                title: { fr: "Lecture des capteurs Dracal", en: "Reading the Dracal sensors" },
+                detail: {
+                  fr: "Écriture des données · docker-compose adapté · lancé sur Spot par SSH avec un script Bash",
+                  en: "Writes the data · adapted docker-compose · run on Spot over SSH with a Bash script",
+                },
+                mine: true,
+                link: { label: { fr: "modifié", en: "modified" } },
+              },
+            ],
+          },
+        ],
+        explanation: {
+          fr: "Le robot suit une mission Autowalk enregistrée à la tablette, qui passe par trois points. Pendant la mission, la caméra thermique balaie la zone pour repérer la source de chaleur la plus élevée; le robot s’oriente selon l’angle de la caméra et s’en approche, avec des déviations. Sur place, il collecte du son, des photos, des photos infrarouges et les mesures des capteurs Dracal. Côté code, l’équipe a adapté quatre exemples du Spot SDK et modifié le conteneur Docker fourni pour lire les capteurs.",
+          en: "The robot follows an Autowalk mission recorded on the tablet, through three waypoints. During the mission, the thermal camera scans the area for the hottest heat source; the robot turns to the camera’s angle and walks toward it, with some drift. On site, it collects sound, photos, infrared photos and the Dracal sensor readings. On the code side, the team adapted four Spot SDK examples and modified the provided Docker container to read the sensors.",
         },
       },
-    ],
-    limits: [
-      {
-        fr: "L’approche vers la source de chaleur se fait avec des déviations : le guidage n’est pas précis.",
-        en: "The approach toward the heat source drifts: the guidance is not precise.",
-      },
-    ],
+      contributions: [
+        {
+          fr: "Scripts Python de la mission, adaptés de quatre exemples du Spot SDK : le code de base vient du SDK, les modifications et l’intégration sont de l’équipe.",
+          en: "Python mission scripts adapted from four Spot SDK examples: the base code comes from the SDK, the changes and integration are the team’s.",
+        },
+        {
+          fr: "Modification du conteneur Docker fourni pour lire les capteurs Dracal et écrire les données; adaptation du docker-compose.",
+          en: "Modified the provided Docker container to read the Dracal sensors and write the data; adapted the docker-compose file.",
+        },
+        {
+          fr: "Exécution sur Spot par connexion SSH, avec un script Bash lancé pendant la mission.",
+          en: "Ran it on Spot over SSH, with a Bash script launched during the mission.",
+        },
+        { fr: "Rapport final du projet.", en: "The project’s final report." },
+      ],
+      decisions: [
+        {
+          fr: "Scripts construits à partir de quatre exemples du Spot SDK, modifiés et intégrés par l’équipe.",
+          en: "Scripts built from four Spot SDK examples, modified and integrated by the team.",
+        },
+        { fr: "Mission Autowalk enregistrée à la tablette.", en: "Autowalk mission recorded on the tablet." },
+        {
+          fr: "Capteurs lus depuis le conteneur Docker fourni, modifié, et lancé sur le robot par SSH.",
+          en: "Sensors read from the provided Docker container, modified and run on the robot over SSH.",
+        },
+      ],
+      stack: [{ label: { fr: "Technologies", en: "Stack" }, items: ["Python", "Spot SDK", "Docker", "docker-compose", "Bash", "SSH"] }],
+      results: [
+        {
+          fr: "Le robot repère la source de chaleur la plus élevée, s’en approche et collecte les données sur place.",
+          en: "The robot finds the hottest heat source, walks toward it and collects data on site.",
+        },
+        {
+          fr: "Données recueillies sur place : audio, photo, photo infrarouge, température, humidité et gaz.",
+          en: "Data collected on site: audio, photo, infrared photo, temperature, humidity and gas.",
+        },
+      ],
+      limits: [
+        {
+          fr: "L’approche vers la source se fait avec des déviations : le guidage n’est pas précis.",
+          en: "The approach toward the source drifts: the guidance is not precise.",
+        },
+        {
+          fr: "Projet en équipe de deux : la part de chacun n’est pas détaillée ici.",
+          en: "A team-of-two project: each person’s share is not detailed here.",
+        },
+        {
+          fr: "Une vidéo de démonstration existe, mais elle n’est pas publiée ici.",
+          en: "A demo video exists, but it is not published here.",
+        },
+      ],
+    },
   },
   {
     slug: "android-raspberry-arduino",
@@ -527,29 +645,134 @@ export const projects: Project[] = [
     period: { fr: "Automne 2025", en: "Fall 2025" },
     domains: ["software"],
     stack: ["Java", "SQL", "Apache Derby", "JaCoCo", "GitLab"],
-    sections: [
-      {
-        heading: { fr: "Ce que nous avons fait", en: "What we did" },
-        points: [
+    caseStudy: {
+      status: { fr: "Laboratoires de cours · ÉTS", en: "Course labs · ÉTS" },
+      lede: {
+        fr: "Comprendre, tester et faire évoluer FinanceJ, une application Java existante, au fil de trois laboratoires du cours LOG240.",
+        en: "Understanding, testing and changing FinanceJ, an existing Java application, over three labs of the LOG240 course.",
+      },
+      role: {
+        fr: "Équipe de quatre : rétro-ingénierie, tests boîte noire, unitaires et d’intégration",
+        en: "Team of four: reverse engineering, black-box, unit and integration tests",
+      },
+      outcome: {
+        fr: "99 % de couverture sur AccountDAO et CategoryDAO, mesurée avec JaCoCo, et des défauts enregistrés dans GitLab.",
+        en: "99% coverage on AccountDAO and CategoryDAO, measured with JaCoCo, and defects logged in GitLab.",
+      },
+      client: { fr: "LOG240 Tests et maintenance, ÉTS", en: "LOG240 Testing and Maintenance, ÉTS" },
+      setting: true,
+      authorship: "team",
+      problem: {
+        body: [
           {
-            fr: "Rétro-ingénierie de l’application FinanceJ et analyse d’impacts d’une demande de changement client.",
-            en: "Reverse-engineered the FinanceJ application and analysed the impact of a client change request.",
+            fr: "FinanceJ est une application Java existante, avec une base de données Apache Derby. Le cours demande de la comprendre, de traiter une demande de changement d’un client, puis de la tester à plusieurs niveaux.",
+            en: "FinanceJ is an existing Java application with an Apache Derby database. The course asks students to understand it, handle a client change request, then test it at several levels.",
           },
           {
-            fr: "Tests boîte noire documentés par classes d’équivalence et valeurs frontalières pour ses trois fonctions principales; défauts enregistrés dans GitLab.",
-            en: "Black-box tests documented with equivalence classes and boundary values for its three main functions; defects logged in GitLab.",
+            fr: "Le travail s’étend sur trois laboratoires : rétro-ingénierie et analyse d’impacts, tests boîte noire, puis tests unitaires et d’intégration avec mesure de la couverture.",
+            en: "The work spans three labs: reverse engineering and impact analysis, black-box testing, then unit and integration tests with coverage measurement.",
+          },
+        ],
+        constraints: [
+          {
+            fr: "Une application existante, dont il faut d’abord retrouver la structure.",
+            en: "An existing application, whose structure has to be recovered first.",
           },
           {
-            fr: "Tests unitaires de la couche DAO : 99 % de couverture sur AccountDAO et CategoryDAO, mesurée avec JaCoCo.",
-            en: "Unit tests for the DAO layer: 99% coverage on AccountDAO and CategoryDAO, measured with JaCoCo.",
-          },
-          {
-            fr: "Tests d’intégration vérifiant que le modèle de l’interface interagit réellement avec la base Derby; graphes de flux et complexité cyclomatique de McCabe.",
-            en: "Integration tests checking that the UI model really talks to the Derby database; control-flow graphs and McCabe cyclomatic complexity.",
+            fr: "La couverture de 99 % porte sur deux classes, AccountDAO et CategoryDAO, pas sur toute l’application.",
+            en: "The 99% coverage covers two classes, AccountDAO and CategoryDAO, not the whole application.",
           },
         ],
       },
-    ],
+      diagram: {
+        lanes: [
+          {
+            label: { fr: "Trois laboratoires", en: "Three labs" },
+            nodes: [
+              { title: { fr: "FinanceJ", en: "FinanceJ" }, detail: { fr: "Application Java existante · base Apache Derby", en: "Existing Java application · Apache Derby database" } },
+              {
+                title: { fr: "Rétro-ingénierie", en: "Reverse engineering" },
+                detail: { fr: "Laboratoire 2 · demande de changement client, analyse d’impacts", en: "Lab 2 · client change request, impact analysis" },
+                mine: true,
+                link: { label: { fr: "comprendre", en: "understand" } },
+              },
+              {
+                title: { fr: "Tests boîte noire", en: "Black-box tests" },
+                detail: {
+                  fr: "Laboratoire 3 · classes d’équivalence, valeurs frontalières · défauts dans GitLab",
+                  en: "Lab 3 · equivalence classes, boundary values · defects in GitLab",
+                },
+                mine: true,
+                link: { label: { fr: "tester de l’extérieur", en: "test from outside" } },
+              },
+              {
+                title: { fr: "Tests unitaires et d’intégration", en: "Unit and integration tests" },
+                detail: {
+                  fr: "Laboratoire 4 · couche DAO : 99 % sur AccountDAO et CategoryDAO (JaCoCo) · modèle de l’interface et base Derby",
+                  en: "Lab 4 · DAO layer: 99% on AccountDAO and CategoryDAO (JaCoCo) · UI model and Derby database",
+                },
+                mine: true,
+                link: { label: { fr: "tester de l’intérieur", en: "test from inside" } },
+              },
+            ],
+          },
+        ],
+        explanation: {
+          fr: "L’équipe a d’abord reconstitué la structure de FinanceJ et mesuré l’impact d’une demande de changement. Elle a ensuite testé ses trois fonctions principales de l’extérieur, par classes d’équivalence et valeurs frontalières, en consignant les défauts dans GitLab. Enfin, elle a écrit des tests unitaires pour la couche d’accès aux données et des tests d’intégration entre le modèle de l’interface et la base Derby, avec la couverture mesurée par JaCoCo.",
+          en: "The team first recovered FinanceJ’s structure and assessed the impact of a change request. It then tested the three main functions from the outside, with equivalence classes and boundary values, logging defects in GitLab. Finally, it wrote unit tests for the data access layer and integration tests between the UI model and the Derby database, with coverage measured by JaCoCo.",
+        },
+      },
+      contributions: [
+        {
+          fr: "Rétro-ingénierie de FinanceJ, gestion d’une demande de changement client et analyse de ses impacts (laboratoire 2).",
+          en: "Reverse-engineered FinanceJ, handled a client change request and analysed its impact (lab 2).",
+        },
+        {
+          fr: "Tests boîte noire documentés par classes d’équivalence et valeurs frontalières pour les trois fonctions principales, tests fonctionnels écrits dans le code, défauts enregistrés dans GitLab (laboratoire 3).",
+          en: "Black-box tests documented with equivalence classes and boundary values for the three main functions, functional tests written in code, defects logged in GitLab (lab 3).",
+        },
+        {
+          fr: "Tests unitaires de la couche DAO, avec 99 % de couverture sur AccountDAO et CategoryDAO, et tests d’intégration entre le modèle de l’interface et la base Derby (laboratoire 4).",
+          en: "Unit tests for the DAO layer, with 99% coverage on AccountDAO and CategoryDAO, and integration tests between the UI model and the Derby database (lab 4).",
+        },
+        {
+          fr: "Analyse de la couverture avec JaCoCo, graphes de flux de contrôle et complexité cyclomatique de McCabe (laboratoire 4).",
+          en: "Coverage analysis with JaCoCo, control-flow graphs and McCabe cyclomatic complexity (lab 4).",
+        },
+      ],
+      decisions: [
+        {
+          fr: "Tests boîte noire construits par classes d’équivalence et valeurs frontalières.",
+          en: "Black-box tests built from equivalence classes and boundary values.",
+        },
+        { fr: "Couverture du code mesurée avec JaCoCo.", en: "Code coverage measured with JaCoCo." },
+        {
+          fr: "Tests d’intégration qui vérifient que le modèle de l’interface interagit réellement avec la base Derby.",
+          en: "Integration tests that check the UI model really talks to the Derby database.",
+        },
+        {
+          fr: "Complexité cyclomatique de McCabe calculée à partir des graphes de flux de contrôle.",
+          en: "McCabe cyclomatic complexity computed from control-flow graphs.",
+        },
+      ],
+      stack: [{ label: { fr: "Technologies", en: "Stack" }, items: ["Java", "SQL", "Apache Derby", "JaCoCo", "GitLab"] }],
+      results: [
+        { fr: "99 % de couverture sur AccountDAO et CategoryDAO, mesurée avec JaCoCo.", en: "99% coverage on AccountDAO and CategoryDAO, measured with JaCoCo." },
+        { fr: "Défauts identifiés et enregistrés dans GitLab.", en: "Defects found and logged in GitLab." },
+        { fr: "Demande de changement analysée, avec ses impacts.", en: "Change request analysed, with its impact." },
+      ],
+      limits: [
+        {
+          fr: "Les 99 % portent sur AccountDAO et CategoryDAO seulement, pas sur toute l’application.",
+          en: "The 99% applies to AccountDAO and CategoryDAO only, not to the whole application.",
+        },
+        {
+          fr: "Laboratoires de cours en équipe de quatre : la part de chacun n’est pas détaillée ici.",
+          en: "Course labs in a team of four: each person’s share is not detailed here.",
+        },
+        { fr: "Les rapports ne nomment pas le framework de test utilisé.", en: "The reports do not name the test framework used." },
+      ],
+    },
   },
   {
     slug: "javafx-image-editor",
@@ -564,21 +787,97 @@ export const projects: Project[] = [
     period: { fr: "Automne 2025", en: "Fall 2025" },
     domains: ["software"],
     stack: ["Java", "JavaFX", "MVC", "Observer"],
-    sections: [
-      {
-        heading: { fr: "Ce que nous avons fait", en: "What we did" },
-        points: [
+    caseStudy: {
+      status: { fr: "Laboratoire de cours · ÉTS", en: "Course lab · ÉTS" },
+      lede: {
+        fr: "Une application JavaFX pour afficher et manipuler une image, construite en MVC avec trois vues qui restent synchronisées.",
+        en: "A JavaFX app to display and edit an image, built in MVC with three views that stay in sync.",
+      },
+      role: { fr: "Équipe de trois : application JavaFX, architecture MVC, patron Observateur", en: "Team of three: JavaFX app, MVC architecture, Observer pattern" },
+      outcome: {
+        fr: "Trois vues indépendantes synchronisées par le patron Observateur/Sujet, avec zoom, translation, annulation, sauvegarde et chargement.",
+        en: "Three independent views kept in sync by the Observer/Subject pattern, with zoom, pan, undo, save and load.",
+      },
+      client: { fr: "LOG121 Conception orientée objet, ÉTS", en: "LOG121 Object-Oriented Design, ÉTS" },
+      setting: true,
+      authorship: "team",
+      problem: {
+        body: [
           {
-            fr: "Affichage et manipulation d’image : zoom, translation, annulation, sauvegarde et chargement de fichier.",
-            en: "Image display and editing: zoom, pan, undo, save and load.",
+            fr: "Le laboratoire 5 du cours LOG121 porte sur une application JavaFX d’affichage et de manipulation d’image : zoom, translation, annulation, sauvegarde et chargement de fichier.",
+            en: "Lab 5 of the LOG121 course is a JavaFX app to display and edit an image: zoom, pan, undo, save and load.",
           },
           {
-            fr: "Architecture MVC avec trois vues indépendantes, synchronisées par le patron Observateur/Sujet.",
-            en: "MVC architecture with three independent views kept in sync with the Observer/Subject pattern.",
+            fr: "L’enjeu de conception : trois vues indépendantes doivent rester synchronisées quand l’image change.",
+            en: "The design challenge: three independent views must stay in sync when the image changes.",
           },
         ],
       },
-    ],
+      diagram: {
+        lanes: [
+          {
+            nodes: [
+              { title: { fr: "Utilisateur", en: "User" }, detail: { fr: "Zoom, translation, annulation, sauvegarde, chargement", en: "Zoom, pan, undo, save, load" } },
+              {
+                title: { fr: "Contrôleur", en: "Controller" },
+                detail: { fr: "Reçoit les actions", en: "Receives the actions" },
+                mine: true,
+                link: { label: { fr: "actions", en: "actions" } },
+              },
+              {
+                title: { fr: "Modèle", en: "Model" },
+                detail: { fr: "Sujet observé", en: "Observed subject" },
+                mine: true,
+                link: { label: { fr: "modifie", en: "updates" } },
+              },
+              {
+                title: { fr: "Trois vues indépendantes", en: "Three independent views" },
+                detail: { fr: "Observateurs, mises à jour à chaque changement", en: "Observers, refreshed on every change" },
+                mine: true,
+                link: { label: { fr: "notifie", en: "notifies" } },
+              },
+            ],
+          },
+        ],
+        explanation: {
+          fr: "L’utilisateur agit sur l’image : zoom, translation, annulation, sauvegarde ou chargement. En MVC, le contrôleur reçoit ces actions et modifie le modèle. Le modèle joue le rôle de sujet : à chaque changement, il prévient ses observateurs, les trois vues, qui se mettent à jour sans dépendre les unes des autres.",
+          en: "The user acts on the image: zoom, pan, undo, save or load. In MVC, the controller receives these actions and updates the model. The model is the subject: on every change it notifies its observers, the three views, which refresh without depending on each other.",
+        },
+      },
+      contributions: [
+        {
+          fr: "Application JavaFX d’affichage et de manipulation d’image : zoom, translation, annulation, sauvegarde et chargement de fichier.",
+          en: "A JavaFX app to display and edit an image: zoom, pan, undo, save and load.",
+        },
+        { fr: "Architecture MVC avec trois vues indépendantes.", en: "MVC architecture with three independent views." },
+        {
+          fr: "Application de patrons de conception, dont Observateur/Sujet pour synchroniser les vues.",
+          en: "Applied design patterns, including Observer/Subject to keep the views in sync.",
+        },
+      ],
+      decisions: [
+        { fr: "Modèle, vues et contrôleur séparés (MVC).", en: "Model, views and controller kept apart (MVC)." },
+        {
+          fr: "Les trois vues synchronisées par le patron Observateur/Sujet, pour qu’elles restent indépendantes.",
+          en: "The three views kept in sync by the Observer/Subject pattern, so they stay independent.",
+        },
+      ],
+      stack: [{ label: { fr: "Technologies", en: "Stack" }, items: ["Java", "JavaFX", "MVC", "Observer"] }],
+      results: [
+        {
+          fr: "Application JavaFX avec zoom, translation, annulation, sauvegarde et chargement.",
+          en: "A JavaFX app with zoom, pan, undo, save and load.",
+        },
+        { fr: "Trois vues indépendantes synchronisées par le patron Observateur/Sujet.", en: "Three independent views kept in sync by the Observer/Subject pattern." },
+      ],
+      limits: [
+        {
+          fr: "Laboratoire de cours en équipe de trois : la part de chacun n’est pas détaillée ici.",
+          en: "A course lab in a team of three: each person’s share is not detailed here.",
+        },
+        { fr: "Aucune capture de l’application n’est publiée ici.", en: "No screenshot of the app is published here." },
+      ],
+    },
   },
   {
     slug: "server-infrastructure-lab",
@@ -593,31 +892,171 @@ export const projects: Project[] = [
     period: { fr: "2023", en: "2023" },
     domains: ["data"],
     stack: ["VMware ESXi", "Ubuntu Server 22.04", "Netplan", "DHCP", "Apache", "MariaDB", "PHP", "OCS Inventory", "GLPI", "Zabbix"],
-    sections: [
-      {
-        heading: { fr: "Ce qui a été mis en place", en: "What was set up" },
-        points: [
+    caseStudy: {
+      status: { fr: "Projet de session · Cégep de Sept-Îles", en: "Session project · Cégep de Sept-Îles" },
+      lede: {
+        fr: "Un laboratoire virtualisé pour inventorier des postes, gérer des tickets et superviser des machines, avec OCS Inventory, GLPI et Zabbix.",
+        en: "A virtualized lab to inventory machines, manage tickets and monitor hosts, with OCS Inventory, GLPI and Zabbix.",
+      },
+      role: { fr: "Projet de session, rapport remis à mon nom", en: "Session project, report submitted under my name" },
+      outcome: {
+        fr: "Postes inventoriés et synchronisés dans GLPI, hôtes Linux et Windows supervisés par Zabbix, avec alerte par courriel.",
+        en: "Machines inventoried and synced into GLPI, Linux and Windows hosts monitored by Zabbix, with an email alert.",
+      },
+      client: { fr: "Administration serveur II, Cégep de Sept-Îles", en: "Server Administration II, Cégep de Sept-Îles" },
+      setting: true,
+      authorship: "lab",
+      problem: {
+        body: [
           {
-            fr: "Un laboratoire virtualisé sur VMware ESXi : serveur Ubuntu Server 22.04 LTS, clients Ubuntu et Windows 10, réseau virtuel isolé, adressage par DHCP.",
-            en: "A virtualized lab on VMware ESXi: an Ubuntu Server 22.04 LTS host, Ubuntu and Windows 10 clients, an isolated virtual network, DHCP addressing.",
+            fr: "Ce projet de session monte un petit parc informatique virtualisé, puis l’outille : inventaire des postes, gestion des tickets et supervision des machines.",
+            en: "This session project builds a small virtualized fleet, then equips it: machine inventory, ticket management and host monitoring.",
           },
           {
-            fr: "OCS Inventory et ses agents pour inventorier les postes, synchronisés avec GLPI pour la gestion de tickets.",
-            en: "OCS Inventory and its agents to inventory machines, synced with GLPI for ticket management.",
+            fr: "Le parc comprend un serveur Ubuntu Server 22.04 LTS et des clients Ubuntu et Windows 10, sur un réseau virtuel isolé de VMware ESXi.",
+            en: "The fleet has an Ubuntu Server 22.04 LTS server and Ubuntu and Windows 10 clients, on an isolated VMware ESXi virtual network.",
           },
+        ],
+        constraints: [
+          { fr: "Laboratoire de cours, pas un environnement de production.", en: "A course lab, not a production environment." },
           {
-            fr: "Zabbix pour superviser les hôtes Linux et Windows, avec une alerte par courriel en cas d’utilisation élevée des ressources.",
-            en: "Zabbix to monitor Linux and Windows hosts, with an email alert on high resource usage.",
+            fr: "Le laboratoire impliquait des collègues et une technicienne du département.",
+            en: "The lab involved classmates and a department technician.",
           },
         ],
       },
-    ],
-    limits: [
-      {
-        fr: "Projet de laboratoire réalisé dans un cours, avec des collègues et une technicienne du département. Ce n’est pas un environnement de production.",
-        en: "A lab project done in a course, with classmates and a department technician. It is not a production environment.",
+      diagram: {
+        lanes: [
+          {
+            label: { fr: "Réseau du laboratoire", en: "Lab network" },
+            nodes: [
+              {
+                title: { fr: "VMware ESXi", en: "VMware ESXi" },
+                detail: { fr: "Hyperviseur · commutateur virtuel, groupes de ports, réseau isolé", en: "Hypervisor · virtual switch, port groups, isolated network" },
+                mine: true,
+              },
+              {
+                title: { fr: "Serveur Ubuntu 22.04", en: "Ubuntu 22.04 server" },
+                detail: { fr: "IP statique avec Netplan · serveur DHCP (isc-dhcp-server)", en: "Static IP with Netplan · DHCP server (isc-dhcp-server)" },
+                mine: true,
+                link: { label: { fr: "machine virtuelle", en: "virtual machine" } },
+              },
+              {
+                title: { fr: "Clients Ubuntu et Windows 10", en: "Ubuntu and Windows 10 clients" },
+                detail: { fr: "Adresses attribuées par DHCP · connectivité validée par ping", en: "Addresses from DHCP · connectivity checked with ping" },
+                link: { label: { fr: "DHCP", en: "DHCP" } },
+              },
+            ],
+          },
+          {
+            label: { fr: "Inventaire et tickets", en: "Inventory and tickets" },
+            nodes: [
+              { title: { fr: "Agents OCS Inventory", en: "OCS Inventory agents" }, detail: { fr: "Clients Windows et Linux", en: "Windows and Linux clients" }, mine: true },
+              {
+                title: { fr: "Serveur OCS Inventory", en: "OCS Inventory server" },
+                detail: { fr: "MariaDB, Apache, PHP, Perl, Composer", en: "MariaDB, Apache, PHP, Perl, Composer" },
+                mine: true,
+                link: { label: { fr: "inventaire", en: "inventory" } },
+              },
+              {
+                title: { fr: "GLPI", en: "GLPI" },
+                detail: {
+                  fr: "Plugin OCS, import et synchronisation · tickets, rôles usager, technicien, administrateur",
+                  en: "OCS plugin, import and sync · tickets, user, technician and admin roles",
+                },
+                mine: true,
+                link: { label: { fr: "import", en: "import" } },
+              },
+            ],
+          },
+          {
+            label: { fr: "Supervision", en: "Monitoring" },
+            nodes: [
+              { title: { fr: "Agents Zabbix", en: "Zabbix agents" }, detail: { fr: "Clients Linux et Windows", en: "Linux and Windows clients" }, mine: true },
+              {
+                title: { fr: "Serveur Zabbix", en: "Zabbix server" },
+                detail: { fr: "Gabarits Linux et Windows · interface web", en: "Linux and Windows templates · web interface" },
+                mine: true,
+                link: { label: { fr: "supervision", en: "monitoring" } },
+              },
+              {
+                title: { fr: "Administrateurs", en: "Administrators" },
+                detail: { fr: "Courriel en cas d’utilisation élevée des ressources", en: "Email on high resource usage" },
+                link: { label: { fr: "alerte", en: "alert" } },
+              },
+            ],
+          },
+        ],
+        explanation: {
+          fr: "Sur l’hyperviseur VMware ESXi, un réseau virtuel isolé relie un serveur Ubuntu et des clients Ubuntu et Windows 10, qui reçoivent leur adresse du serveur DHCP. Des agents envoient l’inventaire des postes à OCS Inventory, synchronisé avec GLPI, où se gèrent les tickets. D’autres agents remontent l’état des machines à Zabbix, qui prévient les administrateurs par courriel quand les ressources sont trop sollicitées.",
+          en: "On the VMware ESXi hypervisor, an isolated virtual network links an Ubuntu server and Ubuntu and Windows 10 clients, which get their address from the DHCP server. Agents send the machine inventory to OCS Inventory, synced with GLPI, where tickets are handled. Other agents report the hosts’ state to Zabbix, which emails the administrators when resources run high.",
+        },
       },
-    ],
+      contributions: [
+        {
+          fr: "Réseau virtuel sur VMware ESXi : commutateur virtuel, groupes de ports, réseau isolé; recréation d’un groupe de ports et réattribution des adaptateurs réseau des machines virtuelles.",
+          en: "Virtual network on VMware ESXi: virtual switch, port groups, isolated network; recreated a port group and reassigned the virtual machines’ network adapters.",
+        },
+        {
+          fr: "Serveur Ubuntu : adresse IP statique et passerelle avec Netplan, serveur DHCP qui adresse les clients Ubuntu et Windows 10.",
+          en: "Ubuntu server: static IP and gateway with Netplan, a DHCP server addressing the Ubuntu and Windows 10 clients.",
+        },
+        {
+          fr: "OCS Inventory : serveur avec MariaDB, Apache, PHP, Perl et Composer, base de données, agents sur les clients Windows et Linux.",
+          en: "OCS Inventory: server with MariaDB, Apache, PHP, Perl and Composer, its database, agents on the Windows and Linux clients.",
+        },
+        {
+          fr: "GLPI : installation, plugin OCS Inventory, import et synchronisation des ordinateurs, scénario de tickets avec types, groupes et rôles usager, technicien et administrateur.",
+          en: "GLPI: installation, OCS Inventory plugin, import and sync of the computers, a ticket scenario with types, groups and user, technician and admin roles.",
+        },
+        {
+          fr: "Zabbix : serveur et base de données, interface web, agents Linux et Windows, hôtes déclarés avec des gabarits, alerte par courriel aux administrateurs.",
+          en: "Zabbix: server and database, web interface, Linux and Windows agents, hosts declared with templates, email alert to administrators.",
+        },
+      ],
+      decisions: [
+        {
+          fr: "Virtualisation sur VMware ESXi, un hyperviseur de type 1, avec un réseau isolé.",
+          en: "Virtualization on VMware ESXi, a type 1 hypervisor, with an isolated network.",
+        },
+        { fr: "Adressage dynamique des clients par un serveur DHCP sur Ubuntu.", en: "Dynamic client addressing by a DHCP server on Ubuntu." },
+        {
+          fr: "OCS Inventory synchronisé avec GLPI par son plugin, pour relier l’inventaire et les tickets.",
+          en: "OCS Inventory synced with GLPI through its plugin, linking inventory and tickets.",
+        },
+        { fr: "Supervision Zabbix avec des gabarits par système d’exploitation.", en: "Zabbix monitoring with per-OS templates." },
+      ],
+      stack: [
+        {
+          label: { fr: "Technologies", en: "Stack" },
+          items: ["VMware ESXi", "Ubuntu Server 22.04", "Windows 10", "Netplan", "DHCP", "Apache", "MariaDB", "PHP", "Perl", "OCS Inventory", "GLPI", "Zabbix"],
+        },
+      ],
+      results: [
+        {
+          fr: "Clients adressés par DHCP et connectivité validée par ping, après le diagnostic d’un blocage causé par le pare-feu Windows.",
+          en: "Clients addressed by DHCP and connectivity checked with ping, after diagnosing a block caused by the Windows firewall.",
+        },
+        { fr: "Machines inventoriées et synchronisées entre OCS Inventory et GLPI.", en: "Machines inventoried and synced between OCS Inventory and GLPI." },
+        { fr: "Scénario de tickets mené jusqu’à la résolution et la fermeture.", en: "A ticket scenario carried through to resolution and closing." },
+        { fr: "Hôtes Linux et Windows supervisés, avec une alerte par courriel configurée.", en: "Linux and Windows hosts monitored, with an email alert set up." },
+      ],
+      limits: [
+        {
+          fr: "Laboratoire de cours, pas un environnement de production : aucune mesure n’est publiée.",
+          en: "A course lab, not a production environment: no figures are published.",
+        },
+        { fr: "Aucune automatisation n’est documentée dans ce projet.", en: "No automation is documented in this project." },
+        {
+          fr: "Le projet ne porte pas sur la sécurité ni le durcissement des serveurs.",
+          en: "The project does not cover security or server hardening.",
+        },
+        {
+          fr: "Les identifiants et adresses du laboratoire ne sont pas publiés.",
+          en: "The lab’s credentials and addresses are not published.",
+        },
+      ],
+    },
   },
   {
     slug: "dotnet-web-apps",
@@ -635,29 +1074,166 @@ export const projects: Project[] = [
     period: { fr: "2023 – 2024", en: "2023 – 2024" },
     domains: ["software", "data"],
     stack: ["C#", "ASP.NET Core", "Blazor", "Entity Framework Core", "SQL Server", "IIS"],
-    sections: [
-      {
-        heading: { fr: "Ce que j’ai construit", en: "What I built" },
-        points: [
+    caseStudy: {
+      status: { fr: "Travaux de cours · Cégep de Sept-Îles", en: "Coursework · Cégep de Sept-Îles" },
+      lede: {
+        fr: "Des applications web en C# : une API REST ASP.NET Core, un client Blazor qui la consomme, une application Blazor Server de gestion universitaire et un guide pour publier l’API sur IIS.",
+        en: "Web apps in C#: an ASP.NET Core REST API, a Blazor client that consumes it, a Blazor Server university management app, and a guide to publishing the API on IIS.",
+      },
+      role: { fr: "Travaux de cours; auteur du guide de déploiement sur IIS", en: "Coursework; author of the IIS deployment guide" },
+      outcome: {
+        fr: "Un client Blazor qui lit, ajoute, modifie et supprime des données par une API REST ASP.NET Core, et un guide pour publier cette API sur IIS.",
+        en: "A Blazor client that reads, adds, edits and deletes data through an ASP.NET Core REST API, and a guide to publishing that API on IIS.",
+      },
+      client: { fr: "Cours .NET et bases de données, Cégep de Sept-Îles", en: ".NET and database courses, Cégep de Sept-Îles" },
+      setting: true,
+      authorship: "course",
+      problem: {
+        body: [
           {
-            fr: "Une application Blazor Server de gestion universitaire (étudiants, cours, inscriptions) avec Entity Framework Core, SQL Server et des migrations successives.",
-            en: "A Blazor Server university management app (students, courses, enrolments) with Entity Framework Core, SQL Server and successive migrations.",
+            fr: "Deux cours du DEC, « Exploiter un système de gestion de base de données » (automne 2023) et « Développement web transactionnel » (hiver 2024), portent sur des applications .NET reliées à une base de données.",
+            en: "Two college courses, Database Management Systems (fall 2023) and Transactional Web Development (winter 2024), cover .NET applications backed by a database.",
           },
           {
-            fr: "Une API REST ASP.NET Core, consommée par un client Blazor avec HttpClient (GET, POST, PUT, DELETE).",
-            en: "An ASP.NET Core REST API, consumed by a Blazor client with HttpClient (GET, POST, PUT, DELETE).",
+            fr: "Le fil principal : une API REST ASP.NET Core avec Entity Framework Core, un client Blazor qui la consomme, et la mise en service de l’API sur IIS.",
+            en: "The main thread: an ASP.NET Core REST API with Entity Framework Core, a Blazor client that consumes it, and putting the API into service on IIS.",
+          },
+        ],
+        constraints: [
+          {
+            fr: "Travaux de cours; la part faite en équipe n’est pas précisée ici.",
+            en: "Coursework; the share done in a team is not specified here.",
           },
           {
-            fr: "Un guide de déploiement de l’API sur IIS : site, pool d’applications, droits d’accès et règle de pare-feu.",
-            en: "A guide to deploying the API on IIS: site, application pool, permissions and firewall rule.",
-          },
-          {
-            fr: "Des applications ASP.NET Core MVC et C# WinForms connectées à SQL Server avec Entity Framework et ADO.NET.",
-            en: "ASP.NET Core MVC and C# WinForms apps connected to SQL Server with Entity Framework and ADO.NET.",
+            fr: "Le contrôleur de l’API part de la génération automatique de Visual Studio, ensuite commentée et intégrée.",
+            en: "The API controller starts from Visual Studio’s scaffolding, then commented and integrated.",
           },
         ],
       },
-    ],
+      diagram: {
+        lanes: [
+          {
+            label: { fr: "API REST et client", en: "REST API and client" },
+            nodes: [
+              { title: { fr: "Client Blazor", en: "Blazor client" }, detail: { fr: "Api.razor · HttpClient", en: "Api.razor · HttpClient" }, mine: true },
+              {
+                title: { fr: "API REST ASP.NET Core", en: "ASP.NET Core REST API" },
+                detail: { fr: "CRUD · contrôleur généré par Visual Studio, commenté et intégré", en: "CRUD · controller scaffolded by Visual Studio, commented and integrated" },
+                mine: true,
+                link: { label: { fr: "GET, POST, PUT, DELETE", en: "GET, POST, PUT, DELETE" }, both: true },
+              },
+              {
+                title: { fr: "Entity Framework Core", en: "Entity Framework Core" },
+                detail: { fr: "Migrations", en: "Migrations" },
+                mine: true,
+                link: { label: { fr: "accès aux données", en: "data access" }, both: true },
+              },
+              {
+                title: { fr: "Base de données", en: "Database" },
+                detail: { fr: "Type non précisé pour ce travail", en: "Type not specified for this work" },
+                link: { both: true },
+              },
+            ],
+          },
+          {
+            label: { fr: "Mise en service de l’API", en: "Putting the API into service" },
+            nodes: [
+              { title: { fr: "Guide IIS", en: "IIS guide" }, detail: { fr: "Rédigé en mai 2024", en: "Written in May 2024" }, mine: true },
+              {
+                title: { fr: "IIS", en: "IIS" },
+                detail: { fr: "Site, pool d’applications, droits d’accès", en: "Site, application pool, permissions" },
+                link: { label: { fr: "installation", en: "setup" } },
+              },
+              {
+                title: { fr: "Réseau interne", en: "Internal network" },
+                detail: { fr: "Règle de pare-feu entrante", en: "Inbound firewall rule" },
+                link: { label: { fr: "accès", en: "access" } },
+              },
+            ],
+          },
+          {
+            label: { fr: "Gestion universitaire", en: "University management" },
+            nodes: [
+              {
+                title: { fr: "Application Blazor Server", en: "Blazor Server app" },
+                detail: { fr: "Étudiants, cours, inscriptions · services", en: "Students, courses, enrolments · services" },
+                mine: true,
+              },
+              {
+                title: { fr: "Entity Framework Core", en: "Entity Framework Core" },
+                detail: { fr: "Migrations successives", en: "Successive migrations" },
+                mine: true,
+                link: { both: true },
+              },
+              { title: { fr: "SQL Server", en: "SQL Server" }, detail: { fr: "SQL Express", en: "SQL Express" }, link: { both: true } },
+            ],
+          },
+        ],
+        explanation: {
+          fr: "Le client Blazor envoie ses requêtes GET, POST, PUT et DELETE à l’API REST ASP.NET Core, qui passe par Entity Framework Core pour lire et écrire les données. Le guide décrit comment publier cette API sur IIS et l’ouvrir au réseau interne. À côté, l’application Blazor Server de gestion universitaire gère étudiants, cours et inscriptions dans SQL Server, aussi avec Entity Framework Core.",
+          en: "The Blazor client sends GET, POST, PUT and DELETE requests to the ASP.NET Core REST API, which uses Entity Framework Core to read and write data. The guide explains how to publish this API on IIS and open it to the internal network. Alongside, the Blazor Server university management app handles students, courses and enrolments in SQL Server, also with Entity Framework Core.",
+        },
+      },
+      contributions: [
+        {
+          fr: "Client Blazor (Api.razor) qui consomme l’API REST avec HttpClient : lecture, ajout, modification et suppression.",
+          en: "A Blazor client (Api.razor) that consumes the REST API with HttpClient: read, add, edit and delete.",
+        },
+        {
+          fr: "API REST ASP.NET Core Web API avec Entity Framework Core et migrations; contrôleur parti de la génération automatique de Visual Studio, commenté et intégré.",
+          en: "An ASP.NET Core Web API with Entity Framework Core and migrations; the controller starts from Visual Studio scaffolding, commented and integrated.",
+        },
+        {
+          fr: "Application Blazor Server de gestion universitaire (étudiants, cours, inscriptions) avec Entity Framework Core, SQL Server, des services et des migrations successives.",
+          en: "A Blazor Server university management app (students, courses, enrolments) with Entity Framework Core, SQL Server, services and successive migrations.",
+        },
+        {
+          fr: "Guide de déploiement de l’API sur IIS, dont je suis l’auteur : installation d’IIS, site, pool d’applications, droits d’accès et règle de pare-feu entrante.",
+          en: "A guide to deploying the API on IIS, which I wrote: installing IIS, site, application pool, permissions and inbound firewall rule.",
+        },
+      ],
+      decisions: [
+        { fr: "Client Blazor séparé de l’API REST; ils communiquent par HTTP.", en: "A Blazor client separate from the REST API; they talk over HTTP." },
+        { fr: "Accès aux données par Entity Framework Core et ses migrations.", en: "Data access through Entity Framework Core and its migrations." },
+        {
+          fr: "Publication sur IIS avec son pool d’applications et une règle de pare-feu entrante.",
+          en: "Publishing on IIS with its application pool and an inbound firewall rule.",
+        },
+      ],
+      stack: [{ label: { fr: "Technologies", en: "Stack" }, items: ["C#", "ASP.NET Core", "Blazor", "Entity Framework Core", "SQL Server", "IIS"] }],
+      around: [
+        {
+          heading: { fr: "Autres travaux .NET du DEC", en: "Other .NET coursework" },
+          body: {
+            fr: "Cours « Exploiter un système de gestion de base de données », automne 2023.",
+            en: "Database Management Systems course, fall 2023.",
+          },
+          points: [
+            { fr: "Applications C# WinForms connectées à SQL Server avec ADO.NET.", en: "C# WinForms apps connected to SQL Server with ADO.NET." },
+            {
+              fr: "Entity Framework : DbContext, DbSet, migrations par annotations et Fluent API.",
+              en: "Entity Framework: DbContext, DbSet, migrations with annotations and the Fluent API.",
+            },
+            {
+              fr: "Applications ASP.NET Core MVC : contrôleurs, vues et opérations CRUD avec Entity Framework et SQL Server.",
+              en: "ASP.NET Core MVC apps: controllers, views and CRUD operations with Entity Framework and SQL Server.",
+            },
+          ],
+        },
+      ],
+      results: [
+        {
+          fr: "Client Blazor qui couvre les quatre opérations GET, POST, PUT et DELETE, vérifié dans le code source.",
+          en: "A Blazor client covering the four operations GET, POST, PUT and DELETE, checked in the source code.",
+        },
+        { fr: "Application de gestion universitaire avec migrations successives de la base.", en: "A university management app with successive database migrations." },
+        { fr: "Guide IIS rédigé pour rendre l’API disponible sur le réseau interne.", en: "An IIS guide written to make the API available on the internal network." },
+      ],
+      limits: [
+        { fr: "Travaux de cours, pas des applications en production.", en: "Coursework, not production applications." },
+        { fr: "La base de données utilisée par l’API REST n’est pas précisée ici.", en: "The database behind the REST API is not specified here." },
+      ],
+    },
   },
   {
     slug: "php-auth-sites",
@@ -672,25 +1248,133 @@ export const projects: Project[] = [
     period: { fr: "Hiver 2024", en: "Winter 2024" },
     domains: ["software"],
     stack: ["PHP", "MySQL", "PDO", "PHPMailer", "OAuth", "TOTP"],
-    sections: [
-      {
-        heading: { fr: "Ce que j’ai construit", en: "What I built" },
-        points: [
+    caseStudy: {
+      status: { fr: "Travaux de cours · Cégep de Sept-Îles", en: "Coursework · Cégep de Sept-Îles" },
+      lede: {
+        fr: "Deux sites PHP avec MySQL qui gèrent des comptes : connexion, rôles, activation par courriel, double authentification TOTP et connexion OAuth.",
+        en: "Two PHP sites with MySQL that manage accounts: sign-in, roles, email activation, TOTP two-factor and OAuth sign-in.",
+      },
+      role: { fr: "Travaux de cours en PHP et MySQL, code commenté", en: "PHP and MySQL coursework, commented code" },
+      outcome: {
+        fr: "Comptes avec rôles usager et administrateur, double authentification TOTP par code QR et connexion OAuth Google, Facebook et GitHub.",
+        en: "Accounts with user and admin roles, TOTP two-factor with a QR code, and Google, Facebook and GitHub OAuth sign-in.",
+      },
+      client: { fr: "Programmation environnement Internet, Cégep de Sept-Îles", en: "Internet Programming, Cégep de Sept-Îles" },
+      setting: true,
+      authorship: "course",
+      problem: {
+        body: [
           {
-            fr: "Connexion avec mots de passe hachés, sessions, rôles usager et administrateur, page d’administration des comptes.",
-            en: "Sign-in with hashed passwords, sessions, user and admin roles, an account admin page.",
+            fr: "Le cours « Programmation environnement Internet » (hiver 2024) porte sur des sites web complets en PHP avec MySQL.",
+            en: "The Internet Programming course (winter 2024) covers complete PHP websites with MySQL.",
           },
           {
-            fr: "Inscription validée, activation du compte par courriel, double authentification TOTP avec code QR, connexion OAuth Google, Facebook et GitHub, reCAPTCHA.",
-            en: "Validated sign-up, email account activation, TOTP two-factor with QR code, Google, Facebook and GitHub OAuth sign-in, reCAPTCHA.",
-          },
-          {
-            fr: "Requêtes préparées PDO et échappement des sorties contre les injections.",
-            en: "PDO prepared statements and output escaping against injection.",
+            fr: "Le premier travail gère la connexion et les rôles; le second renforce l’inscription et la connexion : activation par courriel, double authentification et connexion par des comptes externes.",
+            en: "The first assignment handles sign-in and roles; the second strengthens sign-up and sign-in: email activation, two-factor authentication and sign-in with external accounts.",
           },
         ],
+        constraints: [{ fr: "Travaux de cours, pas des sites en production.", en: "Coursework, not production sites." }],
       },
-    ],
+      diagram: {
+        lanes: [
+          {
+            label: { fr: "TP1 : connexion et rôles", en: "Assignment 1: sign-in and roles" },
+            nodes: [
+              { title: { fr: "Connexion", en: "Sign-in" }, detail: { fr: "Table d’usagers · password_verify", en: "User table · password_verify" }, mine: true },
+              {
+                title: { fr: "Session", en: "Session" },
+                detail: { fr: "Pages protégées", en: "Protected pages" },
+                mine: true,
+                link: { label: { fr: "mot de passe vérifié", en: "password checked" } },
+              },
+              {
+                title: { fr: "Rôle", en: "Role" },
+                detail: { fr: "Usager : page personnelle · administrateur : gestion des comptes", en: "User: personal page · admin: account management" },
+                mine: true,
+                link: { label: { fr: "selon le rôle", en: "by role" } },
+              },
+            ],
+          },
+          {
+            label: { fr: "TP2 : inscription et connexion renforcée", en: "Assignment 2: stronger sign-up and sign-in" },
+            nodes: [
+              { title: { fr: "Inscription", en: "Sign-up" }, detail: { fr: "Validation d’unicité · reCAPTCHA", en: "Uniqueness checks · reCAPTCHA" }, mine: true },
+              {
+                title: { fr: "Activation", en: "Activation" },
+                detail: { fr: "Courriel avec PHPMailer", en: "Email with PHPMailer" },
+                mine: true,
+                link: { label: { fr: "courriel", en: "email" } },
+              },
+              {
+                title: { fr: "Double authentification", en: "Two-factor" },
+                detail: { fr: "TOTP avec code QR (Google2FA, BaconQrCode)", en: "TOTP with a QR code (Google2FA, BaconQrCode)" },
+                mine: true,
+                link: { label: { fr: "connexion", en: "sign-in" } },
+              },
+            ],
+          },
+          {
+            label: { fr: "TP2 : comptes externes", en: "Assignment 2: external accounts" },
+            nodes: [
+              { title: { fr: "Google, Facebook, GitHub", en: "Google, Facebook, GitHub" } },
+              {
+                title: { fr: "Connexion OAuth", en: "OAuth sign-in" },
+                mine: true,
+                link: { label: { fr: "OAuth", en: "OAuth" } },
+              },
+            ],
+          },
+        ],
+        explanation: {
+          fr: "Dans le premier site, l’usager se connecte avec un mot de passe vérifié contre son empreinte (password_hash, password_verify); une session protège les pages, et le rôle décide de l’accès : page personnelle pour l’usager, gestion des comptes pour l’administrateur. Dans le second, l’inscription vérifie l’unicité et passe par reCAPTCHA, le compte s’active par courriel, et la connexion peut demander un code TOTP ou passer par Google, Facebook ou GitHub. Dans les deux, le code utilise des requêtes préparées PDO et échappe les sorties avec htmlspecialchars.",
+          en: "In the first site, users sign in with a password checked against its hash (password_hash, password_verify); a session protects the pages, and the role decides access: a personal page for users, account management for the admin. In the second, sign-up checks uniqueness and goes through reCAPTCHA, the account is activated by email, and sign-in can ask for a TOTP code or go through Google, Facebook or GitHub. In both, the code uses PDO prepared statements and escapes output with htmlspecialchars.",
+        },
+      },
+      contributions: [
+        {
+          fr: "TP1 : site multipage avec table d’usagers, mots de passe hachés (password_hash, password_verify), sessions, rôles usager et administrateur, pages protégées, page personnelle et page d’administration des comptes.",
+          en: "Assignment 1: a multipage site with a user table, hashed passwords (password_hash, password_verify), sessions, user and admin roles, protected pages, a personal page and an account admin page.",
+        },
+        {
+          fr: "TP2 : inscription avec validations d’unicité, activation du compte par courriel (PHPMailer), double authentification TOTP avec code QR (Google2FA, BaconQrCode), connexion OAuth Google, Facebook et GitHub, reCAPTCHA.",
+          en: "Assignment 2: sign-up with uniqueness checks, email account activation (PHPMailer), TOTP two-factor with a QR code (Google2FA, BaconQrCode), Google, Facebook and GitHub OAuth sign-in, reCAPTCHA.",
+        },
+        {
+          fr: "Code commenté, avec requêtes préparées PDO et échappement des sorties (htmlspecialchars).",
+          en: "Commented code, with PDO prepared statements and output escaping (htmlspecialchars).",
+        },
+      ],
+      decisions: [
+        {
+          fr: "Mots de passe stockés hachés avec password_hash, vérifiés avec password_verify.",
+          en: "Passwords stored hashed with password_hash, checked with password_verify.",
+        },
+        { fr: "Accès aux données par PDO avec des requêtes préparées.", en: "Data access through PDO with prepared statements." },
+        { fr: "Deuxième facteur TOTP, configuré par code QR.", en: "A TOTP second factor, set up with a QR code." },
+        { fr: "Connexion déléguée par OAuth à Google, Facebook et GitHub.", en: "Sign-in delegated through OAuth to Google, Facebook and GitHub." },
+      ],
+      stack: [
+        {
+          label: { fr: "Technologies", en: "Stack" },
+          items: ["PHP", "MySQL", "PDO", "PHPMailer", "OAuth", "TOTP", "Google2FA", "BaconQrCode", "reCAPTCHA"],
+        },
+      ],
+      results: [
+        { fr: "Deux sites complets avec comptes, rôles et pages protégées.", en: "Two complete sites with accounts, roles and protected pages." },
+        { fr: "Double authentification TOTP et connexion OAuth avec trois fournisseurs.", en: "TOTP two-factor and OAuth sign-in with three providers." },
+        {
+          fr: "Protections vérifiées dans le code : requêtes préparées PDO et htmlspecialchars.",
+          en: "Protections checked in the code: PDO prepared statements and htmlspecialchars.",
+        },
+      ],
+      limits: [
+        { fr: "Travaux de cours, pas des sites en production.", en: "Coursework, not production sites." },
+        {
+          fr: "Aucun audit ni test d’intrusion : seules les protections vérifiées dans le code sont mentionnées.",
+          en: "No audit or penetration test: only the protections checked in the code are mentioned.",
+        },
+      ],
+    },
   },
 ];
 
