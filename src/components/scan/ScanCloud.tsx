@@ -32,7 +32,10 @@ function poseFor(section: string): Pose {
 function hasWebGL(): boolean {
   try {
     const c = document.createElement("canvas");
-    return !!(c.getContext("webgl2") || c.getContext("webgl"));
+    const gl = c.getContext("webgl2") || c.getContext("webgl");
+    // The test context is released at once, not left to the garbage collector.
+    gl?.getExtension("WEBGL_lose_context")?.loseContext();
+    return !!gl;
   } catch {
     return false;
   }
@@ -141,8 +144,10 @@ export function ScanCloud({ lang }: { lang: Locale }) {
       apply.current = () => {
         if (!introDone) return;
         const target = wantedName.current;
-        cloud.setPose(poseFor(section.current));
-        if (target === wanted) return;
+        const pose = poseFor(section.current);
+        cloud.setPose(pose);
+        // Narrow screens only show the cloud behind the hero: no shape is fetched where it is hidden.
+        if (target === wanted || pose.opacity === 0) return;
         wanted = target;
         load(target)
           .then((shape) => {
@@ -166,18 +171,21 @@ export function ScanCloud({ lang }: { lang: Locale }) {
           apply.current();
         }, INTRO_HOLD_MS);
 
-      // The other shapes download in the background, one at a time, once the first is on screen.
+      // On wide screens, where the cloud follows the whole page, the other shapes download in the
+      // background, one at a time, once the first is on screen.
       const queue = SHAPE_NAMES.filter((n) => n !== "yarn" && n !== "text");
       const idle = window.requestIdleCallback ?? ((cb: () => void) => window.setTimeout(cb, 300));
       const next = () => {
         const n = queue.shift();
-        if (n && !cancelled) void load(n).catch(() => {}).finally(() => idle(next));
+        if (n && !cancelled && window.innerWidth >= 1024) void load(n).catch(() => {}).finally(() => idle(next));
       };
       idle(next);
 
       const onResize = () => {
         cloud.resize();
         cloud.setPose(poseFor(section.current));
+        // A screen turned or widened may now show the cloud where it was hidden.
+        apply.current();
       };
       const onPointer = (e: PointerEvent) => {
         if (e.pointerType === "mouse") cloud.setPointer((e.clientX / window.innerWidth) * 2 - 1, (e.clientY / window.innerHeight) * 2 - 1);
@@ -195,7 +203,12 @@ export function ScanCloud({ lang }: { lang: Locale }) {
     };
 
     const idle = window.requestIdleCallback ?? ((cb: () => void) => window.setTimeout(cb, 200));
-    idle(() => void boot());
+    idle(() =>
+      void boot().catch(() => {
+        // Three.js could not be loaded or could not start: the still images instead of an empty space.
+        if (!cancelled) setNoWebGL(true);
+      }),
+    );
     return () => {
       cancelled = true;
       apply.current = () => {};
@@ -205,7 +218,8 @@ export function ScanCloud({ lang }: { lang: Locale }) {
 
   return (
     <>
-      <canvas ref={canvasRef} className={styles.canvas} aria-hidden="true" hidden={noWebGL} />
+      {/* A new canvas per language: a renderer never reuses the canvas of the one it replaces. */}
+      <canvas key={lang} ref={canvasRef} className={styles.canvas} aria-hidden="true" hidden={noWebGL} />
       {!noWebGL && <MapMarks ref={marksRef} />}
       {fallback && (
         <div className={styles.still}>

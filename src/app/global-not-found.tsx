@@ -46,9 +46,11 @@ export default function GlobalNotFound() {
     <html lang="fr-CA" className={`${serif.variable} ${sans.variable} ${mono.variable}`}>
       <body>
         <div className={`wrap ${styles.page}`}>
-          <a href={`${basePath}/fr/`} className={styles.name}>
-            {profile.name}
-          </a>
+          <header>
+            <a href={`${basePath}/fr/`} className={styles.name}>
+              {profile.name}
+            </a>
+          </header>
 
           <main className={styles.main}>
             <p className={`mono ${styles.code}`}>

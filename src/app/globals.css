@@ -74,6 +74,20 @@ html {
   }
 }
 
+/* Under 360px (small phones, or zoomed to 400 %) the section links take two lines. */
+@media (max-width: 359px) {
+  html {
+    scroll-padding-top: 9.5rem;
+  }
+}
+
+/* Zoomed in far, the header scrolls away (SiteHeader.module.css): anchors need little room. */
+@media (max-height: 300px) {
+  html {
+    scroll-padding-top: 1rem;
+  }
+}
+
 a,
 button,
 summary {

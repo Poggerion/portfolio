@@ -12,7 +12,10 @@ const INTRO_HOLD_MS = 500;
 function hasWebGL(): boolean {
   try {
     const c = document.createElement("canvas");
-    return !!(c.getContext("webgl2") || c.getContext("webgl"));
+    const gl = c.getContext("webgl2") || c.getContext("webgl");
+    // The test context is released at once, not left to the garbage collector.
+    gl?.getExtension("WEBGL_lose_context")?.loseContext();
+    return !!gl;
   } catch {
     return false;
   }
@@ -104,7 +107,8 @@ export function CaseCloud({ shape }: { shape: ShapeName }) {
     // Fixed behind the page, outside the text's stacking order, as on the home page. When it falls
     // back to the still image, the intro shows that image instead (CaseStill), so it scrolls away.
     <div className={styles.cloud} data-still={still || undefined}>
-      <canvas ref={canvasRef} className={styles.canvas} aria-hidden="true" hidden={still} />
+      {/* A new canvas per shape: a renderer never reuses the canvas of the one it replaces. */}
+      <canvas key={shape} ref={canvasRef} className={styles.canvas} aria-hidden="true" hidden={still} />
     </div>
   );
 }
@@ -114,6 +118,30 @@ export function CaseCloud({ shape }: { shape: ShapeName }) {
  * screens in place of the cloud when it cannot run (no WebGL, shape not loaded).
  */
 export function CaseStill({ shape }: { shape: ShapeName }) {
-  // eslint-disable-next-line @next/next/no-img-element
-  return <img className={styles.still} src={`${basePath}/clouds/${shape}.webp`} alt="" width={480} height={480} data-shape={shape} />;
+  const ref = useRef<HTMLImageElement>(null);
+  const [missing, setMissing] = useState(false);
+
+  useEffect(() => {
+    // The image may have failed before the page became interactive.
+    const img = ref.current;
+    if (!img?.complete || img.naturalWidth > 0) return;
+    const frame = requestAnimationFrame(() => setMissing(true));
+    return () => cancelAnimationFrame(frame);
+  }, []);
+
+  // A missing image leaves no empty space.
+  if (missing) return null;
+  return (
+    // eslint-disable-next-line @next/next/no-img-element
+    <img
+      ref={ref}
+      className={styles.still}
+      src={`${basePath}/clouds/${shape}.webp`}
+      alt=""
+      width={480}
+      height={480}
+      data-shape={shape}
+      onError={() => setMissing(true)}
+    />
+  );
 }

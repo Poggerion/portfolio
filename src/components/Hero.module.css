@@ -199,6 +199,13 @@
   }
 }
 
+/* Under 360px the header's section links take two lines. */
+@media (max-width: 359px) {
+  .inner {
+    padding-top: 11rem;
+  }
+}
+
 /* Phones, tablets, narrow or short laptop screens: the calls to action come before the details,
    so both stay inside the first screen (J5). */
 @media (max-width: 1199px), (max-height: 820px) {

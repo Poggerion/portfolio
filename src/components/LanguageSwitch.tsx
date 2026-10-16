@@ -28,7 +28,8 @@ export function LanguageSwitch({ lang }: { lang: Locale }) {
                 href={href}
                 hrefLang={code}
                 lang={code}
-                aria-label={t(ui.switchLanguage, lang)}
+                // Starts with the code shown, so voice control users can say what they see.
+                aria-label={`${code.toUpperCase()}, ${t(ui.switchLanguage, lang)}`}
                 className={styles.langLink}
                 onClick={(event) => {
                   // Keep the query and the section (#…) across languages.

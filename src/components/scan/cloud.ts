@@ -310,6 +310,8 @@ export class ScanCloudRenderer {
   private rest = 1;
   private morph = 1;
   private running = false;
+  /** Nothing would change on screen, so no frame is requested until something does (see wake). */
+  private asleep = false;
   private current: Shape;
   private ext: { x: number; y: number };
   /** Scale of the group, eased toward the one that fits the current shape in the pose's box. */
@@ -382,6 +384,7 @@ export class ScanCloudRenderer {
     this.camera.updateProjectionMatrix();
     this.material.uniforms.uSize.value = (w < 768 ? 1.7 : 2.1) * dpr;
     this.render();
+    this.wake();
   }
 
   setPose(pose: Pose) {
@@ -389,7 +392,7 @@ export class ScanCloudRenderer {
     if (this.still) {
       this.pose = { ...pose };
       this.render();
-    }
+    } else this.wake();
   }
 
   /** Called after every frame drawn, so overlays (the map's labels) can follow the cloud. */
@@ -403,7 +406,9 @@ export class ScanCloudRenderer {
   /** Pointer in −1..1 on both axes; the cloud leans up to MOTION.pointer toward it. */
   setPointer(x: number, y: number) {
     const max = this.motion === "steady" ? 0 : MOTION.pointer;
+    if (this.tiltTarget.x === y * max && this.tiltTarget.y === x * max) return;
     this.tiltTarget = { x: y * max, y: x * max };
+    this.wake();
   }
 
   /**
@@ -451,10 +456,12 @@ export class ScanCloudRenderer {
     this.morph = this.still ? 1 : 0;
     this.material.uniforms.uProgress.value = this.morph;
     if (this.still) this.render();
+    this.wake();
   }
 
   play() {
     if (this.still || this.running) return;
+    this.asleep = false;
     this.running = true;
     this.last = performance.now();
     this.frame = requestAnimationFrame(this.tick);
@@ -462,7 +469,19 @@ export class ScanCloudRenderer {
 
   pause() {
     this.running = false;
+    this.asleep = false;
     cancelAnimationFrame(this.frame);
+  }
+
+  /** Stops requesting frames until a change wakes the cloud: hidden, or a steady shape at rest. */
+  private sleep() {
+    this.running = false;
+    this.asleep = true;
+    cancelAnimationFrame(this.frame);
+  }
+
+  private wake() {
+    if (this.asleep) this.play();
   }
 
   private tick = (now: number) => {
@@ -473,8 +492,9 @@ export class ScanCloudRenderer {
     const k = 1 - Math.exp(-dt * 3);
     for (const key of ["x", "y", "size", "width", "opacity"] as const) this.pose[key] += (this.target[key] - this.pose[key]) * k;
     this.scale += (this.fit() - this.scale) * k;
-    // Nothing to draw while the cloud is hidden (phones, past the hero).
-    if (this.pose.opacity < 0.004 && this.target.opacity === 0) return;
+    // Nothing to draw while the cloud is hidden (phones, past the hero): no more frames until
+    // the cloud is shown again.
+    if (this.pose.opacity < 0.004 && this.target.opacity === 0) return this.sleep();
     this.tilt.x += (this.tiltTarget.x - this.tilt.x) * k;
     this.tilt.y += (this.tiltTarget.y - this.tilt.y) * k;
     const t = (now - this.start) / 1000;
@@ -495,8 +515,29 @@ export class ScanCloudRenderer {
       this.group.rotation.x += (this.tilt.x - this.group.rotation.x) * k;
     }
     this.group.rotation.y = this.yaw + this.tilt.y;
+    if (this.motion === "steady" && this.morph >= 1 && this.rest < 1e-3 && this.settled()) {
+      // The signature has formed and holds still: drawn once more exactly at rest, then no frames
+      // until something changes.
+      this.rest = 0;
+      this.material.uniforms.uRest.value = 0;
+      this.render();
+      return this.sleep();
+    }
     this.render();
   };
+
+  /** Pose, size and lean have reached their targets (to well under a pixel). */
+  private settled() {
+    const near = (a: number, b: number, e = 1e-4) => Math.abs(a - b) < e;
+    return (
+      (["x", "y", "size", "width", "opacity"] as const).every((key) => near(this.pose[key], this.target[key])) &&
+      near(this.scale, this.fit(), 1e-4 * this.scale) &&
+      near(this.tilt.x, this.tiltTarget.x, 1e-5) &&
+      near(this.tilt.y, this.tiltTarget.y, 1e-5) &&
+      near(this.group.rotation.x, this.tilt.x, 1e-5) &&
+      near(this.yaw, 0, 1e-5)
+    );
+  }
 
   private halves() {
     const halfH = Math.tan((this.camera.fov * Math.PI) / 360) * this.camera.position.z;
@@ -526,5 +567,8 @@ export class ScanCloudRenderer {
     this.geometry.dispose();
     this.material.dispose();
     this.renderer.dispose();
+    // Frees the canvas's GPU memory now rather than when the canvas is collected. The components
+    // give the next renderer a new canvas.
+    this.renderer.forceContextLoss();
   }
 }

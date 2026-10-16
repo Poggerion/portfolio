@@ -6,6 +6,13 @@
   padding-bottom: 6rem;
 }
 
+/* Under 360px the header's section links take two lines. */
+@media (max-width: 359px) {
+  .page {
+    padding-top: 11rem;
+  }
+}
+
 .back {
   display: inline-flex;
   align-items: center;

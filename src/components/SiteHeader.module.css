@@ -6,6 +6,14 @@
   pointer-events: none;
 }
 
+/* Zoomed in far (300 % and more leaves a very short window), the header scrolls away with the
+   page instead of covering half of it. */
+@media (max-height: 300px) {
+  .header {
+    position: absolute;
+  }
+}
+
 .header::before,
 .header::after {
   content: "";
@@ -99,6 +107,7 @@
   display: inline-flex;
   align-items: center;
   min-height: 44px;
+  white-space: nowrap;
   color: var(--ink-muted);
   transition: color 0.25s var(--ease-out);
 }
@@ -215,5 +224,20 @@
   .langSep,
   .counter {
     letter-spacing: 0.03em;
+  }
+}
+
+/* Under 360px (small phones, or zoomed to 400 %), the four links no longer fit on one line: they
+   wrap rather than run off the screen, and the decorative counter (the HUD has the same number)
+   makes room for the languages beside the name. */
+@media (max-width: 359px) {
+  .nav ul {
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    column-gap: 1.25rem;
+  }
+
+  .counter {
+    display: none;
   }
 }
