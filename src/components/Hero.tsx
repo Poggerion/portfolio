@@ -4,7 +4,10 @@ import { t, type Locale } from "@/lib/i18n";
 import { basePath } from "@/lib/site";
 import styles from "./Hero.module.css";
 
-/** First screen: who, what, where, and the two ways to follow up. Visible at once, no intro. */
+/**
+ * First screen, read in 30 to 60 seconds (J5): who, studies at ÉTS, the three fields, one concrete
+ * result, availability, then the featured work, the résumé and contact. Visible at once, no intro.
+ */
 export function Hero({ lang }: { lang: Locale }) {
   const [first, last] = profile.name.split(" ");
   const resume = profile.resume[lang];
@@ -20,6 +23,7 @@ export function Hero({ lang }: { lang: Locale }) {
         </h1>
 
         <p className={styles.role}>{t(profile.role, lang)}</p>
+        <p className={`mono ${styles.focus}`}>{t(profile.focus, lang)}</p>
         <p className={styles.hook}>{t(profile.hook, lang)}</p>
 
         <dl className={styles.meta}>
@@ -37,15 +41,11 @@ export function Hero({ lang }: { lang: Locale }) {
               <span className={styles.coords}>{profile.coordinates}</span>
             </dd>
           </div>
-          <div>
-            <dt className="mono">{t(ui.hero.studies, lang)}</dt>
-            <dd>{t(profile.studies, lang)}</dd>
-          </div>
         </dl>
 
         <div className={styles.actions}>
-          <a href="#contact" className={styles.primary}>
-            {t(ui.contactMe, lang)}
+          <a href="#work" className={styles.primary}>
+            {t(ui.hero.work, lang)}
           </a>
           {resume && (
             <a href={`${basePath}${resume}`} className={styles.secondary} download>
@@ -53,6 +53,9 @@ export function Hero({ lang }: { lang: Locale }) {
               <span className={styles.fileType}>PDF</span>
             </a>
           )}
+          <a href="#contact" className={styles.tertiary}>
+            {t(ui.contactMe, lang)}
+          </a>
         </div>
       </div>
     </section>

@@ -43,7 +43,7 @@ export function SiteNav({ lang }: { lang: Locale }) {
         </ul>
       </nav>
       {/* Same number as the HUD; the nav already tells assistive technology where the reader is. */}
-      <p className={`mono ${styles.counter}`} aria-hidden="true" data-live={live || undefined}>
+      <p className={styles.counter} aria-hidden="true" data-live={live || undefined}>
         <span className={styles.counterNum}>{num}</span>/{total}
       </p>
     </>

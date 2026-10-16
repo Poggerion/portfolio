@@ -34,8 +34,11 @@ export const scanSections: ScanSection[] = [
   { id: "skills", subject: { fr: "Carte électronique · Raspberry Pi", en: "Circuit board · Raspberry Pi" } },
   {
     id: "education",
-    subject: { fr: "Façade · Cégep de Sept-Îles", en: "Facade · Cégep de Sept-Îles" },
-    variants: { ets: { fr: "Façade · ÉTS, Montréal", en: "Facade · ÉTS, Montréal" } },
+    subject: { fr: "Façade · ÉTS, Montréal", en: "Facade · ÉTS, Montréal" },
+    variants: {
+      cegep: { fr: "Façade · Cégep de Sept-Îles", en: "Facade · Cégep de Sept-Îles" },
+      ets: { fr: "Façade · ÉTS, Montréal", en: "Facade · ÉTS, Montréal" },
+    },
   },
   {
     id: "contact",

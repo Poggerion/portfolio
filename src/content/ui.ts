@@ -19,9 +19,10 @@ export const ui = {
   contactMe: { fr: "Me contacter", en: "Get in touch" },
   downloadResume: { fr: "Télécharger le CV", en: "Download résumé" },
   hero: {
-    status: { fr: "Statut", en: "Status" },
+    status: { fr: "Disponibilité", en: "Availability" },
     based: { fr: "Basé à", en: "Based in" },
-    studies: { fr: "Études", en: "Studies" },
+    /** The hero's first call to action: the three featured case studies. */
+    work: { fr: "Voir les projets phares", en: "See featured work" },
   },
   sections: {
     about: { fr: "À propos", en: "About" },

@@ -34,9 +34,10 @@ describe("content", () => {
     }
   });
 
-  it("links only to Felipe's own GitHub profile", () => {
-    const links = published.match(/github\.com\/[\w-]+/gi) ?? [];
-    for (const l of links) expect(l.toLowerCase()).toBe("github.com/poggerion");
+  // J5: selected public repositories only, never the whole profile; none approved yet.
+  it("links to no GitHub profile, only to approved repositories of Felipe's account", () => {
+    expect(published).not.toMatch(/github\.com\/[\w-]+\/?["'\s]/i);
+    for (const repo of profile.repositories) expect(repo.url).toMatch(/^https:\/\/github\.com\/Poggerion\/[\w.-]+$/);
   });
 
   it("links only to résumé PDFs that exist", () => {

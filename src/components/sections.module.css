@@ -508,6 +508,13 @@
   color: var(--accent);
 }
 
+/* An approved repository: its one-line description under the link. */
+.repoDetail {
+  grid-column: 2 / -1;
+  color: var(--ink-muted);
+  font-size: var(--text-sm);
+}
+
 .copy {
   justify-self: end;
   min-height: 44px;
@@ -570,7 +577,8 @@
     padding-block: 0.75rem;
   }
 
-  .contactKey {
+  .contactKey,
+  .repoDetail {
     grid-column: 1 / -1;
   }
 }

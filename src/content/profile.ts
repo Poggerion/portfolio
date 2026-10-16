@@ -8,37 +8,42 @@ export const profile = {
     en: "Building beyond code.",
   } satisfies Localized,
   /** Shown under the name in the hero. */
-  role: { fr: "Étudiant en génie logiciel", en: "Software engineering student" } satisfies Localized,
-  /** Hero hook: what he has built, in one sentence. */
+  role: { fr: "Étudiant en génie logiciel à l’ÉTS", en: "Software engineering student at ÉTS" } satisfies Localized,
+  /** The three fields he positions himself in (J5), under the role. */
+  focus: {
+    fr: "Développement logiciel · Robotique · Systèmes embarqués",
+    en: "Software development · Robotics · Embedded systems",
+  } satisfies Localized,
+  /** Hero hook: one concrete professional result, then a second one (J5, recruiter reading). */
   hook: {
-    fr: "Du téléphone au robot : une application mobile déployée au Cégep de Sept-Îles, des outils Python pour le robot Spot, et une passion pour l’IA et les systèmes embarqués.",
-    en: "From phone to robot: a mobile app deployed at Cégep de Sept-Îles, Python tools for the Spot robot, and a passion for AI and embedded systems.",
+    fr: "À l’ITMI, j’ai été le seul développeur de l’application mobile de gestion des stationnements, déployée pour tout le personnel du Cégep de Sept-Îles, et j’ai construit un prototype de missions autonomes avec OCR pour le robot Spot.",
+    en: "At ITMI, I was the sole developer of the parking management mobile app, deployed to all Cégep de Sept-Îles staff, and built an autonomous mission prototype with OCR for the Spot robot.",
   } satisfies Localized,
   /** Meta description and social previews. */
   tagline: {
-    fr: "Étudiant en génie logiciel à l’ÉTS, intéressé par le développement logiciel, la robotique et les systèmes connectés.",
-    en: "Software engineering student at ÉTS, interested in software development, robotics and connected systems.",
+    fr: "Étudiant en génie logiciel à l’ÉTS : développement logiciel, robotique et systèmes embarqués. Disponible pour un stage dès janvier 2027.",
+    en: "Software engineering student at ÉTS: software development, robotics and embedded systems. Available for an internship from January 2027.",
   } satisfies Localized,
   location: "Montréal, Québec",
   coordinates: "45.50° N  73.57° W",
   email: "felipe-alberto.padilla-portugal.1@ens.etsmtl.ca",
   linkedin: "https://www.linkedin.com/in/felipe-portugal-151a75225",
   linkedinLabel: "linkedin.com/in/felipe-portugal-151a75225",
-  github: "https://github.com/Poggerion",
-  githubLabel: "github.com/Poggerion",
+  /**
+   * Public repositories Felipe has explicitly approved for the site (decision of the V2 cahier:
+   * selected repositories only, never the whole profile). Empty until he gives the list; while it
+   * is empty, no GitHub link is shown anywhere.
+   */
+  repositories: [] as { name: string; url: string; description: Localized }[],
   languages: { fr: "Français, anglais, espagnol", en: "French, English, Spanish" } satisfies Localized,
   /** Résumé PDFs in public/cv/, without the phone number. A null hides every résumé link. */
   resume: {
     fr: "/cv/felipe-portugal-cv-fr.pdf",
     en: "/cv/felipe-portugal-cv-en.pdf",
   } as Record<"fr" | "en", string | null>,
-  studies: {
-    fr: "ÉTS, baccalauréat prévu en mai 2029",
-    en: "ÉTS, bachelor’s expected May 2029",
-  } satisfies Localized,
   status: {
-    fr: "Recherche un stage · hiver 2027",
-    en: "Seeking an internship · winter 2027",
+    fr: "Stage dès janvier 2027 · 4 ou 8 mois",
+    en: "Internship from January 2027 · 4 or 8 months",
   } satisfies Localized,
   availability: [
     {

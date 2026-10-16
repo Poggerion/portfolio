@@ -40,7 +40,8 @@ export function shapeFor(section: string, variant: string | null, project: strin
     case "skills":
       return "board";
     case "education":
-      return variant === "ets" ? "ets" : "cegep";
+      // ÉTS comes first (J5): its facade until the reader reaches the Cégep entry.
+      return variant === "cegep" ? "cegep" : "ets";
     case "contact":
       return "text";
     default:

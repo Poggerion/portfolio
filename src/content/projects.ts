@@ -1,7 +1,8 @@
 import type { Project } from "./types";
 
 /**
- * Case studies. The three featured ones open the work section as large cards.
+ * Case studies. The three featured ones (parking, Spot at ITMI, portable monitoring; Felipe, J5)
+ * open the work section as large cards, in this order.
  */
 export const projects: Project[] = [
   {
@@ -184,8 +185,8 @@ export const projects: Project[] = [
     featured: {
       role: { fr: "Conseiller technique · ITMI", en: "Technical advisor · ITMI" },
       impact: {
-        fr: "Un prototype fonctionnel qui sélectionne et enregistre des missions autonomes, et des photos de mission traitées automatiquement sur un serveur Linux.",
-        en: "A working prototype that selects and records autonomous missions, with mission photos processed automatically on a Linux server.",
+        fr: "Un prototype fonctionnel de missions autonomes; sur les photos de mission, l’OCR reconnaît les valeurs des instruments, exportées pour les techniciens.",
+        en: "A working prototype for autonomous missions; on the mission photos, OCR recognizes the gauge readings, exported for the technicians.",
       },
       stack: ["Python", "Spot SDK", "OpenCV", "Rust"],
     },
@@ -340,15 +341,136 @@ export const projects: Project[] = [
     },
   },
   {
-    slug: "spot-thermal-mission",
+    slug: "android-raspberry-arduino",
     featured: {
-      role: { fr: "Projet final · équipe de deux", en: "Final project · team of two" },
+      role: { fr: "Projet individuel · client réel", en: "Solo project · real client" },
       impact: {
-        fr: "Le robot repère la source de chaleur la plus élevée avec sa caméra thermique, s’en approche et collecte des données sur place.",
-        en: "The robot finds the hottest source with its thermal camera, walks toward it and collects data on site.",
+        fr: "Des capteurs lus par un Arduino, un Raspberry Pi au centre et une application Android qui notifie la présence ou l’absence de personnes.",
+        en: "Sensors read by an Arduino, a Raspberry Pi at the centre and an Android app that notifies people being present or absent.",
       },
-      stack: ["Python", "Spot SDK", "Docker", "Bash"],
+      stack: ["Android", "Java", "Raspberry Pi", "Arduino"],
     },
+    title: { fr: "Surveillance portable avec Android, Raspberry Pi et Arduino", en: "Portable monitoring with Android, Raspberry Pi and Arduino" },
+    summary: {
+      fr: "Projet individuel pour un vrai client : un système de surveillance portable avec un Raspberry Pi central, un Arduino pour les capteurs et une application Android.",
+      en: "Solo project for a real client: a portable monitoring system with a central Raspberry Pi, an Arduino for the sensors and an Android app.",
+    },
+    involvement: "solo",
+    team: { fr: "Projet individuel", en: "Solo project" },
+    context: { fr: "Cégep de Sept-Îles · client : le Cégep et ses professeurs", en: "Cégep de Sept-Îles · client: the college and its teachers" },
+    period: { fr: "Hiver 2024", en: "Winter 2024" },
+    domains: ["embedded", "software"],
+    stack: ["Android", "Android Studio", "Java", "Python", "Raspberry Pi", "Arduino", "GPIO", "I2C", "SPI", "UART", "RTC"],
+    caseStudy: {
+      status: { fr: "Projet individuel · Cégep de Sept-Îles", en: "Solo project · Cégep de Sept-Îles" },
+      lede: {
+        fr: "Un système de surveillance portable : des capteurs lus par un Arduino, un Raspberry Pi au centre et une application mobile avec des notifications sur la présence ou l’absence de personnes.",
+        en: "A portable monitoring system: sensors read by an Arduino, a Raspberry Pi at the centre, and a mobile app with notifications about people being present or absent.",
+      },
+      role: {
+        fr: "Seul sur le projet : application Android, Raspberry Pi, Arduino et gestion de projet",
+        en: "Solo: Android app, Raspberry Pi, Arduino and project management",
+      },
+      outcome: {
+        fr: "Mené pour un client réel, le Cégep et ses professeurs : cahier des charges, échéancier, rencontres et validation des livrables.",
+        en: "Run for a real client, the college and its teachers: specification, schedule, meetings and deliverable sign-off.",
+      },
+      client: { fr: "Cégep de Sept-Îles et ses professeurs", en: "Cégep de Sept-Îles and its teachers" },
+      problem: {
+        body: [
+          {
+            fr: "Le Cégep de Sept-Îles et ses professeurs étaient les clients de ce projet : un système de surveillance portable, avec des notifications sur la présence ou l’absence de personnes.",
+            en: "Cégep de Sept-Îles and its teachers were the clients of this project: a portable monitoring system with notifications about people being present or absent.",
+          },
+          {
+            fr: "Le système utilise des capteurs à ultrasons et une caméra. Il a servi en laboratoire et à la maison, pour un usage personnel.",
+            en: "The system uses ultrasonic sensors and a camera. It was used in a lab and at home, for personal use.",
+          },
+          {
+            fr: "J’ai mené le projet du cahier des charges jusqu’à la validation des livrables avec le client.",
+            en: "I ran the project from the specification to the deliverable sign-off with the client.",
+          },
+        ],
+        constraints: [
+          {
+            fr: "Un système portable : de petits boîtiers contiennent le système de surveillance et le Raspberry Pi.",
+            en: "A portable system: small enclosures hold the monitoring system and the Raspberry Pi.",
+          },
+          {
+            fr: "Trois appareils à faire travailler ensemble : un Arduino, un Raspberry Pi et un appareil Android.",
+            en: "Three devices working together: an Arduino, a Raspberry Pi and an Android device.",
+          },
+        ],
+      },
+      diagram: {
+        lanes: [
+          {
+            nodes: [
+              { title: { fr: "Capteurs", en: "Sensors" }, detail: { fr: "Capteurs à ultrasons", en: "Ultrasonic sensors" } },
+              {
+                title: { fr: "Arduino", en: "Arduino" },
+                detail: { fr: "Acquisition par capteurs", en: "Sensor acquisition" },
+                mine: true,
+                link: { label: { fr: "acquisition", en: "acquisition" } },
+              },
+              {
+                title: { fr: "Raspberry Pi", en: "Raspberry Pi" },
+                detail: { fr: "Unité centrale · traitement des requêtes, gestion du système · Python", en: "Central unit · request handling, system management · Python" },
+                mine: true,
+                link: { label: { fr: "transmission", en: "transmission" } },
+              },
+              {
+                title: { fr: "Application Android", en: "Android app" },
+                detail: { fr: "Java · compte lié au Raspberry Pi · notifications : présence ou absence de personnes", en: "Java · account linked to the Raspberry Pi · notifications: people present or absent" },
+                mine: true,
+                link: { label: { fr: "communications réseau", en: "network communication" }, both: true },
+              },
+            ],
+          },
+        ],
+        explanation: {
+          fr: "L’Arduino lit les capteurs et transmet leurs informations au Raspberry Pi. Le Raspberry Pi, au centre, traite les requêtes et gère le système. L’application mobile se connecte avec un compte lié au Raspberry Pi et affiche des notifications sur la présence ou l’absence de personnes. Le système comprend aussi une caméra. Le branchement de la caméra, la liaison entre les appareils et la méthode de détection ne sont pas détaillés ici.",
+          en: "The Arduino reads the sensors and passes their information to the Raspberry Pi. The Raspberry Pi, at the centre, handles requests and manages the system. The mobile app signs in with an account linked to the Raspberry Pi and shows notifications about people being present or absent. The system also includes a camera. How the camera is connected, the links between the devices and the detection method are not detailed here.",
+        },
+      },
+      contributions: [
+        { fr: "Application Android en Java avec Android Studio : l’interface, la connexion par compte liée au Raspberry Pi et les notifications.", en: "Android app in Java with Android Studio: the interface, account sign-in linked to the Raspberry Pi, and notifications." },
+        { fr: "Programme Python sur le Raspberry Pi : traitement local et communications réseau.", en: "Python program on the Raspberry Pi: local processing and network communication." },
+        { fr: "Programmation de l’Arduino pour l’acquisition par capteurs et la transmission au Raspberry Pi.", en: "Arduino programming for sensor acquisition and transmission to the Raspberry Pi." },
+        {
+          fr: "Gestion de projet : cahier des charges, échéancier, documentation, rencontres avec le client et validation des livrables.",
+          en: "Project management: specification, schedule, documentation, client meetings and deliverable sign-off.",
+        },
+      ],
+      decisions: [
+        {
+          fr: "Trois rôles séparés : l’Arduino pour l’acquisition, le Raspberry Pi comme unité centrale, l’application mobile comme interface.",
+          en: "Three separate roles: the Arduino for acquisition, the Raspberry Pi as the central unit, the mobile app as the interface.",
+        },
+        { fr: "Python sur le Raspberry Pi, Java pour l’application Android.", en: "Python on the Raspberry Pi, Java for the Android app." },
+        {
+          fr: "Protocoles et composants utilisés dans le projet : GPIO, I2C, SPI, UART et horloge temps réel (RTC).",
+          en: "Protocols and components used in the project: GPIO, I2C, SPI, UART and a real-time clock (RTC).",
+        },
+      ],
+      stack: [
+        { label: { fr: "Technologies", en: "Stack" }, items: ["Android", "Android Studio", "Java", "Python", "Raspberry Pi", "Arduino", "GPIO", "I2C", "SPI", "UART", "RTC"] },
+      ],
+      results: [
+        { fr: "Système réalisé seul pour un client réel, le Cégep et ses professeurs.", en: "A system built alone for a real client, the college and its teachers." },
+        { fr: "Livrables validés avec le client.", en: "Deliverables signed off with the client." },
+        { fr: "Système utilisé en laboratoire et à la maison.", en: "System used in a lab and at home." },
+      ],
+      limits: [
+        {
+          fr: "Aucune photo ni vidéo du système n’est disponible : le schéma ci-dessus est une illustration.",
+          en: "No photo or video of the system is available: the diagram above is an illustration.",
+        },
+      ],
+    },
+  },
+  {
+    slug: "spot-thermal-mission",
     title: { fr: "Spot à la recherche de chaleur", en: "Spot, heat-seeking" },
     summary: {
       fr: "Projet final en équipe de deux : une mission Spot qui repère une source de chaleur et collecte des données.",
@@ -507,127 +629,6 @@ export const projects: Project[] = [
         {
           fr: "Une vidéo de démonstration existe, mais elle n’est pas publiée ici.",
           en: "A demo video exists, but it is not published here.",
-        },
-      ],
-    },
-  },
-  {
-    slug: "android-raspberry-arduino",
-    title: { fr: "Surveillance portable avec Android, Raspberry Pi et Arduino", en: "Portable monitoring with Android, Raspberry Pi and Arduino" },
-    summary: {
-      fr: "Projet individuel pour un vrai client : un système de surveillance portable avec un Raspberry Pi central, un Arduino pour les capteurs et une application Android.",
-      en: "Solo project for a real client: a portable monitoring system with a central Raspberry Pi, an Arduino for the sensors and an Android app.",
-    },
-    involvement: "solo",
-    team: { fr: "Projet individuel", en: "Solo project" },
-    context: { fr: "Cégep de Sept-Îles · client : le Cégep et ses professeurs", en: "Cégep de Sept-Îles · client: the college and its teachers" },
-    period: { fr: "Hiver 2024", en: "Winter 2024" },
-    domains: ["embedded", "software"],
-    stack: ["Android", "Android Studio", "Java", "Python", "Raspberry Pi", "Arduino", "GPIO", "I2C", "SPI", "UART", "RTC"],
-    caseStudy: {
-      status: { fr: "Projet individuel · Cégep de Sept-Îles", en: "Solo project · Cégep de Sept-Îles" },
-      lede: {
-        fr: "Un système de surveillance portable : des capteurs lus par un Arduino, un Raspberry Pi au centre et une application mobile avec des notifications sur la présence ou l’absence de personnes.",
-        en: "A portable monitoring system: sensors read by an Arduino, a Raspberry Pi at the centre, and a mobile app with notifications about people being present or absent.",
-      },
-      role: {
-        fr: "Seul sur le projet : application Android, Raspberry Pi, Arduino et gestion de projet",
-        en: "Solo: Android app, Raspberry Pi, Arduino and project management",
-      },
-      outcome: {
-        fr: "Mené pour un client réel, le Cégep et ses professeurs : cahier des charges, échéancier, rencontres et validation des livrables.",
-        en: "Run for a real client, the college and its teachers: specification, schedule, meetings and deliverable sign-off.",
-      },
-      client: { fr: "Cégep de Sept-Îles et ses professeurs", en: "Cégep de Sept-Îles and its teachers" },
-      problem: {
-        body: [
-          {
-            fr: "Le Cégep de Sept-Îles et ses professeurs étaient les clients de ce projet : un système de surveillance portable, avec des notifications sur la présence ou l’absence de personnes.",
-            en: "Cégep de Sept-Îles and its teachers were the clients of this project: a portable monitoring system with notifications about people being present or absent.",
-          },
-          {
-            fr: "Le système utilise des capteurs à ultrasons et une caméra. Il a servi en laboratoire et à la maison, pour un usage personnel.",
-            en: "The system uses ultrasonic sensors and a camera. It was used in a lab and at home, for personal use.",
-          },
-          {
-            fr: "J’ai mené le projet du cahier des charges jusqu’à la validation des livrables avec le client.",
-            en: "I ran the project from the specification to the deliverable sign-off with the client.",
-          },
-        ],
-        constraints: [
-          {
-            fr: "Un système portable : de petits boîtiers contiennent le système de surveillance et le Raspberry Pi.",
-            en: "A portable system: small enclosures hold the monitoring system and the Raspberry Pi.",
-          },
-          {
-            fr: "Trois appareils à faire travailler ensemble : un Arduino, un Raspberry Pi et un appareil Android.",
-            en: "Three devices working together: an Arduino, a Raspberry Pi and an Android device.",
-          },
-        ],
-      },
-      diagram: {
-        lanes: [
-          {
-            nodes: [
-              { title: { fr: "Capteurs", en: "Sensors" }, detail: { fr: "Capteurs à ultrasons", en: "Ultrasonic sensors" } },
-              {
-                title: { fr: "Arduino", en: "Arduino" },
-                detail: { fr: "Acquisition par capteurs", en: "Sensor acquisition" },
-                mine: true,
-                link: { label: { fr: "acquisition", en: "acquisition" } },
-              },
-              {
-                title: { fr: "Raspberry Pi", en: "Raspberry Pi" },
-                detail: { fr: "Unité centrale · traitement des requêtes, gestion du système · Python", en: "Central unit · request handling, system management · Python" },
-                mine: true,
-                link: { label: { fr: "transmission", en: "transmission" } },
-              },
-              {
-                title: { fr: "Application Android", en: "Android app" },
-                detail: { fr: "Java · compte lié au Raspberry Pi · notifications : présence ou absence de personnes", en: "Java · account linked to the Raspberry Pi · notifications: people present or absent" },
-                mine: true,
-                link: { label: { fr: "communications réseau", en: "network communication" }, both: true },
-              },
-            ],
-          },
-        ],
-        explanation: {
-          fr: "L’Arduino lit les capteurs et transmet leurs informations au Raspberry Pi. Le Raspberry Pi, au centre, traite les requêtes et gère le système. L’application mobile se connecte avec un compte lié au Raspberry Pi et affiche des notifications sur la présence ou l’absence de personnes. Le système comprend aussi une caméra. Le branchement de la caméra, la liaison entre les appareils et la méthode de détection ne sont pas détaillés ici.",
-          en: "The Arduino reads the sensors and passes their information to the Raspberry Pi. The Raspberry Pi, at the centre, handles requests and manages the system. The mobile app signs in with an account linked to the Raspberry Pi and shows notifications about people being present or absent. The system also includes a camera. How the camera is connected, the links between the devices and the detection method are not detailed here.",
-        },
-      },
-      contributions: [
-        { fr: "Application Android en Java avec Android Studio : l’interface, la connexion par compte liée au Raspberry Pi et les notifications.", en: "Android app in Java with Android Studio: the interface, account sign-in linked to the Raspberry Pi, and notifications." },
-        { fr: "Programme Python sur le Raspberry Pi : traitement local et communications réseau.", en: "Python program on the Raspberry Pi: local processing and network communication." },
-        { fr: "Programmation de l’Arduino pour l’acquisition par capteurs et la transmission au Raspberry Pi.", en: "Arduino programming for sensor acquisition and transmission to the Raspberry Pi." },
-        {
-          fr: "Gestion de projet : cahier des charges, échéancier, documentation, rencontres avec le client et validation des livrables.",
-          en: "Project management: specification, schedule, documentation, client meetings and deliverable sign-off.",
-        },
-      ],
-      decisions: [
-        {
-          fr: "Trois rôles séparés : l’Arduino pour l’acquisition, le Raspberry Pi comme unité centrale, l’application mobile comme interface.",
-          en: "Three separate roles: the Arduino for acquisition, the Raspberry Pi as the central unit, the mobile app as the interface.",
-        },
-        { fr: "Python sur le Raspberry Pi, Java pour l’application Android.", en: "Python on the Raspberry Pi, Java for the Android app." },
-        {
-          fr: "Protocoles et composants utilisés dans le projet : GPIO, I2C, SPI, UART et horloge temps réel (RTC).",
-          en: "Protocols and components used in the project: GPIO, I2C, SPI, UART and a real-time clock (RTC).",
-        },
-      ],
-      stack: [
-        { label: { fr: "Technologies", en: "Stack" }, items: ["Android", "Android Studio", "Java", "Python", "Raspberry Pi", "Arduino", "GPIO", "I2C", "SPI", "UART", "RTC"] },
-      ],
-      results: [
-        { fr: "Système réalisé seul pour un client réel, le Cégep et ses professeurs.", en: "A system built alone for a real client, the college and its teachers." },
-        { fr: "Livrables validés avec le client.", en: "Deliverables signed off with the client." },
-        { fr: "Système utilisé en laboratoire et à la maison.", en: "System used in a lab and at home." },
-      ],
-      limits: [
-        {
-          fr: "Aucune photo ni vidéo du système n’est disponible : le schéma ci-dessus est une illustration.",
-          en: "No photo or video of the system is available: the diagram above is an illustration.",
         },
       ],
     },

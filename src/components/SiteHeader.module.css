@@ -59,7 +59,7 @@
   display: inline-flex;
   align-items: center;
   min-height: 44px;
-  font-size: var(--text-sm);
+  font-size: var(--text-base);
   font-weight: 500;
   letter-spacing: 0.01em;
   margin-right: auto;
@@ -70,24 +70,27 @@
   gap: clamp(1rem, 2vw, 2rem);
 }
 
+/* Six links at the readable size need about 1200px; below that, the four main ones. */
 .wide {
   display: none;
 }
 
-@media (min-width: 1024px) {
+@media (min-width: 1200px) {
   .wide {
     display: block;
   }
 }
 
+/* Navigation, languages and counter: same mono capitals as the rest of the site, at a size a
+   first-time reader can scan (J5: 11px was too small). The other .mono annotations keep theirs. */
 .link,
 .langLink,
 .langActive,
 .langSep,
 .counter {
   font-family: var(--font-mono);
-  font-size: var(--text-xs);
-  letter-spacing: 0.08em;
+  font-size: var(--text-nav);
+  letter-spacing: 0.06em;
   text-transform: uppercase;
 }
 
@@ -204,5 +207,13 @@
 
   .nav ul {
     justify-content: space-between;
+  }
+
+  .link,
+  .langLink,
+  .langActive,
+  .langSep,
+  .counter {
+    letter-spacing: 0.03em;
   }
 }

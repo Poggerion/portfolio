@@ -253,7 +253,7 @@ export function EducationList({ lang }: { lang: Locale }) {
       <Head id="education" label={ui.sections.education} lang={lang} />
       <ol className={styles.timeline}>
         {education.map((e) => (
-          <li key={e.id} className={styles.job} data-scan-variant={e.id === "ets" ? "ets" : undefined}>
+          <li key={e.id} className={styles.job} data-scan-variant={e.id}>
             <p className={`mono ${styles.when}`}>{t(e.period, lang)}</p>
             <div className={styles.jobBody}>
               <h3 className={styles.jobTitle}>{t(e.degree, lang)}</h3>
@@ -272,7 +272,8 @@ export function EducationList({ lang }: { lang: Locale }) {
             </div>
           </li>
         ))}
-        <li className={styles.job}>
+        {/* An ÉTS club: the facade goes back to the ÉTS for it. */}
+        <li className={styles.job} data-scan-variant="ets">
           <p className={`mono ${styles.when}`}>{t(capra.period, lang)}</p>
           <div className={styles.jobBody}>
             <h3 className={styles.jobTitle}>{t(capra.title, lang)}</h3>
@@ -311,14 +312,18 @@ export function Contact({ lang }: { lang: Locale }) {
             <span aria-hidden="true">↗</span>
           </a>
         </li>
-        <li>
-          <span className={`mono ${styles.contactKey}`}>GitHub</span>
-          <a href={profile.github} className={styles.contactValue} target="_blank" rel="noopener noreferrer">
-            {profile.githubLabel}
-            {"\u00a0"}
-            <span aria-hidden="true">↗</span>
-          </a>
-        </li>
+        {/* Only repositories Felipe approved; none yet, so this row stays out. */}
+        {profile.repositories.map((repo) => (
+          <li key={repo.url}>
+            <span className={`mono ${styles.contactKey}`}>GitHub</span>
+            <a href={repo.url} className={styles.contactValue} target="_blank" rel="noopener noreferrer">
+              {repo.name}
+              {"\u00a0"}
+              <span aria-hidden="true">↗</span>
+            </a>
+            <span className={styles.repoDetail}>{t(repo.description, lang)}</span>
+          </li>
+        ))}
         {resume && (
           <li>
             <span className={`mono ${styles.contactKey}`}>CV</span>
@@ -341,9 +346,6 @@ export function Footer() {
       <span className={styles.footerLinks}>
         <a className="mono" href={profile.linkedin} target="_blank" rel="noopener noreferrer">
           LinkedIn
-        </a>
-        <a className="mono" href={profile.github} target="_blank" rel="noopener noreferrer">
-          GitHub
         </a>
       </span>
       <span className="mono">{profile.location}</span>
