@@ -101,3 +101,34 @@ describe("five-part case studies", () => {
     }
   });
 });
+
+// J4.R1 (Felipe, 2026-10-16): the OCR of the professional Spot prototype worked and the readings
+// were exported. It stays a prototype: no engine, accuracy, volume or commercial claim, and the
+// "in development" status of another ITMI work never applies here.
+describe("Spot professional prototype OCR", () => {
+  const spot = projects.find((p) => p.slug === "spot-mission-imaging")!;
+  const expected = {
+    fr: [/OCR fonctionnel dans le prototype/, /reconnues automatiquement et exportées/, /pas dans une solution industrielle/],
+    en: [/Working OCR in the prototype/, /recognized automatically and exported/, /not in an industrial solution/],
+  };
+
+  for (const lang of ["fr", "en"] as const) {
+    it(`states the OCR as working and its readings as exported (${lang})`, () => {
+      const text = page(spot, lang).textContent!;
+      for (const re of expected[lang]) expect(text).toMatch(re);
+      expect(text).toContain(lang === "fr" ? "OCR des valeurs des instruments" : "OCR of the instrument readings");
+      expect(text).not.toMatch(/en développement|in development|pleinement validée|fully validated|not presented here as/i);
+    });
+
+    it(`names no OCR engine, model or figure (${lang})`, () => {
+      const text = page(spot, lang).textContent!;
+      expect(text).not.toMatch(/tesseract|easyocr|paddle|keras|tensorflow|torch|yolo|modèle|\bmodel\b|taux|\brate of|\d+\s*%/i);
+      expect(text).not.toMatch(/\b(IA|AI)\b/);
+      expect(text).not.toMatch(/commercialis|déployé chez|deployed at|en production|in production/i);
+      const blocks = [...page(spot, lang).querySelectorAll("p, li, dd, span")].filter((el) => el.children.length === 0);
+      const ocr = blocks.map((el) => el.textContent!).filter((t) => /\bOCR\b/.test(t));
+      expect(ocr.length).toBeGreaterThan(0);
+      for (const t of ocr) expect(t).not.toMatch(/OpenCV|Pillow|NumPy/);
+    });
+  }
+});

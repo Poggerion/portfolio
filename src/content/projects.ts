@@ -250,14 +250,14 @@ export const projects: Project[] = [
               },
               {
                 title: { fr: "Traitement automatisé", en: "Automated processing" },
-                detail: { fr: "Serveur Linux · Python, OpenCV, Pillow, NumPy", en: "Linux server · Python, OpenCV, Pillow, NumPy" },
+                detail: { fr: "Serveur Linux · Python · OCR des valeurs des instruments", en: "Linux server · Python · OCR of the instrument readings" },
                 mine: true,
                 link: { label: { fr: "téléversement", en: "upload" } },
               },
               {
                 title: { fr: "Techniciens sur le terrain", en: "Field technicians" },
                 detail: { fr: "Fichier Excel sur SharePoint", en: "Excel file on SharePoint" },
-                link: { label: { fr: "transmission", en: "sent" } },
+                link: { label: { fr: "valeurs exportées", en: "exported readings" } },
               },
             ],
           },
@@ -276,8 +276,8 @@ export const projects: Project[] = [
           },
         ],
         explanation: {
-          fr: "Avec le prototype, on choisit une mission existante ou on en enregistre une nouvelle. Spot l’exécute de façon autonome et prend des photos. Les photos sont téléversées vers un serveur Linux et traitées automatiquement avec les données du payload, dans le but d’en extraire les données des capteurs photographiés. Les résultats arrivent aux techniciens sur le terrain dans un fichier Excel sur SharePoint. À côté, un programme en Rust récupère les données de capteurs extérieurs pour Grafana.",
-          en: "With the prototype, you pick an existing mission or record a new one. Spot carries it out autonomously and takes photos. The photos are uploaded to a Linux server and processed automatically with the payload data, with the aim of extracting the readings of the photographed gauges. The results reach field technicians in an Excel file on SharePoint. Alongside, a Rust program collects outdoor sensor data for Grafana.",
+          fr: "Avec le prototype, on choisit une mission existante ou on en enregistre une nouvelle. Spot l’exécute de façon autonome et prend des photos. Les photos sont téléversées vers un serveur Linux et traitées automatiquement avec les données du payload : une reconnaissance optique des caractères (OCR) lit les valeurs numériques des instruments photographiés, et ces valeurs sont exportées. Elles arrivent aux techniciens sur le terrain dans un fichier Excel sur SharePoint. À côté, un programme en Rust récupère les données de capteurs extérieurs pour Grafana.",
+          en: "With the prototype, you pick an existing mission or record a new one. Spot carries it out autonomously and takes photos. The photos are uploaded to a Linux server and processed automatically with the payload data: optical character recognition (OCR) reads the numeric values of the photographed gauges, and those values are exported. They reach field technicians in an Excel file on SharePoint. Alongside, a Rust program collects outdoor sensor data for Grafana.",
         },
       },
       contributions: [
@@ -290,8 +290,8 @@ export const projects: Project[] = [
           en: "Photo capture during missions and upload to a Linux server.",
         },
         {
-          fr: "Traitement automatisé des photos sur le serveur en Python (OpenCV, Pillow, NumPy), avec les données du payload, en vue d’extraire les données des capteurs physiques photographiés, comme la pression; transmission des résultats aux techniciens dans un fichier Excel sur SharePoint.",
-          en: "Automated photo processing on the server in Python (OpenCV, Pillow, NumPy), with the payload data, aimed at extracting the readings of the photographed physical gauges, such as pressure; results delivered to technicians in an Excel file on SharePoint.",
+          fr: "Traitement automatisé des photos sur le serveur en Python, avec les données du payload : reconnaissance optique des caractères (OCR) des valeurs numériques des instruments photographiés, comme la pression, puis export de ces valeurs vers les techniciens dans un fichier Excel sur SharePoint.",
+          en: "Automated photo processing on the server in Python, with the payload data: optical character recognition (OCR) of the numeric values on the photographed gauges, such as pressure, then export of those values to technicians in an Excel file on SharePoint.",
         },
         {
           fr: "Récupération en Rust des données de différents capteurs extérieurs, exploitées dans Grafana.",
@@ -316,8 +316,8 @@ export const projects: Project[] = [
           en: "A working prototype to select and record autonomous missions.",
         },
         {
-          fr: "Photos de mission traitées automatiquement sur le serveur; résultats remis aux techniciens sur le terrain.",
-          en: "Mission photos processed automatically on the server; results delivered to field technicians.",
+          fr: "OCR fonctionnel dans le prototype : les valeurs numériques des instruments photographiés étaient reconnues automatiquement et exportées pour les techniciens sur le terrain.",
+          en: "Working OCR in the prototype: the numeric values of the photographed gauges were recognized automatically and exported for field technicians.",
         },
         { fr: "Données de capteurs extérieurs exploitées dans Grafana.", en: "Outdoor sensor data put to use in Grafana." },
         { fr: "Personnel formé et documentation technique rédigée.", en: "Staff trained and technical documentation written." },
@@ -328,8 +328,8 @@ export const projects: Project[] = [
           en: "This is a working prototype, not a commercial product.",
         },
         {
-          fr: "La lecture automatique des instruments sur les photos n’est pas présentée ici comme une fonctionnalité pleinement validée.",
-          en: "Automatic reading of the instruments in the photos is not presented here as a fully validated feature.",
+          fr: "L’OCR fonctionnait dans un prototype, pas dans une solution industrielle dont la fiabilité aurait été mesurée; le moteur OCR utilisé n’est pas précisé ici.",
+          en: "The OCR worked in a prototype, not in an industrial solution with measured reliability; the OCR engine used is not specified here.",
         },
         {
           fr: "Aucune mesure de performance n’est publiée : ni cadence, ni volume, ni précision.",
