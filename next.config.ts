@@ -18,6 +18,7 @@ const nextConfig: NextConfig = {
   // root layouts, so there is no single layout to build a not-found page from.
   experimental: {
     globalNotFound: true,
+    agentUpgrade: "security",
   },
 };
 
